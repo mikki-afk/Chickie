@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>期期的小鸡养成系统</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: linear-gradient(135deg, #ffecd2, #fcb69f);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 16px;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+}
+
+h1 {
+  text-align: center;
+  font-size: 32px;
+  padding: 20px 0 12px;
+  color: #5a3e2b;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+}
+
+/* Nest area */
+.nest {
+  background: linear-gradient(180deg, #87CEEB 55%, #90EE90 55%);
+  border-radius: 20px;
+  border: 4px solid #8B4513;
+  padding: 30px 16px 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  min-height: 160px;
+}
+
+.nest::before {
+  content: "☁️";
+  position: absolute;
+  top: 10px; left: 20%;
+  font-size: 28px;
+  opacity: 0.7;
+  animation: cloudDrift 8s ease-in-out infinite;
+}
+
+.nest::after {
+  content: "☁️";
+  position: absolute;
+  top: 24px; right: 15%;
+  font-size: 20px;
+  opacity: 0.5;
+  animation: cloudDrift 12s ease-in-out infinite reverse;
+}
+
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(20px); }
+}
+
+.chickens-display {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.chicken-sprite {
+  text-align: center;
+  cursor: default;
+}
+
+.chicken-emoji {
+  font-size: 48px;
+  display: block;
+  animation: breathe 2s ease-in-out infinite;
+}
+
+.chicken-sprite .name {
+  font-size: 13px;
+  color: #5a3e2b;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.chicken-sprite .status-text {
+  font-size: 11px;
+  color: #c0392b;
+  font-weight: 600;
+  min-height: 16px;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-14px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-8px); }
+}
+
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-12deg); }
+  75% { transform: rotate(12deg); }
+}
+
+@keyframes sleepAnim {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.92); opacity: 0.7; }
+}
+
+.chicken-emoji.feed { animation: bounce 0.5s ease 3; }
+.chicken-emoji.play { animation: wobble 0.4s ease 4; }
+.chicken-emoji.rest { animation: sleepAnim 1s ease 3; }
+
+/* Status cards */
+.status-panel {
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.chicken-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0e0d0;
+}
+
+.chicken-card:last-child { border-bottom: none; }
+
+.card-emoji { font-size: 28px; flex-shrink: 0; }
+
+.card-info { flex: 1; min-width: 0; }
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.card-header .name {
+  font-weight: 700;
+  color: #5a3e2b;
+  font-size: 15px;
+}
+
+.card-header .stage-badge {
+  font-size: 13px;
+  background: #fff3e0;
+  border-radius: 8px;
+  padding: 1px 6px;
+}
+
+.bars { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.bar-group {
+  flex: 1;
+  min-width: 100px;
+}
+
+.bar-label {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 2px;
+}
+
+.bar-track {
+  height: 10px;
+  background: #eee;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.bar-fill.hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
+.bar-fill.happiness { background: linear-gradient(90deg, #ffd93d, #f0932b); }
+
+/* Growth progress */
+.growth-bar-track {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.growth-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #a29bfe, #6c5ce7);
+  transition: width 0.3s ease;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+.action-btn {
+  flex: 1;
+  max-width: 200px;
+  padding: 14px 10px;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.action-btn:hover:not(:disabled) { transform: scale(1.05); }
+.action-btn:active:not(:disabled) { transform: scale(0.97); }
+
+.action-btn:disabled {
+  background: #ccc !important;
+  cursor: not-allowed;
+  transform: none;
+  color: #999;
+}
+
+.btn-feed { background: linear-gradient(135deg, #FFD700, #f39c12); }
+.btn-play { background: linear-gradient(135deg, #FF69B4, #e84393); }
+.btn-rest { background: linear-gradient(135deg, #9370DB, #6c5ce7); }
+
+.cooldown-text {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* Stats bar */
+.stats {
+  background: rgba(255,255,255,0.85);
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-around;
+  font-size: 15px;
+  color: #5a3e2b;
+  font-weight: 600;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stats span { white-space: nowrap; }
+
+/* Reset button */
+.reset-area {
+  text-align: center;
+  padding: 10px 0 20px;
+}
+
+.reset-btn {
+  background: none;
+  border: 1px dashed #c0a080;
+  color: #b08060;
+  padding: 8px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.reset-btn:hover { background: rgba(255,255,255,0.4); }
+
+/* No food message */
+.no-food-msg {
+  font-size: 12px;
+  color: #e17055;
+  text-align: center;
+  margin-top: -8px;
+  margin-bottom: 12px;
+  display: none;
+}
+
+.no-food-msg.show { display: block; }
+
+/* Responsive */
+@media (max-width: 767px) {
+  h1 { font-size: 24px; }
+
+  .actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .action-btn {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .chickens-display {
+    gap: 8px;
+  }
+
+  .chicken-emoji { font-size: 40px; }
+
+  .stats { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>🐥 期期的小鸡养成系统 💕</h1>
+
+  <div class="nest">
+    <div class="chickens-display" id="chickensDisplay"></div>
+  </div>
+
+  <div class="status-panel" id="statusPanel"></div>
+
+  <div class="actions">
+    <button class="action-btn btn-feed" id="btnFeed" onclick="doFeed()">🌾 喂食</button>
+    <button class="action-btn btn-play" id="btnPlay" onclick="doPlay()">🎮 玩耍</button>
+    <button class="action-btn btn-rest" id="btnRest" onclick="doRest()">💤 休息</button>
+  </div>
+  <div class="no-food-msg" id="noFoodMsg">没有食物了🥺</div>
+
+  <div class="stats" id="statsBar"></div>
+
+  <div class="reset-area">
+    <button class="reset-btn" onclick="resetGame()">🔄 重置游戏</button>
+  </div>
+</div>
+
+<script>
+const CHICKEN_NAMES = ["玖宝", "期期小一", "毛毛", "咕咕", "叽叽"];
+const COOLDOWNS = { feed: 30000, play: 30000, rest: 300000 };
+const STORAGE_KEY = "chickie_save";
+
+let state = null;
+let cooldowns = { feed: 0, play: 0, rest: 0 };
+let decayTimer = null;
+let uiTimer = null;
+
+function defaultState() {
+  const now = new Date().toISOString();
+  return {
+    chickens: CHICKEN_NAMES.map((name, i) => ({
+      id: i, name,
+      hunger: 50, happiness: 50,
+      stage: "baby",
+      totalHunger: 0, totalHappiness: 0
+    })),
+    food: 20,
+    startDate: now,
+    totalInteractions: 0,
+    lastUpdateTime: now
+  };
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state = JSON.parse(raw);
+      applyOfflineDecay();
+      return;
+    }
+  } catch(e) {}
+  state = defaultState();
+  save();
+}
+
+function save() {
+  state.lastUpdateTime = new Date().toISOString();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function applyOfflineDecay() {
+  const last = new Date(state.lastUpdateTime).getTime();
+  const now = Date.now();
+  const minutes = Math.floor((now - last) / 60000);
+  if (minutes > 0) {
+    state.chickens.forEach(c => {
+      c.hunger = Math.max(0, c.hunger - minutes * 5);
+      c.happiness = Math.max(0, c.happiness - minutes * 3);
+    });
+    updateStages();
+    save();
+  }
+}
+
+function stageEmoji(stage) {
+  return stage === "adult" ? "🐔" : stage === "teen" ? "🐤" : "🐥";
+}
+
+function stageName(stage) {
+  return stage === "adult" ? "成年" : stage === "teen" ? "少年" : "幼年";
+}
+
+function moodEmoji(c) {
+  if (c.hunger < 20 && c.happiness < 20) return "😭";
+  if (c.hunger < 20 || c.happiness < 20) return "😢";
+  return stageEmoji(c.stage);
+}
+
+function statusText(c) {
+  if (c.hunger < 20 && c.happiness < 20) return "又饿又不开心";
+  if (c.hunger < 20) return "饿了";
+  if (c.happiness < 20) return "不开心";
+  return "";
+}
+
+function updateStages() {
+  state.chickens.forEach(c => {
+    if (c.totalHunger > 1000 && c.totalHappiness > 1000) c.stage = "adult";
+    else if (c.totalHunger > 500 && c.totalHappiness > 500) c.stage = "teen";
+    else c.stage = "baby";
+  });
+}
+
+function growthPercent(c) {
+  if (c.stage === "adult") return 100;
+  const target = c.stage === "baby" ? 500 : 1000;
+  const prev = c.stage === "baby" ? 0 : 500;
+  const h = Math.min(c.totalHunger, target) - prev;
+  const p = Math.min(c.totalHappiness, target) - prev;
+  const range = target - prev;
+  return Math.floor(((h + p) / (range * 2)) * 100);
+}
+
+function getDays() {
+  const start = new Date(state.startDate).getTime();
+  return Math.max(1, Math.floor((Date.now() - start) / 86400000) + 1);
+}
+
+// Rendering
+function render() {
+  renderNest();
+  renderStatus();
+  renderStats();
+  renderButtons();
+}
+
+function renderNest() {
+  const el = document.getElementById("chickensDisplay");
+  el.innerHTML = state.chickens.map((c, i) => `
+    <div class="chicken-sprite">
+      <span class="chicken-emoji" id="sprite${i}">${moodEmoji(c)}</span>
+      <div class="name">${c.name}</div>
+      <div class="status-text">${statusText(c)}</div>
+    </div>
+  `).join("");
+}
+
+function renderStatus() {
+  const el = document.getElementById("statusPanel");
+  el.innerHTML = state.chickens.map(c => {
+    const gp = growthPercent(c);
+    return `
+    <div class="chicken-card">
+      <div class="card-emoji">${stageEmoji(c.stage)}</div>
+      <div class="card-info">
+        <div class="card-header">
+          <span class="name">${c.name}</span>
+          <span class="stage-badge">${stageName(c.stage)}</span>
+        </div>
+        <div class="bars">
+          <div class="bar-group">
+            <div class="bar-label">❤️ 饥饿 ${c.hunger}</div>
+            <div class="bar-track"><div class="bar-fill hunger" style="width:${c.hunger}%"></div></div>
+          </div>
+          <div class="bar-group">
+            <div class="bar-label">😊 快乐 ${c.happiness}</div>
+            <div class="bar-track"><div class="bar-fill happiness" style="width:${c.happiness}%"></div></div>
+          </div>
+        </div>
+        <div class="growth-bar-track" title="成长进度 ${gp}%">
+          <div class="growth-bar-fill" style="width:${gp}%"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderStats() {
+  document.getElementById("statsBar").innerHTML =
+    `<span>🌾 食物: ${state.food}</span>
+     <span>📅 第${getDays()}天</span>
+     <span>⭐ ${state.totalInteractions}次</span>`;
+}
+
+function renderButtons() {
+  const now = Date.now();
+  ["feed", "play", "rest"].forEach(action => {
+    const btn = document.getElementById("btn" + action.charAt(0).toUpperCase() + action.slice(1));
+    const remaining = Math.max(0, cooldowns[action] - now);
+    if (action === "feed" && state.food <= 0) {
+      btn.disabled = true;
+      btn.innerHTML = "🌾 喂食";
+      document.getElementById("noFoodMsg").classList.add("show");
+      return;
+    } else if (action === "feed") {
+      document.getElementById("noFoodMsg").classList.remove("show");
+    }
+    if (remaining > 0) {
+      btn.disabled = true;
+      const secs = Math.ceil(remaining / 1000);
+      const label = action === "feed" ? "🌾 喂食" : action === "play" ? "🎮 玩耍" : "💤 休息";
+      btn.innerHTML = `${label}<span class="cooldown-text">${secs}秒</span>`;
+    } else {
+      btn.disabled = false;
+      btn.innerHTML = action === "feed" ? "🌾 喂食" : action === "play" ? "🎮 玩耍" : "💤 休息";
+    }
+  });
+}
+
+function animateSprites(cls) {
+  document.querySelectorAll(".chicken-emoji").forEach(el => {
+    el.classList.remove("feed", "play", "rest");
+    void el.offsetWidth;
+    el.classList.add(cls);
+  });
+  setTimeout(() => {
+    document.querySelectorAll(".chicken-emoji").forEach(el => el.classList.remove(cls));
+  }, 2000);
+}
+
+function startCooldown(action) {
+  cooldowns[action] = Date.now() + COOLDOWNS[action];
+}
+
+function doFeed() {
+  if (state.food <= 0) return;
+  if (Date.now() < cooldowns.feed) return;
+  state.chickens.forEach(c => {
+    const added = Math.min(20, 100 - c.hunger);
+    c.hunger = Math.min(100, c.hunger + 20);
+    c.totalHunger += added;
+  });
+  state.food--;
+  state.totalInteractions++;
+  updateStages();
+  startCooldown("feed");
+  animateSprites("feed");
+  save();
+  render();
+}
+
+function doPlay() {
+  if (Date.now() < cooldowns.play) return;
+  state.chickens.forEach(c => {
+    const added = Math.min(20, 100 - c.happiness);
+    c.happiness = Math.min(100, c.happiness + 20);
+    c.hunger = Math.max(0, c.hunger - 10);
+    c.totalHappiness += added;
+  });
+  state.totalInteractions++;
+  updateStages();
+  startCooldown("play");
+  animateSprites("play");
+  save();
+  render();
+}
+
+function doRest() {
+  if (Date.now() < cooldowns.rest) return;
+  state.chickens.forEach(c => {
+    if (c.hunger < 80) { c.totalHunger += 80 - c.hunger; c.hunger = 80; }
+    if (c.happiness < 80) { c.totalHappiness += 80 - c.happiness; c.happiness = 80; }
+  });
+  state.totalInteractions++;
+  updateStages();
+  startCooldown("rest");
+  animateSprites("rest");
+  save();
+  render();
+}
+
+function decay() {
+  state.chickens.forEach(c => {
+    c.hunger = Math.max(0, c.hunger - 5);
+    c.happiness = Math.max(0, c.happiness - 3);
+  });
+  save();
+  render();
+}
+
+function resetGame() {
+  if (confirm("确定要重置游戏吗？所有进度将丢失！")) {
+    localStorage.removeItem(STORAGE_KEY);
+    cooldowns = { feed: 0, play: 0, rest: 0 };
+    state = defaultState();
+    save();
+    render();
+  }
+}
+
+// Init
+load();
+render();
+decayTimer = setInterval(decay, 60000);
+uiTimer = setInterval(renderButtons, 1000);
+window.addEventListener("beforeunload", save);
+</script>
+</body>
+</html>
