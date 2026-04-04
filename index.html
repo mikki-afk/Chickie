@@ -60,108 +60,85 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .expr-satisfied .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}
 .expr-normal .chick-blush{opacity:.3}
 
-/* New expressions */
-/* Hungry - droopy eyes, open beak */
-.expr-hungry .chick-eye{height:3px;border-radius:0 0 3px 3px;margin-top:2px}
-.expr-hungry .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px;animation:beakOpen .8s ease infinite}
-@keyframes beakOpen{0%,100%{transform:translateX(-50%) scaleY(1)}50%{transform:translateX(-50%) scaleY(1.4)}}
-.expr-hungry .chick-sweat{opacity:.6}
-
-/* Thirsty - squinting, panting */
-.expr-thirsty .chick-eye{height:2px;border-radius:1px;margin-top:2px;width:5px}
-.expr-thirsty .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
-.expr-thirsty .chick-sweat{opacity:1;animation:sweatDrip 1.2s ease infinite}
-@keyframes sweatDrip{0%{opacity:1;transform:rotate(45deg) translateY(0)}100%{opacity:0;transform:rotate(45deg) translateY(5px)}}
-
-/* Dirty - squished face, visible discomfort */
-.expr-dirty .chick-eye{width:5px;height:3px;border-radius:0 0 3px 3px}
-.expr-dirty .chick-blush{opacity:.5;background:rgba(150,120,80,.4)}
-.expr-dirty .chick-sweat{opacity:.7}
-
-/* Excited - big eyes, bouncing */
-.expr-excited .chick-eye{width:5px;height:6px;border-radius:50%}
-.expr-excited .chick-blush{opacity:.8;background:rgba(255,100,100,.5)}
-.expr-excited .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
-.expr-excited .chick-hearts{opacity:1;animation:heartF 1s ease infinite}
-
-/* Scared - tiny pupils, shaking */
-.expr-scared .chick-eye{width:3px;height:3px;border-radius:50%;background:#2c1810}
-.expr-scared .chick-sweat{opacity:1}
-.expr-scared .chick-body{animation:shiver .15s ease infinite}
+/* ===== ALL EXPRESSIONS ===== */
 @keyframes shiver{0%,100%{transform:translateX(-50%)}50%{transform:translateX(calc(-50% + 1px))}}
-
-/* Curious - tilted head look, one eye bigger */
-.expr-curious .chick-eye:first-child{width:5px;height:5px;border-radius:50%}
-.expr-curious .chick-eye:last-child{width:3px;height:3px;border-radius:50%;margin-top:1px}
-.expr-curious .chick-head{transform:translateX(-50%) rotate(8deg)}
-
-/* Proud - puffed up, smug smile */
-.expr-proud .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}
-.expr-proud .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
-.expr-proud .chick-body{transform:translateX(-50%) scale(1.05)}
-.expr-proud .chick-blush{opacity:.6}
-
-/* Sleepy - half closed eyes, drooping */
-.expr-sleepy .chick-eye{height:2px;border-radius:2px;margin-top:2px;width:4px}
-.expr-sleepy .chick-blush{opacity:.4}
-.expr-sleepy .chick-zzz{opacity:.5;animation:zzzF 3s ease-in-out infinite}
-
-/* Angry - V-shaped brows, red face */
-.expr-angry .chick-eye{width:5px;height:2px;border-radius:0;border-bottom:2px solid #2c1810;background:none;transform:rotate(-8deg)}
-.expr-angry .chick-eye:last-child{transform:rotate(8deg)}
-.expr-angry .chick-blush{opacity:1;background:rgba(255,50,50,.6)}
-.expr-angry .chick-body{animation:angryShake .3s ease infinite}
+@keyframes beakOpen{0%,100%{transform:translateX(-50%) scaleY(1)}50%{transform:translateX(-50%) scaleY(1.4)}}
+@keyframes sweatDrip{0%{opacity:1;transform:rotate(45deg) translateY(0)}100%{opacity:0;transform:rotate(45deg) translateY(5px)}}
 @keyframes angryShake{0%,100%{transform:translateX(-50%)}33%{transform:translateX(calc(-50% + 2px))}66%{transform:translateX(calc(-50% - 2px))}}
-
-/* In love - heart eyes, floating, pink glow */
-.expr-inlove .chick-eye{background:#e84393;width:5px;height:5px;border-radius:50%}
-.expr-inlove .chick-blush{opacity:1;background:rgba(255,80,130,.6)}
-.expr-inlove .chick-hearts{opacity:1;animation:heartF 1.2s ease infinite}
-.expr-inlove .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
-.expr-inlove .chick-body{box-shadow:0 0 8px rgba(255,105,180,.3)}
-
-/* Flirty - wink, smirk, one eye closed */
-.expr-flirty .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px}
-.expr-flirty .chick-eye:last-child{width:4px;height:4px;border-radius:50%}
-.expr-flirty .chick-blush{opacity:.8;background:rgba(255,100,120,.5)}
-.expr-flirty .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
-
-/* Sick - pale, droopy, cross eyes */
-.expr-sick .chick-eye{width:4px;height:4px;border-radius:50%;opacity:.6}
-.expr-sick .chick-blush{opacity:.3;background:rgba(100,200,100,.3)}
-.expr-sick .chick-sweat{opacity:1}
-.expr-sick .chick-body{opacity:.8}
-
-/* Cold - shivering, blue tint */
-.expr-cold .chick-eye{height:2px;border-radius:1px;margin-top:2px}
-.expr-cold .chick-body{animation:shiver .2s ease infinite}
-.expr-cold .chick-blush{opacity:.6;background:rgba(100,150,255,.4)}
-.expr-cold .chick-sweat{opacity:.7}
-
-/* Warm - cozy closed eyes, rosy cheeks */
-.expr-warm .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}
-.expr-warm .chick-blush{opacity:.9;background:rgba(255,120,80,.5)}
-.expr-warm .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
-
-/* Giggle - squinty happy eyes, open beak */
-.expr-giggle .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}
-.expr-giggle .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
-.expr-giggle .chick-blush{opacity:.7}
-.expr-giggle .chick-body{animation:giggleShake .3s ease 3}
 @keyframes giggleShake{0%,100%{transform:translateX(-50%)}50%{transform:translateX(calc(-50% + 1px))}}
-
-/* Clingy - big round eyes, reaching out */
-.expr-clingy .chick-eye{width:6px;height:6px;border-radius:50%}
-.expr-clingy .chick-blush{opacity:.8;background:rgba(255,100,100,.5)}
-.expr-clingy .chick-tear.L{opacity:.3;animation:tearD 2s ease-in infinite}
-.expr-clingy .chick-wing.L{transform:rotate(35deg)!important}
-
-/* Energetic - star eyes, jumping */
-.expr-energetic .chick-eye{width:5px;height:5px;border-radius:0;transform:rotate(45deg);background:#FFD700}
-.expr-energetic .chick-blush{opacity:.6}
-.expr-energetic .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
-.expr-energetic .chick-body{animation:energeticBounce .4s ease infinite}
 @keyframes energeticBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+@keyframes dizzy{0%{transform:translateX(-50%) rotate(0)}100%{transform:translateX(-50%) rotate(360deg)}}
+@keyframes partyBounce{0%,100%{transform:translateX(-50%) translateY(0) rotate(0)}25%{transform:translateX(-50%) translateY(-4px) rotate(5deg)}75%{transform:translateX(-50%) translateY(-4px) rotate(-5deg)}}
+
+/* 😴 sleep */ .expr-sleep .chick-eye{height:2px;border-radius:2px;margin-top:2px;width:5px}.expr-sleep .chick-beak{width:5px;height:2px;border:none;background:#FF8C00;border-radius:1px;top:15px;margin-left:-2px}.expr-sleep .chick-blush{opacity:.3}.expr-sleep .chick-zzz{opacity:1;animation:zzzF 2s ease-in-out infinite}
+/* 🤕 injured */ .expr-injured .chick-eye{width:4px;height:2px;border-radius:1px;opacity:.5}.expr-injured .chick-blush{opacity:.2}.expr-injured .chick-tear{opacity:.8;animation:tearD 1.2s ease infinite}.expr-injured .chick-body{opacity:.7}
+/* 🤒 fever */ .expr-fever .chick-eye{height:2px;border-radius:1px;margin-top:2px;opacity:.7}.expr-fever .chick-blush{opacity:1;background:rgba(255,60,60,.5)}.expr-fever .chick-sweat{opacity:1;animation:sweatDrip 1s ease infinite}.expr-fever .chick-body{opacity:.85}
+/* 🤧 sick */ .expr-sick .chick-eye{width:4px;height:4px;border-radius:50%;opacity:.6}.expr-sick .chick-blush{opacity:.3;background:rgba(100,200,100,.3)}.expr-sick .chick-sweat{opacity:1}.expr-sick .chick-body{opacity:.8}
+/* 😫 despair */ .expr-despair .chick-eye{border-radius:0 0 4px 4px;height:3px;width:5px}.expr-despair .chick-tear{opacity:1;animation:tearD .8s ease infinite}.expr-despair .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px}.expr-despair .chick-body{opacity:.85}
+/* 😵 faint */ .expr-faint .chick-eye{width:5px;height:5px;border-radius:50%;border:1.5px solid #2c1810;background:none}.expr-faint .chick-body{opacity:.7;animation:shiver .3s ease infinite}
+/* 😵‍💫 exhausted */ .expr-exhausted .chick-eye{width:5px;height:5px;border-radius:50%;border:1.5px solid #2c1810;background:none}.expr-exhausted .chick-head{animation:dizzy 2s linear infinite}.expr-exhausted .chick-sweat{opacity:1}
+/* 🥱 sleepy */ .expr-sleepy .chick-eye{height:2px;border-radius:2px;margin-top:2px;width:4px}.expr-sleepy .chick-blush{opacity:.4}.expr-sleepy .chick-zzz{opacity:.5;animation:zzzF 3s ease-in-out infinite}
+/* 😪 drowsy */ .expr-drowsy .chick-eye{height:2px;border-radius:2px;margin-top:3px;width:3px}.expr-drowsy .chick-tear.R{opacity:.5;background:#74b9ff;animation:tearD 2s ease infinite}.expr-drowsy .chick-blush{opacity:.3}
+/* 🤤 starving */ .expr-starving .chick-eye{height:3px;border-radius:0 0 3px 3px;margin-top:2px}.expr-starving .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px;animation:beakOpen .6s ease infinite}.expr-starving .chick-sweat{opacity:.8}
+/* 😣 hungry */ .expr-hungry .chick-eye{height:3px;border-radius:0 0 3px 3px;margin-top:2px;width:4px}.expr-hungry .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px}.expr-hungry .chick-sweat{opacity:.5}
+/* 🥵 parched */ .expr-parched .chick-eye{height:2px;border-radius:1px;margin-top:2px;width:5px}.expr-parched .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}.expr-parched .chick-sweat{opacity:1;animation:sweatDrip .8s ease infinite}.expr-parched .chick-blush{opacity:.7;background:rgba(255,80,80,.5)}
+/* 😮‍💨 thirsty */ .expr-thirsty .chick-eye{height:2px;border-radius:1px;margin-top:2px}.expr-thirsty .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}.expr-thirsty .chick-sweat{opacity:.7}
+/* 👹 rage */ .expr-rage .chick-eye{width:6px;height:2px;border-bottom:2px solid #8b0000;background:none;transform:rotate(-12deg)}.expr-rage .chick-eye:last-child{transform:rotate(12deg)}.expr-rage .chick-blush{opacity:1;background:rgba(200,0,0,.7)}.expr-rage .chick-body{animation:angryShake .15s ease infinite}
+/* 😡 angry */ .expr-angry .chick-eye{width:5px;height:2px;border-bottom:2px solid #2c1810;background:none;transform:rotate(-8deg)}.expr-angry .chick-eye:last-child{transform:rotate(8deg)}.expr-angry .chick-blush{opacity:1;background:rgba(255,50,50,.6)}.expr-angry .chick-body{animation:angryShake .3s ease infinite}
+/* 😤 upset */ .expr-upset .chick-eye{width:5px;height:2px;border-radius:0;border-bottom:2px solid #2c1810;background:none}.expr-upset .chick-sweat{opacity:.8}
+/* 🤢 filthy */ .expr-filthy .chick-eye{height:2px;border-radius:1px;margin-top:2px}.expr-filthy .chick-blush{opacity:.8;background:rgba(80,160,80,.5)}.expr-filthy .chick-beak{border-top:3px solid #8fbc8f;border-bottom:0;top:16px}
+/* 🫣 dirty */ .expr-dirty .chick-eye{width:5px;height:3px;border-radius:0 0 3px 3px}.expr-dirty .chick-blush{opacity:.5;background:rgba(150,120,80,.4)}.expr-dirty .chick-sweat{opacity:.7}
+/* 😶‍🌫️ messy */ .expr-messy .chick-eye{height:2px;border-radius:1px;margin-top:2px;opacity:.6}.expr-messy .chick-blush{opacity:.3}.expr-messy .chick-body{opacity:.85}
+/* 😱 terrified */ .expr-terrified .chick-eye{width:6px;height:7px;border-radius:50%}.expr-terrified .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px;animation:beakOpen .4s ease infinite}.expr-terrified .chick-body{animation:shiver .1s ease infinite}.expr-terrified .chick-sweat{opacity:1}
+/* 😰 wet */ .expr-wet .chick-eye{height:3px;border-radius:0 0 3px 3px;margin-top:1px}.expr-wet .chick-sweat{opacity:1}.expr-wet .chick-blush{opacity:.4;background:rgba(100,150,200,.4)}.expr-wet .chick-body{opacity:.9}
+/* 🥶 cold */ .expr-cold .chick-eye{height:2px;border-radius:1px;margin-top:2px}.expr-cold .chick-body{animation:shiver .2s ease infinite}.expr-cold .chick-blush{opacity:.6;background:rgba(100,150,255,.4)}.expr-cold .chick-sweat{opacity:.7}
+/* 🫠 melting */ .expr-melting .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-melting .chick-blush{opacity:.9;background:rgba(255,150,80,.5)}.expr-melting .chick-body{transform:translateX(-50%) scaleY(.92);border-radius:50% 50% 45% 45%}
+/* 🤗 warm */ .expr-warm .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}.expr-warm .chick-blush{opacity:.9;background:rgba(255,120,80,.5)}.expr-warm .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+/* 🥰 smitten */ .expr-smitten .chick-eye{height:2px;border-radius:3px 3px 0 0;background:#e84393;margin-top:1px;width:5px}.expr-smitten .chick-blush{opacity:1;background:rgba(255,80,130,.7)}.expr-smitten .chick-hearts{opacity:1;animation:heartF 1s ease infinite}.expr-smitten .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}.expr-smitten .chick-body{box-shadow:0 0 10px rgba(255,105,180,.4)}
+/* 💘 inlove */ .expr-inlove .chick-eye{background:#e84393;width:5px;height:5px;border-radius:50%}.expr-inlove .chick-blush{opacity:1;background:rgba(255,80,130,.6)}.expr-inlove .chick-hearts{opacity:1;animation:heartF 1.2s ease infinite}.expr-inlove .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+/* 😏 flirty */ .expr-flirty .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px}.expr-flirty .chick-eye:last-child{width:4px;height:4px;border-radius:50%}.expr-flirty .chick-blush{opacity:.8;background:rgba(255,100,120,.5)}.expr-flirty .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+/* 😚 shy */ .expr-shy .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:4px}.expr-shy .chick-blush{opacity:1;background:rgba(255,100,100,.6)}.expr-shy .chick-beak{width:4px;height:3px;border:none;background:#FF8C00;border-radius:50%;top:15px;margin-left:-1px}
+/* 😇 angel */ .expr-angel .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:4px}.expr-angel .chick-blush{opacity:.5}.expr-angel .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}.expr-angel .chick-hearts{opacity:1;content:"👼";animation:heartF 2s ease infinite}.expr-angel .chick-body{box-shadow:0 0 12px rgba(255,223,100,.3)}
+/* 🥳 party */ .expr-party .chick-eye{width:5px;height:5px;border-radius:50%}.expr-party .chick-blush{opacity:.8;background:rgba(255,100,100,.5)}.expr-party .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}.expr-party .chick-body{animation:partyBounce .5s ease infinite}
+/* 😎 proud */ .expr-proud .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-proud .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}.expr-proud .chick-body{transform:translateX(-50%) scale(1.05)}.expr-proud .chick-blush{opacity:.6}
+/* 😋 bliss */ .expr-bliss .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}.expr-bliss .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px;animation:beakOpen 1.5s ease infinite}.expr-bliss .chick-blush{opacity:.8}
+/* 🤩 mindblown */ .expr-mindblown .chick-eye{width:6px;height:6px;border-radius:0;transform:rotate(45deg);background:#FFD700}.expr-mindblown .chick-blush{opacity:.7}.expr-mindblown .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
+/* 🤭 giggle */ .expr-giggle .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-giggle .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}.expr-giggle .chick-blush{opacity:.7}.expr-giggle .chick-body{animation:giggleShake .3s ease 3}
+/* 🙂 content */ .expr-content .chick-eye{height:3px;border-radius:50%;margin-top:1px}.expr-content .chick-blush{opacity:.4}.expr-content .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+/* 🧐 curious */ .expr-curious .chick-eye:first-child{width:5px;height:5px;border-radius:50%}.expr-curious .chick-eye:last-child{width:3px;height:3px;border-radius:50%;margin-top:1px}.expr-curious .chick-head{transform:translateX(-50%) rotate(8deg)}
+/* 🥺 clingy */ .expr-clingy .chick-eye{width:6px;height:6px;border-radius:50%}.expr-clingy .chick-blush{opacity:.8;background:rgba(255,100,100,.5)}.expr-clingy .chick-tear.L{opacity:.3;animation:tearD 2s ease-in infinite}.expr-clingy .chick-wing.L{transform:rotate(35deg)!important}
+/* 🥹 innocent */ .expr-innocent .chick-eye{width:5px;height:6px;border-radius:50%}.expr-innocent .chick-blush{opacity:.6}.expr-innocent .chick-tear.L{opacity:.2}
+/* 😐 meh */ .expr-meh .chick-eye{height:2px;border-radius:1px;margin-top:2px}.expr-meh .chick-sweat{opacity:.8}
+/* 🙄 bored */ .expr-bored .chick-eye{width:4px;height:4px;border-radius:50%;margin-top:0}.expr-bored .chick-eye:first-child{margin-top:-1px}
+/* 😶 blank */ .expr-blank .chick-eye{height:3px;border-radius:50%;margin-top:2px}.expr-blank .chick-beak{width:5px;height:2px;border:none;background:#FF8C00;border-radius:1px;top:15px;margin-left:-2px}
+/* 🤮 nausea */ .expr-nausea .chick-eye{height:2px;border-radius:1px;margin-top:2px;opacity:.5}.expr-nausea .chick-blush{opacity:1;background:rgba(80,180,80,.6)}.expr-nausea .chick-beak{border-top:3px solid #6faa6f;border-bottom:0;top:16px;animation:beakOpen .5s ease infinite}.expr-nausea .chick-body{opacity:.7}
+/* 🥴 dizzy */ .expr-dizzy .chick-eye:first-child{width:4px;height:4px;border-radius:50%;margin-top:0}.expr-dizzy .chick-eye:last-child{width:3px;height:3px;border-radius:50%;margin-top:2px}.expr-dizzy .chick-head{animation:dizzy 3s linear infinite}.expr-dizzy .chick-blush{opacity:.5}
+/* 💀 skull */ .expr-skull .chick-eye{width:5px;height:5px;border-radius:50%;background:none;border:1.5px solid #2c1810}.expr-skull .chick-body{opacity:.5}.expr-skull .chick-blush{opacity:0}
+/* 😭 cry */ .expr-cry .chick-eye{width:5px;height:6px;border-radius:50%}.expr-cry .chick-tear{opacity:1;animation:tearD .6s ease infinite}.expr-cry .chick-blush{opacity:.7;background:rgba(255,100,100,.4)}.expr-cry .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px}
+/* 😢 sad */ .expr-sad .chick-eye{width:4px;height:5px;border-radius:50%}.expr-sad .chick-tear.L{opacity:.6;animation:tearD 1.5s ease infinite}.expr-sad .chick-blush{opacity:.5}
+/* 🫨 shocked */ .expr-shocked .chick-eye{width:6px;height:6px;border-radius:50%}.expr-shocked .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px;animation:beakOpen .3s ease infinite}.expr-shocked .chick-body{animation:shiver .15s ease infinite}
+/* 🤰 pregnant */ .expr-pregnant .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}.expr-pregnant .chick-blush{opacity:.8;background:rgba(255,150,180,.5)}.expr-pregnant .chick-body{transform:translateX(-50%) scaleX(1.15) scaleY(1.05);border-radius:50%}.expr-pregnant .chick-hearts{opacity:.6;animation:heartF 2s ease infinite}
+/* 🤱 nursing */ .expr-nursing .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:4px}.expr-nursing .chick-blush{opacity:.7;background:rgba(255,120,150,.4)}.expr-nursing .chick-body{box-shadow:0 0 8px rgba(255,182,193,.4)}.expr-nursing .chick-hearts{opacity:.5;animation:heartF 2.5s ease infinite}
+/* 👨‍🍼 dadcare */ .expr-dadcare .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:4px}.expr-dadcare .chick-blush{opacity:.6;background:rgba(100,150,255,.3)}.expr-dadcare .chick-body{box-shadow:0 0 8px rgba(150,200,255,.3)}.expr-dadcare .chick-hearts{opacity:.5;animation:heartF 2.5s ease infinite}
+/* 😘 kiss */ .expr-kiss .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-kiss .chick-eye:last-child{width:0;height:0;opacity:0}.expr-kiss .chick-beak{width:5px;height:5px;border:none;background:#FF8C00;border-radius:50%;top:14px;margin-left:-1px}.expr-kiss .chick-blush{opacity:1;background:rgba(255,80,130,.7)}.expr-kiss .chick-hearts{opacity:1;animation:heartF .8s ease infinite}
+/* 😙 smooch */ .expr-smooch .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:4px}.expr-smooch .chick-beak{width:4px;height:4px;border:none;background:#FF8C00;border-radius:50%;top:14px;margin-left:-1px}.expr-smooch .chick-blush{opacity:.8;background:rgba(255,100,130,.5)}.expr-smooch .chick-hearts{opacity:.7;animation:heartF 1.2s ease infinite}
+/* 🫶 devoted */ .expr-devoted .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-devoted .chick-blush{opacity:.9;background:rgba(255,100,130,.6)}.expr-devoted .chick-hearts{opacity:1;animation:heartF 1.5s ease infinite}.expr-devoted .chick-body{box-shadow:0 0 10px rgba(255,105,180,.3)}
+/* 😉 wink */ .expr-wink .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-wink .chick-eye:last-child{width:4px;height:4px;border-radius:50%}.expr-wink .chick-blush{opacity:.6;background:rgba(255,100,120,.4)}.expr-wink .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+/* 😗 bashful */ .expr-bashful .chick-eye{height:3px;border-radius:50%;margin-top:1px;width:4px}.expr-bashful .chick-beak{width:4px;height:3px;border:none;background:#FF8C00;border-radius:50%;top:15px;margin-left:-1px}.expr-bashful .chick-blush{opacity:.7;background:rgba(255,120,120,.5)}
+/* 🤠 cowboy */ .expr-cowboy .chick-eye{width:4px;height:4px;border-radius:50%;margin-top:1px}.expr-cowboy .chick-blush{opacity:.5}.expr-cowboy .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}.expr-cowboy .chick-body{transform:translateX(-50%) scale(1.05)}
+/* 🤑 rich */ .expr-rich .chick-eye{width:5px;height:5px;border-radius:50%;background:#27ae60}.expr-rich .chick-blush{opacity:.5}.expr-rich .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
+/* 😍 starstruck */ .expr-starstruck .chick-eye{width:5px;height:5px;border-radius:50%;background:#e84393}.expr-starstruck .chick-blush{opacity:.9;background:rgba(255,80,130,.5)}.expr-starstruck .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}.expr-starstruck .chick-hearts{opacity:1;animation:heartF 1s ease infinite}
+/* 🤪 excited */ .expr-excited .chick-eye:first-child{width:6px;height:6px;border-radius:50%}.expr-excited .chick-eye:last-child{width:4px;height:4px;border-radius:50%;margin-top:1px}.expr-excited .chick-blush{opacity:.8;background:rgba(255,100,100,.5)}.expr-excited .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}.expr-excited .chick-body{animation:partyBounce .6s ease infinite}
+/* 🫂 hug */ .expr-hug .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-hug .chick-blush{opacity:.7;background:rgba(255,150,100,.4)}.expr-hug .chick-wing{transform:rotate(40deg)!important}.expr-hug .chick-body{box-shadow:0 0 8px rgba(255,200,100,.3)}
+/* 😜 playful */ .expr-playful .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-playful .chick-eye:last-child{width:4px;height:4px;border-radius:50%}.expr-playful .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px;margin-left:2px}.expr-playful .chick-body{animation:partyBounce .7s ease infinite}
+/* 😝 goofy */ .expr-goofy .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-goofy .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px;margin-left:3px}.expr-goofy .chick-blush{opacity:.6}.expr-goofy .chick-body{animation:partyBounce .8s ease infinite;transform:translateX(-50%) rotate(3deg)}
+/* 🫡 salute */ .expr-salute .chick-eye{width:4px;height:4px;border-radius:50%;margin-top:1px}.expr-salute .chick-wing.R{transform:rotate(-60deg)!important;transform-origin:bottom}.expr-salute .chick-blush{opacity:.4}
+/* 🤫 wise */ .expr-wise .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-wise .chick-eye:last-child{width:4px;height:4px;border-radius:50%}.expr-wise .chick-beak{width:4px;height:2px;border:none;background:#FF8C00;border-radius:1px;top:15px}.expr-wise .chick-blush{opacity:.3}
+/* 🙂‍↕️ nostalgic */ .expr-nostalgic .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:2px;width:4px}.expr-nostalgic .chick-blush{opacity:.4}.expr-nostalgic .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+/* 😮‍💨 sigh */ .expr-sigh .chick-eye{height:3px;border-radius:50%;margin-top:2px}.expr-sigh .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}.expr-sigh .chick-sweat{opacity:.5}
+/* 😦 confused */ .expr-confused .chick-eye{width:5px;height:5px;border-radius:50%;margin-top:1px}.expr-confused .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px}
+/* 😒 grumpy */ .expr-grumpy .chick-eye{width:5px;height:2px;border-radius:0;border-bottom:2px solid #2c1810;background:none;margin-top:2px}.expr-grumpy .chick-blush{opacity:.3}.expr-grumpy .chick-beak{width:5px;height:2px;border:none;background:#FF8C00;border-radius:1px;top:15px;margin-left:-2px}
+/* 😟 worried */ .expr-worried .chick-eye{width:5px;height:5px;border-radius:50%;margin-top:1px}.expr-worried .chick-blush{opacity:.3}.expr-worried .chick-sweat{opacity:.6;animation:sweatDrip 1.2s ease infinite}
 
 /* Stage extras (hidden by default) */
 .chick-comb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:3;opacity:0;pointer-events:none}
@@ -920,7 +897,7 @@ const PETS=[
   {id:"dance",icon:"💃",name:"跳舞",reacts:["跟着你一起跳！","扭着小屁股左右摇","踩着你的脚跳起来","跳了一个旋转！","蹦蹦跳跳停不下来"],expr:"adore",anim:"anim-chase"}
 ];
 const WEATHERS=["sunny","cloudy","rainy","snowy"];
-let weatherTemp=null,weatherThunder=false;
+let weatherTemp=null,weatherThunder=false,weatherDetail="sunny";
 
 let S=null,view="yard",roomId=-1,cds={},menuTgt=-1,wTimers={},rwTimer=null,sTimers={},weather="sunny",poopTimer=null;
 
@@ -977,37 +954,87 @@ function isCourting(cid){
   return false;
 }
 function getExpr(c){
-  if(c.sleeping)return"sleep";
-  if(c.health<15)return"cry";
-  if(c.health<30)return"sick";
-  if(c.fatigue>90)return"sleepy";
-  if(c.fatigue>75)return"meh";
-  if(c.hunger<15&&c.happiness<15)return"cry";
-  if(c.hunger<15)return"hungry";
-  if(c.hunger<25)return"sad";
-  if(c.thirst<15)return"thirsty";
-  if(c.happiness<15)return"angry";
-  if(c.happiness<25)return"upset";
-  if(c.thirst<25)return"meh";
-  if(c.clean<15)return"dirty";
-  if(c.clean<25)return"meh";
-  if(weatherThunder&&c.fearsThunder)return"scared";
-  if(weather==="snowy"&&c.location==="outside"&&!c.sleeping)return"cold";
-  if(c.location==="inside"&&c.heater>=3)return"warm";
-  // Romance expressions
-  if(isInCouple(c.id)&&c.happiness>=70)return"inlove";
-  if(isCourting(c.id)&&c.happiness>=50)return"flirty";
-  // Positive states
-  if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80&&c.fatigue<20)return"energetic";
-  if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80)return"proud";
-  if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"adore";
-  if(c.hunger>=70&&c.happiness>=70)return"satisfied";
-  if(c.happiness>=80)return"excited";
-  if(c.happiness>=60)return"happy";
-  if(c.happiness>=50)return"giggle";
-  if(c.happiness>=40)return"curious";
-  if(c.stage==="baby"&&c.happiness>=30)return"clingy";
-  return"normal";
+  // === Critical states ===
+  if(c.sleeping)return"sleep";                           // 😴
+  if(c.health<10)return"injured";                        // 🤕
+  if(c.health<15)return"nausea";                         // 🤮
+  if(c.health<20)return"fever";                          // 🤒
+  if(c.health<30)return"sick";                           // 🤧
+  if(c.health<40)return"dizzy";                          // 🥴
+  if(c.hunger<10&&c.happiness<10)return"despair";        // 😫
+  if(c.hunger<10&&c.thirst<10)return"faint";             // 😵
+  if(c.fatigue>95)return"exhausted";                     // 😵‍💫
+  if(c.fatigue>85)return"sleepy";                        // 🥱
+  if(c.fatigue>75)return"drowsy";                        // 😪
+  // === Negative states ===
+  if(c.hunger<15)return"starving";                       // 🤤
+  if(c.hunger<25)return"hungry";                         // 😣
+  if(c.thirst<15)return"parched";                        // 🥵
+  if(c.thirst<25)return"thirsty";                        // 😮‍💨
+  if(c.happiness<8)return"skull";                        // 💀
+  if(c.happiness<10)return"rage";                        // 👹
+  if(c.happiness<15)return"cry";                         // 😭
+  if(c.happiness<20)return"angry";                       // 😡
+  if(c.happiness<25)return"sad";                         // 😢
+  if(c.happiness<30)return"upset";                       // 😤
+  if(c.clean<10)return"filthy";                          // 🤢
+  if(c.clean<20)return"dirty";                           // 🫣
+  if(c.clean<30)return"messy";                           // 😶‍🌫️
+  // === Weather/environment ===
+  if(weatherThunder&&c.fearsThunder)return"terrified";   // 😱
+  if(weatherThunder&&c.location==="outside")return"shocked"; // 🫨
+  if(weather==="rainy"&&c.location==="outside")return"wet"; // 😰
+  if(weather==="snowy"&&c.location==="outside")return"cold"; // 🥶
+  if(c.location==="inside"&&c.heater>=4)return"melting"; // 🫠
+  if(c.location==="inside"&&c.heater>=2)return"warm";    // 🤗
+  // === Pregnancy/nursing ===
+  if(c.pregnant&&c.gender==="female")return"pregnant";   // 🤰
+  if(c.nursing&&c.gender==="female")return"nursing";     // 🤱
+  if(c.nursing&&c.gender==="male")return"dadcare";       // 👨‍🍼
+  // === Romance ===
+  if(isInCouple(c.id)&&c.happiness>=90)return"kiss";     // 😘
+  if(isInCouple(c.id)&&c.happiness>=80)return"smitten";  // 🥰
+  if(isInCouple(c.id)&&c.happiness>=70)return"smooch";   // 😙
+  if(isInCouple(c.id)&&c.happiness>=60)return"inlove";   // 💘
+  if(isInCouple(c.id))return"devoted";                   // 🫶
+  if(isCourting(c.id)&&c.happiness>=60)return"flirty";   // 😏
+  if(isCourting(c.id)&&c.happiness>=50)return"wink";     // 😉
+  if(isCourting(c.id)&&c.happiness>=40)return"shy";      // 😚
+  if(isCourting(c.id))return"bashful";                   // 😗
+  // === Super positive ===
+  if(c.hunger>=95&&c.happiness>=95&&c.thirst>=90&&c.clean>=90&&c.fatigue<10)return"angel"; // 😇
+  if(c.hunger>=92&&c.happiness>=92&&c.thirst>=85&&c.clean>=85&&c.fatigue<15)return"cowboy"; // 🤠
+  if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80&&c.fatigue<20)return"party"; // 🥳
+  if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80)return"proud";  // 😎
+  if(c.hunger>=85&&c.happiness>=85&&c.thirst>=70&&c.clean>=70)return"rich";   // 🤑
+  if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"adore";  // 🥰
+  // === Mid-positive ===
+  if(c.hunger>=70&&c.happiness>=70)return"bliss";        // 😋
+  if(c.happiness>=88)return"mindblown";                  // 🤩
+  if(c.happiness>=82)return"starstruck";                 // 😍
+  if(c.happiness>=76)return"excited";                    // 🤪
+  if(c.happiness>=70)return"happy";                      // 😊
+  if(c.happiness>=64)return"hug";                        // 🫂
+  if(c.happiness>=58)return"giggle";                     // 🤭
+  if(c.happiness>=52)return"playful";                    // 😜
+  if(c.happiness>=46)return"goofy";                      // 😝
+  if(c.happiness>=42)return"content";                    // 🙂
+  if(c.happiness>=38)return"salute";                     // 🫡
+  if(c.happiness>=35)return"curious";                    // 🧐
+  // === Baby special ===
+  if(c.stage==="baby"&&c.happiness>=30)return"clingy";   // 🥺
+  if(c.stage==="baby")return"innocent";                  // 🥹
+  // === Elder special ===
+  if(c.stage==="elder"&&c.happiness>=40)return"wise";    // 🤫
+  if(c.stage==="elder")return"nostalgic";                // 🙂‍↕️
+  // === Neutral/low ===
+  if(c.happiness>=30)return"sigh";                       // 😮‍💨
+  if(c.happiness>=25)return"meh";                        // 😐
+  if(c.happiness>=20)return"confused";                   // 😦
+  if(c.happiness>=15)return"bored";                      // 🙄
+  if(c.happiness>=10)return"grumpy";                     // 😒
+  if(c.happiness>=5)return"worried";                     // 😟
+  return"blank";                                         // 😶
 }
 function getStatus(c){
   if(c.sleeping)return"睡觉中…";
@@ -1121,13 +1148,20 @@ async function fetchTorontoWeather(){
     const d=await r.json();
     const code=d.current.weather_code;
     weatherTemp=Math.round(d.current.temperature_2m);
-    // WMO weather codes: 0-1 sunny, 2-3 cloudy, 51-67 rain/drizzle, 71-77 snow, 80-82 rain showers, 85-86 snow showers, 95-99 thunderstorm
+    // WMO weather codes with extended detail
     weatherThunder=(code>=95&&code<=99);
-    if(code<=1)weather="sunny";
-    else if(code<=3)weather="cloudy";
-    else if((code>=51&&code<=67)||(code>=80&&code<=82)||code>=95)weather="rainy";
-    else if((code>=71&&code<=77)||(code>=85&&code<=86))weather="snowy";
-    else weather="cloudy";
+    const isNight=new Date().getHours()>=19||new Date().getHours()<6;
+    if(code<=1){weather="sunny";weatherDetail=isNight?"night-clear":"sunny"}
+    else if(code===2){weather="cloudy";weatherDetail=isNight?"night-cloudy":"partly-cloudy"}
+    else if(code===3){weather="cloudy";weatherDetail="overcast"}
+    else if(code>=45&&code<=48){weather="cloudy";weatherDetail="foggy"}
+    else if(code>=51&&code<=55){weather="rainy";weatherDetail="drizzle"}
+    else if((code>=56&&code<=57)||(code>=66&&code<=67)){weather="rainy";weatherDetail="freezing-rain"}
+    else if((code>=61&&code<=65)||(code>=80&&code<=82)){weather="rainy";weatherDetail="rainy"}
+    else if((code>=71&&code<=75)||(code>=85&&code<=86)){weather="snowy";weatherDetail="snowy"}
+    else if(code===77){weather="snowy";weatherDetail="hail"}
+    else if(code>=95&&code<=99){weather="rainy";weatherDetail="thunderstorm"}
+    else{weather="cloudy";weatherDetail=isNight?"night-clear":"cloudy"}
     applyWeather();
   }catch(e){console.log("Weather fetch error:",e)}
 }
@@ -1140,11 +1174,8 @@ function applyWeather(){
   sky.className="sky "+weather;
   const badge=document.getElementById("weatherBadge");
   const tempStr=weatherTemp!==null?` ${weatherTemp}°C`:"";
-  if(weather==="sunny")badge.textContent="☀️ 晴天"+tempStr;
-  else if(weather==="cloudy")badge.textContent="⛅ 多云"+tempStr;
-  else if(weather==="snowy")badge.textContent="🌨️ 下雪"+tempStr;
-  else if(weatherThunder)badge.textContent="⛈️ 雷暴"+tempStr;
-  else badge.textContent="🌧️ 下雨"+tempStr;
+  const wMap={"sunny":"☀️ 晴天","night-clear":"🌙 晴夜","partly-cloudy":"⛅ 少云","night-cloudy":"🌑 夜云","overcast":"☁️ 阴天","foggy":"🌫️ 大雾","drizzle":"🌦️ 小雨","freezing-rain":"🌧️ 冻雨","rainy":"🌧️ 下雨","snowy":"❄️ 下雪","hail":"🌨️ 冰雹","thunderstorm":"⛈️ 雷暴","cloudy":"☁️ 多云"};
+  badge.textContent=(wMap[weatherDetail]||"☀️ 晴天")+tempStr;
   // Generate raindrops or snowflakes
   const rain=document.getElementById("rain");
   if(weather==="rainy"&&!rain.querySelector(".raindrop")){
@@ -1763,12 +1794,13 @@ async function flushNotion(){
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
-  props["天气"]={select:{name:weather==="sunny"?"☀️ 晴天":weather==="cloudy"?"☁️ 多云":weather==="snowy"?"❄️ 下雪":weatherThunder?"⛈️ 雷暴":"🌧️ 下雨"}};
+  const wNotionMap={"sunny":"☀️ 晴天","night-clear":"🌙 晴夜","partly-cloudy":"⛅ 少云","night-cloudy":"🌑 夜云","overcast":"☁️ 阴天","foggy":"🌫️ 大雾","drizzle":"🌦️ 小雨","freezing-rain":"🌧️ 冻雨","rainy":"🌧️ 下雨","snowy":"❄️ 下雪","hail":"🌨️ 冰雹","thunderstorm":"⛈️ 雷暴","cloudy":"☁️ 多云"};
+  props["天气"]={select:{name:wNotionMap[weatherDetail]||"☀️ 晴天"}};
   // Add expression emoji
   if(item.stats){
     const ex=getExpr(item.stats);
-    const exEmoji={sleep:"😴",cry:"😭",sad:"😢",upset:"😤",meh:"😑",satisfied:"😌",happy:"😊",love:"😍",adore:"🥰",normal:"🐥",hungry:"🤤",thirsty:"🥵",dirty:"🫣",excited:"🤩",scared:"😨",curious:"🧐",proud:"😎",sleepy:"🥱",angry:"😡",inlove:"💘",flirty:"😏",sick:"🤧",cold:"🥶",warm:"🤗",giggle:"🤭",clingy:"🥺",energetic:"💪"};
-    const exName={sleep:"睡觉",cry:"大哭",sad:"难过",upset:"不爽",meh:"无聊",satisfied:"满足",happy:"开心",love:"喜欢",adore:"超爱",normal:"普通",hungry:"好饿",thirsty:"好渴",dirty:"脏脏",excited:"兴奋",scared:"害怕",curious:"好奇",proud:"得意",sleepy:"犯困",angry:"生气",inlove:"恋爱中",flirty:"心动",sick:"生病",cold:"好冷",warm:"暖暖",giggle:"偷笑",clingy:"撒娇",energetic:"精力充沛"};
+    const exEmoji={sleep:"😴",injured:"🤕",nausea:"🤮",fever:"🤒",sick:"🤧",dizzy:"🥴",despair:"😫",faint:"😵",exhausted:"😵‍💫",sleepy:"🥱",drowsy:"😪",starving:"🤤",hungry:"😣",parched:"🥵",thirsty:"😮‍💨",skull:"💀",rage:"👹",cry:"😭",angry:"😡",sad:"😢",upset:"😤",filthy:"🤢",dirty:"🫣",messy:"😶‍🌫️",terrified:"😱",shocked:"🫨",wet:"😰",cold:"🥶",melting:"🫠",warm:"🤗",pregnant:"🤰",nursing:"🤱",dadcare:"👨‍🍼",kiss:"😘",smitten:"🥰",smooch:"😙",inlove:"💘",devoted:"🫶",flirty:"😏",wink:"😉",shy:"😚",bashful:"😗",angel:"😇",cowboy:"🤠",party:"🥳",proud:"😎",rich:"🤑",adore:"🥰",bliss:"😋",mindblown:"🤩",starstruck:"😍",excited:"🤪",happy:"😊",hug:"🫂",giggle:"🤭",playful:"😜",goofy:"😝",content:"🙂",salute:"🫡",curious:"🧐",clingy:"🥺",innocent:"🥹",wise:"🤫",nostalgic:"🙂‍↕️",sigh:"😮‍💨",meh:"😐",confused:"😦",bored:"🙄",grumpy:"😒",worried:"😟",blank:"😶"};
+    const exName={sleep:"睡觉",injured:"受伤",nausea:"恶心",fever:"发烧",sick:"生病",dizzy:"头晕",despair:"绝望",faint:"晕倒",exhausted:"累瘫",sleepy:"犯困",drowsy:"打盹",starving:"饥饿",hungry:"好饿",parched:"干渴",thirsty:"口渴",skull:"濒死",rage:"暴怒",cry:"大哭",angry:"生气",sad:"难过",upset:"不爽",filthy:"恶臭",dirty:"脏脏",messy:"邋遢",terrified:"恐惧",shocked:"惊吓",wet:"淋雨",cold:"好冷",melting:"热化",warm:"暖暖",pregnant:"怀孕",nursing:"哺育",dadcare:"奶爸",kiss:"亲亲",smitten:"迷恋",smooch:"么么哒",inlove:"恋爱中",devoted:"深情",flirty:"心动",wink:"放电",shy:"害羞",bashful:"腼腆",angel:"天使",cowboy:"牛仔",party:"派对",proud:"得意",rich:"发财",adore:"超爱",bliss:"幸福",mindblown:"震撼",starstruck:"花痴",excited:"兴奋",happy:"开心",hug:"拥抱",giggle:"偷笑",playful:"调皮",goofy:"搞怪",content:"满足",salute:"敬礼",curious:"好奇",clingy:"撒娇",innocent:"天真",wise:"智慧",nostalgic:"怀旧",sigh:"叹气",meh:"无聊",confused:"困惑",bored:"发呆",grumpy:"闷闷不乐",worried:"担忧",blank:"放空"};
     props["表情"]={select:{name:(exEmoji[ex]||"🐥")+" "+(exName[ex]||"普通")}};
   }
   if(weatherTemp!==null)props["温度"]={number:weatherTemp};
@@ -1796,7 +1828,10 @@ async function flushNotion(){
         const v=getBuddyAff(item.stats.id,c2.id);
         if(v>0){
           const bl=BUDDY_LEVELS.slice().reverse().find(l=>v>=l.threshold);
-          const bE={"认识":"👋","玩伴":"🎮","好朋友":"🤝","闺蜜/铁哥们":"💕","伴侣":"💑","灵魂伴侣":"💖"};
+          const g1=item.stats.gender,g2=c2.gender;
+          const pairE=(g1==="male"&&g2==="male")?"👬":(g1==="female"&&g2==="female")?"👭":"👫";
+          const coupleE=isInCouple(item.stats.id)&&isInCouple(c2.id)?(g1==="male"&&g2==="male"?"👨‍❤️‍👨":g1==="female"&&g2==="female"?"👩‍❤️‍👩":"👩‍❤️‍👨"):"💑";
+          const bE={"认识":"👋","玩伴":"🎮","好朋友":pairE,"闺蜜/铁哥们":"💕","伴侣":coupleE,"灵魂伴侣":"💏"};
           parts.push(`${bl?bE[bl.level]||"":""}${c2.name}:${v}${bl?"("+bl.level+")":""}`);
         }
       });
@@ -2164,7 +2199,7 @@ function bestBuddy(ci){
 }
 // Dynamic buddy dialogue generator
 function genBuddyChat(a,b,aff){
-  const acts=["一起去吃虫子","一起晒太阳","比赛跳高","一起看蚂蚁搬家","一起数星星","一起挖土找宝藏","比赛谁叫得响","一起玩泥巴","一起追蝴蝶","比赛谁先跑到树下","一起在草丛里捉迷藏","一起看云朵","一起踩水坑","比赛吃饭谁更快","一起散步","一起练习飞","一起跳舞","比赛打滚"];
+  const acts=["一起去吃虫子🪱","一起晒太阳☀️","比赛跳高","一起看蚂蚁搬家🐜","一起数星星⭐","一起挖土找宝藏","比赛谁叫得响","一起玩泥巴","一起追蝴蝶🦋","比赛谁先跑到树下🌳","一起在草丛里捉迷藏🌿","一起看云朵☁️","一起踩水坑💧","比赛吃饭谁更快","一起散步🍀","一起练习飞","一起跳舞💃","比赛打滚","一起看瓢虫🐞","一起躲蜘蛛网🕸️","一起看蜗牛🐌散步","一起在花丛里玩🌷","一起看猫头鹰🦉","发现了一朵蘑菇🍄","一起看乌鸦🐦‍⬛飞过","一起在大石头🪨上休息","一起看蜜蜂🐝采蜜","一起在落叶🍂堆里打滚"];
   const talks=[
     [`${a}对${b}说：${pick(["你今天好漂亮~","你的毛好顺~","我们去玩吧！","给你吃好吃的~","今天天气真好啊","你怎么越来越可爱了","我做了个好梦！","你猜我刚看到了什么"])}`,`${b}${pick(["害羞地低下了头","开心地叫了两声","点头表示赞同","蹭了蹭"+a,"歪头想了想","扑棱了一下翅膀","咕咕回应了","高兴地转了个圈"])}`],
     [`${a}偷了${b}的${pick(["食物","小虫子","宝贝石头","草莓"])}`,`${b}：${pick(["还给我！","哼，下次不理你了","追上去抢回来了","算了送你了","气鼓鼓地看着"+a])}`],
@@ -2222,12 +2257,12 @@ function genBuddyChat(a,b,aff){
   return{lines:chosen,anim:anim,emoji:emoji};
 }
 const BUDDY_LEVELS=[
-  {threshold:5,level:"认识",msgs:["{a}和{b}开始互相点头打招呼了","{a}和{b}会在一起吃饭了"]},
-  {threshold:15,level:"玩伴",msgs:["{a}和{b}开始经常一起玩了！","{a}一看到{b}就开心地跑过去"]},
-  {threshold:30,level:"好朋友",msgs:["{a}和{b}成了好朋友！走哪都要一起","{a}和{b}开始互相梳毛了，好亲密~"]},
-  {threshold:50,level:"闺蜜/铁哥们",msgs:["{a}和{b}形影不离！","{a}把最好吃的留给{b}，真友情！"]},
-  {threshold:65,level:"伴侣",msgs:["{a}和{b}已经密不可分了","{a}和{b}互相依靠，谁也离不开谁"]},
-  {threshold:80,level:"灵魂伴侣",msgs:["{a}和{b}已经心有灵犀了！","{a}和{b}连睡觉都要挨着~"]}
+  {threshold:5,level:"认识",emoji:"👋",msgs:["🙇 {a}和{b}开始互相点头打招呼了","{a}和{b}会在一起吃饭了"]},
+  {threshold:15,level:"玩伴",emoji:"🎮",msgs:["🏃 {a}和{b}开始经常一起玩了！","🏃‍♀️ {a}一看到{b}就开心地跑过去"]},
+  {threshold:30,level:"好朋友",emoji:"🤝",msgs:["👫 {a}和{b}成了好朋友！走哪都要一起","🫂 {a}和{b}开始互相梳毛了，好亲密~"]},
+  {threshold:50,level:"闺蜜/铁哥们",emoji:"💕",msgs:["👭 {a}和{b}形影不离！","👬 {a}把最好吃的留给{b}，真友情！"]},
+  {threshold:65,level:"伴侣",emoji:"💑",msgs:["💑 {a}和{b}已经密不可分了","👩‍❤️‍👨 {a}和{b}互相依靠，谁也离不开谁"]},
+  {threshold:80,level:"灵魂伴侣",emoji:"💏",msgs:["💏 {a}和{b}已经心有灵犀了！","👩‍❤️‍💋‍👨 {a}和{b}连睡觉都要挨着~"]}
 ];
 function checkBuddyMilestone(id1,id2,aff){
   if(!S.buddyMilestones)S.buddyMilestones={};
@@ -2252,12 +2287,12 @@ const COURT_THRESHOLDS=[
 ];
 function genCourtMsg(stage,a,b){
   const look=()=>pick(["偷偷看","悄悄瞄","忍不住多看","目不转睛地盯着","眼神一直跟着"]);
-  const gift=()=>pick(["最大的虫子","一颗亮晶晶的小石头","一朵小花","最甜的草莓","自己舍不得吃的好东西"]);
-  const react=()=>pick(["鸡冠都红了","心跳加速了","假装没看到但嘴角上扬","害羞地把头埋进翅膀","开心得翅膀都在抖"]);
-  const others=()=>pick(["其他小鸡在旁边偷看","全场都在起哄","旁边的鸡交头接耳","大家都看出来了","空气突然安静了"]);
-  const dance=()=>pick(["跳起了求偶舞，扑棱翅膀转圈圈","用最帅的姿势在面前走来走去","对着唱了一首自创情歌","把自己梳得漂漂亮亮展示羽毛","昂首挺胸迈着正步走过来"]);
-  const respond=()=>pick(["终于回应了！轻轻蹭了蹭","害羞地靠过来了","也偷偷送了一颗虫子回礼","碰了一下翅膀作为回答","小声叫了一声，好像在说我也是"]);
-  const scene=()=>pick(["在月光下","在夕阳里","在星空下","在花丛旁","在大树底下"]);
+  const gift=()=>pick(["最大的虫子🪱","一颗亮晶晶的小石头🪨","一朵小花🌷","最甜的草莓🍓","自己舍不得吃的好东西","一朵玫瑰🌹","一片四叶草🍀","一朵小蘑菇🍄","一束野花💐","一片漂亮的落叶🍁"]);
+  const react=()=>pick(["鸡冠都红了","心跳加速了","假装没看到但嘴角上扬","害羞地把头埋进翅膀","开心得翅膀都在抖","脸都烧起来了🔥"]);
+  const others=()=>pick(["其他小鸡在旁边偷看","全场都在起哄","旁边的鸡交头接耳","大家都看出来了","空气突然安静了","🐌蜗牛路过都停下来看"]);
+  const dance=()=>pick(["跳起了求偶舞，扑棱翅膀转圈圈💃","用最帅的姿势在面前走来走去🧍‍♂️","对着唱了一首自创情歌🎵","把自己梳得漂漂亮亮展示羽毛✨","昂首挺胸迈着正步走过来🫡"]);
+  const respond=()=>pick(["终于回应了！轻轻蹭了蹭🫂","害羞地靠过来了","也偷偷送了一颗虫子回礼🪱","碰了一下翅膀作为回答🫶","小声叫了一声，好像在说我也是❤️"]);
+  const scene=()=>pick(["在月光下🌙","在夕阳里🌅","在星空下⭐","在花丛旁🌷","在大树底下🌳","在彩虹旁🌈","在落叶里🍂","在萤火虫中✨"]);
   switch(stage){
     case"notice":return pick([
       `${a}${look()}${b}好几眼…`,`${a}经过${b}身边时${pick(["走路都不自然了","突然变得特别注意形象","不自觉地挺直了身子"])}`,
@@ -2344,10 +2379,24 @@ function tryBaby(){
     // Cooldown: at least 5 minutes since last baby or couple formation
     const lastTime=cp.lastBaby||cp.since;
     if(Date.now()-lastTime<300000)continue; // 5 min cooldown
-    // 10% chance per check
-    if(Math.random()>0.1)continue;
-    // Max babies limit
-    if(S.chickens.length>=10){addLog(`🥚 ${c1.name}和${c2.name}想生宝宝，但家里太挤了…`,c1.name,"互动",c1);continue}
+    // Pregnancy phase: set pregnant, wait for next cycle to give birth
+    const mom=c1.gender==="female"?c1:c2;
+    const dad=c1.gender==="male"?c1:c2;
+    if(mom.pregnant){
+      // Ready to give birth!
+      mom.pregnant=false;mom.nursing=true;dad.nursing=true;
+      setTimeout(()=>{if(mom)mom.nursing=false;if(dad)dad.nursing=false;save()},180000); // 3min nursing
+    }else{
+      // 10% chance to get pregnant
+      if(Math.random()>0.1)continue;
+      // Max babies limit
+      if(S.chickens.length>=10){addLog(`🥚 ${c1.name}和${c2.name}想生宝宝，但家里太挤了…`,c1.name,"互动",c1);continue}
+      mom.pregnant=true;
+      addLog(`🤰 ${mom.name}怀孕了！${dad.name}激动得转圈圈~`,mom.name,"💘 求偶",mom);
+      showMilestoneToast("怀孕了","🤰",mom.name+"要当妈妈了！","怀孕");
+      mom.happiness=cl(mom.happiness+15,0,100);dad.happiness=cl(dad.happiness+15,0,100);
+      save();continue;
+    }
     // Create baby!
     cp.babies++;cp.lastBaby=Date.now();
     const babyGender=Math.random()<0.5?"male":"female";
