@@ -513,6 +513,40 @@ function defState(){
   };
 }
 function save(){S.lastUpdateTime=new Date().toISOString();localStorage.setItem(SK,JSON.stringify(S))}
+function offlineActivities(rounds){
+  for(let r=0;r<rounds;r++){
+    S.chickens.forEach(c=>{
+      if(c.sleeping||c.location==="inside")return;
+      if(Math.random()>0.5)return;
+      // Auto clean poop
+      if(S.poops.length>0&&Math.random()<0.3){
+        S.poops.splice(Math.floor(Math.random()*S.poops.length),1);
+        addLog(`🧹 ${c.name} 你不在时把粑粑踢走了`,c.name,"清粑粑",c);return;
+      }
+      // Pick action by need
+      if(c.hunger<50&&S.food>0){
+        const f=pick(FOODS);let h=20;
+        if(c.favoriteFood.includes(f.id)){h=30;c.happiness=cl(c.happiness+8,0,100)}
+        else if(c.hatedFood.includes(f.id)){h=10;c.happiness=cl(c.happiness-5,0,100)}
+        const ah=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,ah);S.food--;
+        addLog(`🌾 ${c.name} 你不在时自己吃了${f.icon}${f.name}`,c.name,"吃饭",c);
+      }else if(c.happiness<50){
+        const g=pick(GAMES);let p=20,hc=10;
+        if(c.favoriteGame===g.id){p=30;hc=5}else if(c.hatedGame===g.id){p=10;hc=15}
+        const ap=Math.min(p,100-c.happiness);c.happiness=cl(c.happiness+p,0,100);c.hunger=cl(c.hunger-hc,0,100);c.totalHappiness+=Math.max(0,ap);
+        addLog(`🎮 ${c.name} 你不在时自己玩了${g.icon}${g.name}`,c.name,"玩耍",c);
+      }else if(c.thirst<50){
+        c.thirst=cl(c.thirst+20,0,100);
+        addLog(`💧 ${c.name} 你不在时自己喝了水`,c.name,"喝水",c);
+      }else if(c.clean<40){
+        c.clean=cl(c.clean+25,0,100);c.happiness=cl(c.happiness+5,0,100);
+        addLog(`🛁 ${c.name} 你不在时自己洗了澡`,c.name,"洗澡",c);
+      }
+      // Auto poop
+      if(Math.random()<0.2)S.poops.push({x:5+Math.random()*85,y:10+Math.random()*70,id:Date.now()+Math.random()+r});
+    });
+  }
+}
 function load(){
   try{
     const r=localStorage.getItem(SK);
@@ -521,7 +555,12 @@ function load(){
       S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80});
       if(!S.poops)S.poops=[];
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
-      if(m>0)S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*5,0,100);c.happiness=cl(c.happiness-m*3,0,100);c.thirst=cl(c.thirst-m*4,0,100);c.clean=cl(c.clean-m*2,0,100)}});
+      if(m>0){
+        S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*5,0,100);c.happiness=cl(c.happiness-m*3,0,100);c.thirst=cl(c.thirst-m*4,0,100);c.clean=cl(c.clean-m*2,0,100)}});
+        // Simulate offline auto-activities (1 round per 30 min away)
+        const rounds=Math.min(Math.floor(m/0.5),20);
+        if(rounds>0)offlineActivities(rounds);
+      }
       updStages();save();return}
   }catch(e){}
   S=defState();save();
