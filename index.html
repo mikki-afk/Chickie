@@ -92,6 +92,8 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 @keyframes wakeB{0%,100%{transform:scale(1.7) scaleY(1)}50%{transform:scale(1.7) scaleY(1.15)}}
 .big.anim-drink{animation:drinkB .5s ease 4!important}
 @keyframes drinkB{0%,100%{transform:scale(1.7) rotate(0)}50%{transform:scale(1.7) rotate(-10deg) translateY(3px)}}
+.big.anim-bath{animation:bathB .6s ease 4!important}
+@keyframes bathB{0%,100%{transform:scale(1.7) translateY(0)}30%{transform:scale(1.7) translateY(4px)}60%{transform:scale(1.7) translateY(-2px) rotate(5deg)}}
 
 /* ===== YARD ===== */
 .yard{border-radius:18px;border:4px solid #8B4513;margin-bottom:12px;position:relative;overflow:hidden}
@@ -167,31 +169,31 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .yard-view.hidden{display:none}
 .room{border-radius:18px;border:3px solid rgba(0,0,0,.08);padding:16px;margin-bottom:12px;position:relative;overflow:hidden;min-height:280px}
 .room-header{text-align:center;font-size:18px;font-weight:700;color:#5a3e2b;margin-bottom:8px}
-.room-scene{display:flex;justify-content:space-around;align-items:flex-end;min-height:140px;position:relative;padding:10px 10px 0}
+.room-scene{display:flex;justify-content:space-around;align-items:flex-end;min-height:180px;position:relative;padding:10px 10px 0}
 
 /* CSS Furniture */
 .furniture{text-align:center;flex-shrink:0;position:relative;z-index:1}
 .furniture .fur-label{font-size:10px;color:#5a3e2b;font-weight:600;margin-top:3px}
 
 /* Bed */
-.css-bed{width:56px;height:28px;position:relative}
-.bed-frame{width:56px;height:18px;background:#8B6914;border-radius:4px;position:absolute;bottom:0;border:2px solid #6B4F10}
-.bed-mattress{width:48px;height:12px;background:#FFE4B5;border-radius:3px;position:absolute;bottom:4px;left:4px}
-.bed-pillow{width:14px;height:10px;background:#fff;border-radius:3px;position:absolute;bottom:6px;left:6px;border:1px solid #ddd}
-.bed-blanket{width:30px;height:10px;background:#FFB6C1;border-radius:0 0 3px 3px;position:absolute;bottom:4px;right:6px;opacity:.8}
+.css-bed{width:100px;height:52px;position:relative}
+.bed-frame{width:100px;height:34px;background:#8B6914;border-radius:6px;position:absolute;bottom:0;border:3px solid #6B4F10}
+.bed-mattress{width:88px;height:22px;background:#FFE4B5;border-radius:4px;position:absolute;bottom:6px;left:6px}
+.bed-pillow{width:26px;height:18px;background:#fff;border-radius:5px;position:absolute;bottom:10px;left:10px;border:2px solid #ddd}
+.bed-blanket{width:52px;height:18px;background:#FFB6C1;border-radius:0 0 4px 4px;position:absolute;bottom:6px;right:10px;opacity:.8}
 
 /* Food bowl */
-.css-bowl{width:36px;height:22px;position:relative}
-.bowl-body{width:36px;height:16px;background:#D2691E;border-radius:0 0 14px 14px;position:absolute;bottom:0;border:2px solid #8B4513}
-.bowl-inner{width:28px;height:8px;background:#F5DEB3;border-radius:0 0 10px 10px;position:absolute;bottom:4px;left:4px}
-.bowl-food{width:20px;height:6px;background:#DAA520;border-radius:50%;position:absolute;top:-2px;left:50%;transform:translateX(-50%)}
+.css-bowl{width:66px;height:42px;position:relative}
+.bowl-body{width:66px;height:30px;background:#D2691E;border-radius:0 0 26px 26px;position:absolute;bottom:0;border:3px solid #8B4513}
+.bowl-inner{width:52px;height:16px;background:#F5DEB3;border-radius:0 0 18px 18px;position:absolute;bottom:6px;left:7px}
+.bowl-food{width:38px;height:10px;background:#DAA520;border-radius:50%;position:absolute;top:-3px;left:50%;transform:translateX(-50%)}
 
 /* Water bowl */
-.css-water{width:34px;height:22px;position:relative}
-.water-body{width:34px;height:16px;background:#4682B4;border-radius:0 0 12px 12px;position:absolute;bottom:0;border:2px solid #2c5f8a}
-.water-inner{width:26px;height:8px;background:#87CEEB;border-radius:0 0 9px 9px;position:absolute;bottom:4px;left:4px;overflow:hidden}
-.water-surface{width:100%;height:4px;background:rgba(255,255,255,.4);border-radius:50%;position:absolute;top:0;animation:waterWave 2s ease-in-out infinite}
-@keyframes waterWave{0%,100%{transform:translateX(-2px)}50%{transform:translateX(2px)}}
+.css-water{width:62px;height:42px;position:relative}
+.water-body{width:62px;height:30px;background:#4682B4;border-radius:0 0 24px 24px;position:absolute;bottom:0;border:3px solid #2c5f8a}
+.water-inner{width:48px;height:16px;background:#87CEEB;border-radius:0 0 18px 18px;position:absolute;bottom:6px;left:7px;overflow:hidden}
+.water-surface{width:100%;height:6px;background:rgba(255,255,255,.4);border-radius:50%;position:absolute;top:0;animation:waterWave 2s ease-in-out infinite}
+@keyframes waterWave{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
 
 /* Room chicken */
 .room-chicken-wrap{position:absolute;text-align:center;transition:left 1.5s ease-in-out;z-index:5;bottom:15px}
@@ -255,12 +257,25 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .no-food-msg.show{display:block}
 
 /* Bathtub */
-.css-tub{width:40px;height:22px;position:relative}
-.tub-body{width:40px;height:16px;background:#ddd;border-radius:0 0 16px 16px;position:absolute;bottom:0;border:2px solid #bbb}
-.tub-water{width:32px;height:8px;background:linear-gradient(180deg,#a0d8ef,#74b9ff);border-radius:0 0 12px 12px;position:absolute;bottom:4px;left:4px;overflow:hidden}
-.tub-bubbles{position:absolute;top:-2px;left:4px;font-size:8px;opacity:.7}
-.tub-feet-l,.tub-feet-r{position:absolute;bottom:-2px;width:4px;height:3px;background:#bbb;border-radius:0 0 2px 2px}
-.tub-feet-l{left:6px}.tub-feet-r{right:6px}
+.css-tub{width:80px;height:46px;position:relative}
+.tub-body{width:80px;height:32px;background:#e8e8e8;border-radius:6px 6px 28px 28px;position:absolute;bottom:0;border:3px solid #bbb}
+.tub-water{width:66px;height:18px;background:linear-gradient(180deg,#a0d8ef,#74b9ff);border-radius:0 0 22px 22px;position:absolute;bottom:6px;left:7px;overflow:hidden}
+.tub-bubbles{position:absolute;top:-4px;left:8px;font-size:12px;opacity:.7}
+.tub-feet-l,.tub-feet-r{position:absolute;bottom:-4px;width:8px;height:5px;background:#bbb;border-radius:0 0 3px 3px}
+.tub-feet-l{left:12px}.tub-feet-r{right:12px}
+/* Bath splash animation */
+.tub-splash{position:absolute;top:-8px;left:50%;transform:translateX(-50%);opacity:0;pointer-events:none;font-size:14px}
+.tub-splash.active{opacity:1;animation:splashUp 1.5s ease-out forwards}
+@keyframes splashUp{0%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-18px)}}
+/* Bowl eating animation */
+.bowl-eating .bowl-food{animation:foodBounce .4s ease 5}
+@keyframes foodBounce{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(.7)}}
+/* Water drinking animation */
+.water-drinking .water-inner{animation:waterDip .5s ease 4}
+@keyframes waterDip{0%,100%{height:16px}50%{height:12px}}
+/* Bed sleeping glow */
+.bed-sleeping .bed-blanket{animation:blanketPulse 3s ease-in-out infinite}
+@keyframes blanketPulse{0%,100%{opacity:.8}50%{opacity:1}}
 
 /* Room toys */
 .toys-shelf{display:flex;gap:8px;justify-content:center;margin-top:6px;padding:4px 8px;background:rgba(255,255,255,.25);border-radius:8px}
@@ -716,25 +731,25 @@ function renderRoom(){
   const sc=document.getElementById("roomScene");
   sc.style.background=`linear-gradient(180deg,${col[0]}25 60%,${col[0]}40 100%)`;
   sc.style.borderColor=col[1];
-  const cLeft=c.sleeping?"12%":"42%";
+  const cLeft=c.sleeping?"8%":"42%";
 
   sc.innerHTML=`
     <div class="room-header">🏠 ${c.name}的房间</div>
     <div class="room-scene">
-      <div class="furniture">
-        <div class="css-bed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div>
+      <div class="furniture" id="furBed">
+        <div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div>
         <div class="fur-label">小床</div>
       </div>
-      <div class="furniture">
-        <div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div>
+      <div class="furniture" id="furBowl">
+        <div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div>
         <div class="fur-label">饭盆</div>
       </div>
-      <div class="furniture">
-        <div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div>
+      <div class="furniture" id="furWater">
+        <div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div>
         <div class="fur-label">水碗</div>
       </div>
-      <div class="furniture">
-        <div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div></div>
+      <div class="furniture" id="furTub">
+        <div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div>
         <div class="fur-label">浴盆</div>
       </div>
       <div class="room-chicken-wrap" id="roomChicken" style="left:${cLeft}">
@@ -838,8 +853,9 @@ function doRoomFeed(fid){
   S.food--;S.totalInteractions++;setCD(roomId,"feed");updStages();save();
   setRoomExpr(ex,"anim-eat");
   showReact(c.favoriteFood.includes(fid)?"好吃！😍":c.hatedFood.includes(fid)?"不喜欢…😣":"吃饱啦~😊");
-  const rc=document.getElementById("roomChicken");if(rc)rc.style.left="38%";
-  setTimeout(()=>renderRoom(),2200);
+  moveToFurniture("furBowl");
+  const bw=document.getElementById("cssBowl");if(bw)bw.classList.add("bowl-eating");
+  setTimeout(()=>{if(bw)bw.classList.remove("bowl-eating");renderRoom()},2200);
 }
 
 // ===== ROOM PLAY =====
@@ -861,7 +877,7 @@ function doRoomPlay(gid){
   setCD(roomId,"play");updStages();save();
   setRoomExpr(ex,game?game.anim:"");
   showReact(c.favoriteGame===gid?"超好玩！🥰":c.hatedGame===gid?"不想玩…😕":"好开心~😊");
-  const rc=document.getElementById("roomChicken");if(rc)rc.style.left="68%";
+  const rc=document.getElementById("roomChicken");if(rc)rc.style.left="55%";
   setTimeout(()=>renderRoom(),2200);
 }
 
@@ -873,8 +889,9 @@ function doRoomDrink(){
   S.totalInteractions++;setCD(roomId,"drink");save();
   setRoomExpr("happy","anim-drink");
   showReact("咕噜咕噜~ 💧");
-  const rc=document.getElementById("roomChicken");if(rc)rc.style.left="68%";
-  setTimeout(()=>renderRoom(),2200);
+  moveToFurniture("furWater");
+  const wt=document.getElementById("cssWater");if(wt)wt.classList.add("water-drinking");
+  setTimeout(()=>{if(wt)wt.classList.remove("water-drinking");renderRoom()},2200);
 }
 
 // ===== ROOM BATH =====
@@ -883,10 +900,11 @@ function doRoomBath(){
   if(!c||c.sleeping||getCD(roomId,"bath")>0)return;
   c.clean=cl(c.clean+35,0,100);c.happiness=cl(c.happiness+10,0,100);
   S.totalInteractions++;setCD(roomId,"bath");save();
-  setRoomExpr("love","anim-drink");
+  setRoomExpr("love","anim-bath");
   showReact("洗香香~ 🛁✨");
-  const rc=document.getElementById("roomChicken");if(rc)rc.style.left="75%";
-  setTimeout(()=>renderRoom(),2200);
+  moveToFurniture("furTub");
+  const sp=document.getElementById("tubSplash");if(sp){sp.classList.remove("active");void sp.offsetWidth;sp.classList.add("active")}
+  setTimeout(()=>{if(sp)sp.classList.remove("active");renderRoom()},2200);
 }
 
 // ===== ROOM SLEEP =====
@@ -897,7 +915,8 @@ function doSleep(){
   if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   c.sleeping=true;S.totalInteractions++;setCD(roomId,"sleep");updStages();save();
   setRoomExpr("sleep","anim-sleep");showReact("晚安~ 💤");
-  const rc=document.getElementById("roomChicken");if(rc)rc.style.left="12%";
+  moveToFurniture("furBed");
+  const bd=document.getElementById("cssBed");if(bd)bd.classList.add("bed-sleeping");
   const cid=roomId;
   sTimers[cid]=setTimeout(()=>{
     const ch=S.chickens[cid];if(ch&&ch.sleeping){ch.sleeping=false;save();if(view==="room"&&roomId===cid)renderRoom()}
@@ -919,6 +938,13 @@ function setRoomExpr(ex,anim){
   ch.className=ch.className.replace(/expr-\w+/g,"").replace(/anim-\w+/g,"").trim();
   ch.classList.add("expr-"+ex);
   if(anim){void ch.offsetWidth;ch.classList.add(anim)}
+}
+function moveToFurniture(furId){
+  const fur=document.getElementById(furId);const rc=document.getElementById("roomChicken");const scene=document.querySelector(".room-scene");
+  if(!fur||!rc||!scene)return;
+  const sRect=scene.getBoundingClientRect(),fRect=fur.getBoundingClientRect();
+  const pct=((fRect.left+fRect.width/2-sRect.left)/sRect.width*100);
+  rc.style.left=Math.max(5,Math.min(80,pct-8))+"%";
 }
 function showReact(t){
   const el=document.getElementById("roomReact");if(!el)return;
