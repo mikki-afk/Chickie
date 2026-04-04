@@ -30,7 +30,7 @@ h1 {
   width: 52px; height: 50px;
 }
 .chick.big { transform: scale(1.8); transform-origin: bottom center; margin: 30px 20px 10px; }
-.chick.medium { transform: scale(1.2); transform-origin: bottom center; }
+.chick.medium { transform: scale(1.4); transform-origin: bottom center; margin: 4px; }
 
 /* Body */
 .chick-body {
@@ -322,7 +322,7 @@ h1 {
 .coop-btn:hover { background: #fff; }
 
 .yard-ground {
-  position: relative; min-height: 180px; margin-top: 8px; z-index: 1;
+  position: relative; min-height: 200px; margin-top: 8px; z-index: 1;
 }
 .yard-chicken {
   position: absolute; text-align: center; cursor: pointer;
@@ -661,7 +661,7 @@ function defaultState() {
     chickens: CHICKEN_DEFS.map((d, i) => ({
       id: i, name: d.name, hunger: 50, happiness: 50,
       stage: "baby", totalHunger: 0, totalHappiness: 0,
-      location: "inside", sleeping: false,
+      location: "outside", sleeping: false,
       ...randomPrefs()
     })),
     food: 20, startDate: now, totalInteractions: 0, lastUpdateTime: now
@@ -708,14 +708,17 @@ function renderCoops() {
   document.getElementById("coopsRow").innerHTML = state.chickens.map((c, i) => {
     const col = CHICKEN_DEFS[i].color;
     const inside = c.location === "inside";
-    return `<div class="coop">
+    const btn = inside
+      ? `<button class="coop-btn" onclick="event.stopPropagation();callOut(${i})">📣 叫出来</button>`
+      : `<button class="coop-btn" onclick="event.stopPropagation();enterRoom(${i})">🚪 进房间</button>`;
+    return `<div class="coop" onclick="enterRoom(${i})">
       <div class="coop-building" style="background:${col[0]}">
         <div class="coop-roof" style="background:${col[1]}"></div>
         <div class="coop-window"></div>
         <div class="coop-door ${inside ? '' : 'open'}" id="door${i}"></div>
       </div>
       <div class="coop-name">${c.name}</div>
-      ${inside ? `<button class="coop-btn" onclick="callOut(${i})">📣 叫出来</button>` : ''}
+      ${btn}
     </div>`;
   }).join("");
 }
@@ -728,12 +731,12 @@ function renderYardChickens() {
   });
 
   ground.innerHTML = state.chickens.filter(c => c.location === "outside").map(c => {
-    const pos = old[c.id] || { left: (10 + Math.random() * 65) + "%", top: (10 + Math.random() * 55) + "%" };
+    const pos = old[c.id] || { left: (8 + Math.random() * 60) + "%", top: (5 + Math.random() * 50) + "%" };
     const expr = getExpression(c);
     const st = getStatusText(c);
     return `<div class="yard-chicken" data-id="${c.id}" id="yc${c.id}"
                  style="left:${pos.left};top:${pos.top}" onclick="showChickenMenu(event,${c.id})">
-      ${chickenHTML(c.id, expr, "small")}
+      ${chickenHTML(c.id, expr, "medium")}
       <span class="yc-name">${c.name}</span>
       <span class="yc-status">${st}</span>
       <div class="yard-bars">
