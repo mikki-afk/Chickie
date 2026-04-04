@@ -1006,7 +1006,12 @@ function startAutoActivity(){
       if(c.hunger<25)needs.push("eat"); // extra weight if very hungry
       if(c.thirst<25)needs.push("drink");
       if(needs.length===0){
-        // Not needy, random idle action
+        // Not needy - maybe clean poop or idle
+        if(S.poops.length>0&&Math.random()<0.4){
+          S.poops.splice(Math.floor(Math.random()*S.poops.length),1);
+          addLog(`🧹 ${c.name} 把一坨粑粑踢走了，爱干净！`);
+          return;
+        }
         const idle=pick(["wander","chat","nap"]);
         if(idle==="wander")addLog(`🐥 ${c.name} 在院子里溜达~`);
         else if(idle==="chat")addLog(`🐥 ${c.name} 叽叽喳喳地叫着`);
