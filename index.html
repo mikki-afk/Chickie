@@ -393,8 +393,8 @@ h1{font-size:20px}
     <div style="font-weight:700;color:#5a3e2b;margin-bottom:6px">📝 Notion 日志同步设置</div>
     <input id="nToken" type="password" placeholder="Notion Integration Token" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:4px;font-size:12px">
     <input id="nDb" placeholder="Database ID" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:4px;font-size:12px">
-    <input id="nProxy" placeholder="CORS代理地址" value="http://localhost:3456/proxy?url=" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:6px;font-size:12px">
-    <div style="font-size:10px;color:#999;margin-bottom:6px">先运行 node proxy.js 启动本地代理</div>
+    <input id="nProxy" placeholder="CORS代理地址" value="/notion?url=" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:6px;font-size:12px">
+    <div style="font-size:10px;color:#999;margin-bottom:6px">用 node server.js 启动时无需修改</div>
     <div style="display:flex;gap:6px;justify-content:center">
       <button onclick="saveNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#4682B4;color:#fff;cursor:pointer;font-size:12px">保存</button>
       <button onclick="clearNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#ddd;cursor:pointer;font-size:12px">清除</button>
@@ -1008,7 +1008,7 @@ function clearLog(){actLog=[];renderLog()}
 // ===== NOTION SYNC =====
 let NOTION_TOKEN=localStorage.getItem("chickie_notion_token")||"";
 let NOTION_DB=localStorage.getItem("chickie_notion_db")||"";
-let NOTION_PROXY=localStorage.getItem("chickie_notion_proxy")||"http://localhost:3456/proxy?url=";
+let NOTION_PROXY=localStorage.getItem("chickie_notion_proxy")||"/notion?url=";
 let notionQueue=[];let notionSending=false;
 function toggleNotion(){const el=document.getElementById("notionSetup");el.style.display=el.style.display==="none"?"block":"none";if(el.style.display==="block"){document.getElementById("nToken").value=NOTION_TOKEN;document.getElementById("nDb").value=NOTION_DB;document.getElementById("nProxy").value=NOTION_PROXY;document.getElementById("notionStatus").textContent=NOTION_TOKEN?"✅ 已配置":"未配置"}}
 function saveNotion(){NOTION_TOKEN=document.getElementById("nToken").value.trim();NOTION_DB=document.getElementById("nDb").value.trim();NOTION_PROXY=document.getElementById("nProxy").value.trim();localStorage.setItem("chickie_notion_token",NOTION_TOKEN);localStorage.setItem("chickie_notion_db",NOTION_DB);localStorage.setItem("chickie_notion_proxy",NOTION_PROXY);document.getElementById("notionStatus").textContent="✅ 已保存！";testNotion()}
