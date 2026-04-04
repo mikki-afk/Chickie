@@ -1621,7 +1621,7 @@ async function flushNotion(){
   const item=notionQueue.shift();
   const props={
     "Name":{title:[{text:{content:item.detail}}]},
-    "小鸡":{select:{name:item.chicken?("🐣 "+item.chicken):"🐥 全部"}},
+    "小鸡":{select:{name:item.chicken||"全部"}},
     "类型":{select:{name:({"串门":"🚶 串门","指令":"📋 指令","洗澡":"🛁 洗澡","吃饭":"🍽️ 吃饭","喝水":"💧 喝水","玩耍":"🎮 玩耍","睡觉":"💤 睡觉","清粑粑":"🧹 清粑粑","闲逛":"🐥 闲逛","喂药":"💊 喂药","位置":"📍 位置","食物":"🌾 食物","状态":"📊 状态","打扫":"🧼 打扫","互动":"💕 互动"})[item.type]||(item.type||"🐥 闲逛")}},
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
