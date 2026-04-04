@@ -867,6 +867,7 @@ function getExpr(c){
   if(c.clean<15)return"dirty";
   if(c.clean<25)return"meh";
   if(c.health<35)return"scared";
+  if(weatherThunder&&c.fearsThunder)return"scared";
   if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80)return"proud";
   if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"adore";
   if(c.hunger>=70&&c.happiness>=70)return"satisfied";
@@ -891,7 +892,7 @@ function randPrefs(){
   const fi=FOODS.map(f=>f.id),gi=GAMES.map(g=>g.id);
   const fv=pickN(fi,2),rm=fi.filter(f=>!fv.includes(f)),ht=pickN(rm,2);
   const fg=pick(gi),hg=pick(gi.filter(g=>g!==fg));
-  return{favoriteFood:fv,hatedFood:ht,favoriteGame:fg,hatedGame:hg};
+  return{favoriteFood:fv,hatedFood:ht,favoriteGame:fg,hatedGame:hg,fearsThunder:Math.random()<0.4};
 }
 function defState(){
   const now=new Date().toISOString();
@@ -945,7 +946,7 @@ function load(){
     const r=localStorage.getItem(SK);
     if(r){S=JSON.parse(r);
       // migrate
-      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;if(c.light===undefined)c.light=false;if(c.curtain===undefined)c.curtain=true;});
+      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;if(c.light===undefined)c.light=false;if(c.curtain===undefined)c.curtain=true;if(c.fearsThunder===undefined)c.fearsThunder=Math.random()<0.4;});
       if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};if(!S.buddyMilestones)S.buddyMilestones={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
@@ -2099,6 +2100,7 @@ function showYardEffect(cid,type){
   else if(type==="eat") b.textContent="\uD83C\uDF7D\uFE0F";
   else if(type==="play") b.textContent="\uD83C\uDFAE";
   else if(type==="drink") b.textContent="\uD83D\uDCA7";
+  else if(type==="scared") b.textContent="😨";
   el.appendChild(b);
   setTimeout(()=>b.remove(),2500);
 }
@@ -2112,6 +2114,15 @@ function triggerLightning(){
   setTimeout(()=>el.classList.remove("flash"),120);
   // Sometimes double flash
   if(Math.random()<0.3){setTimeout(()=>{el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),80)},200)}
+  // Scared chickens react
+  S.chickens.forEach(c=>{
+    if(c.fearsThunder&&c.location==="outside"&&!c.sleeping){
+      c.happiness=cl(c.happiness-3,0,100);
+      if(Math.random()<0.3)addLog(`⚡ ${c.name} ${pick(["被雷声吓到了，缩成一团！","听到雷声抖了一下","害怕地躲到角落里","吓得叫了一声"])}`,c.name,"闲逛",c);
+      showYardEffect(c.id,"scared");
+    }
+  });
+  if(view==="yard")renderYard();
 }
 function startStopLightning(){
   if(lightningTimer){clearTimeout(lightningTimer);lightningTimer=null}
