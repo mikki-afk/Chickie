@@ -418,6 +418,7 @@ function pick(a){return a[Math.floor(Math.random()*a.length)]}
 function pickN(a,n){const c=[...a],r=[];for(let i=0;i<n&&c.length;i++){const j=Math.floor(Math.random()*c.length);r.push(c.splice(j,1)[0])}return r}
 function cl(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
 function days(){return Math.max(1,Math.floor((Date.now()-new Date(S.startDate).getTime())/864e5)+1)}
+function nowStr(){const d=new Date();const pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
 function gPct(c){if(c.stage==="adult")return 100;const t=c.stage==="baby"?500:1000,p=c.stage==="baby"?0:500;return Math.floor(((Math.min(c.totalHunger,t)-p+Math.min(c.totalHappiness,t)-p)/((t-p)*2))*100)}
 function stgN(s){return s==="adult"?"成年":s==="teen"?"少年":"幼年"}
 
@@ -955,7 +956,7 @@ function showReact(t){
 // ===== STATS =====
 function renderStats(){
   document.getElementById("statsBar").innerHTML=
-    `<span>🌾 食物: ${S.food}</span><span>💩 ${S.poops.length}</span><span>📅 第${days()}天</span><span>⭐ ${S.totalInteractions}次互动</span>`;
+    `<span>🌾 食物: ${S.food}</span><span>💩 ${S.poops.length}</span><span>📅 ${nowStr()}</span><span>📅 第${days()}天</span><span>⭐ ${S.totalInteractions}次互动</span>`;
 }
 
 // ===== AUTO DECAY =====
@@ -1002,6 +1003,7 @@ setInterval(decay,60000);
 setInterval(()=>{
   if(view==="room")renderRoomBtns();
   if(view==="yard")renderYardBtns();
+  renderStats();
 },1000);
 window.addEventListener("beforeunload",save);
 </script>
