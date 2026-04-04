@@ -998,7 +998,7 @@ function load(){
     if(r){S=JSON.parse(r);
       // migrate
       S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;if(c.light===undefined)c.light=false;if(c.curtain===undefined)c.curtain=true;if(c.fearsThunder===undefined)c.fearsThunder=Math.random()<0.4;if(c.gender===undefined)c.gender=Math.random()<0.5?"male":"female";});
-      if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};if(!S.buddyMilestones)S.buddyMilestones={};
+      if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};if(!S.buddyMilestones)S.buddyMilestones={};if(!S.couples)S.couples={};if(!S.courtship)S.courtship={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
         S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*2,0,100);c.happiness=cl(c.happiness-m*1,0,100);c.thirst=cl(c.thirst-m*2,0,100);c.clean=cl(c.clean-m*1,0,100);c.fatigue=cl(c.fatigue+m*1,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*2,0,100)}else{c.fatigue=cl(c.fatigue-m*3,0,100);c.health=cl(c.health+m,0,100)}});
@@ -2102,9 +2102,27 @@ function genBuddyChat(a,b,aff){
   if(w==="rainy")weatherActs.push([`${a}和${b}一起在雨里踩水坑`,`${pick(["溅了一身泥，但好开心",""+b+"被溅了一脸水","它们玩疯了"])}`],[`${a}给${b}挡雨`,`${b}感动得直叫`]);
   if(w==="snowy")weatherActs.push([`${a}和${b}一起看雪`,`${pick(["好漂亮的雪花~",""+a+"接住了一片雪花","它们在雪地里留下小脚印"])}`],[`${a}和${b}挤在一起取暖`,`好暖和~`]);
   if(w==="sunny")weatherActs.push([`${a}和${b}一起晒太阳`,`${pick(["暖洋洋的~","晒得都不想动了",""+b+"翻了个身继续晒"])}`]);
+  // Flirty lines for courting/couple pairs
+  const flirty=[
+    [`${a}偷偷看了${b}一眼`,`被发现了！两只都假装看天空`],
+    [`${a}把自己梳得漂漂亮亮的`,`然后"不经意"地从${b}面前走过`],
+    [`${a}给${b}叼了一颗最大的虫子`,`${b}收下了，鸡冠都红了`],
+    [`${a}对着${b}唱了一首歌`,`${b}${pick(["听得入迷了","感动得不行","害羞地把头转开了","小声跟着哼"])}`],
+    [`${a}和${b}肩并肩散步`,`${pick(["夕阳下的剪影好浪漫","其他小鸡在旁边偷看","好甜！","走得越来越近了"])}`],
+    [`${a}用翅膀轻轻碰了一下${b}`,`${b}${pick(["心跳加速了","假装没感觉但偷偷笑了","碰了回去","脸红了"])}`]
+  ];
+  const coupleTalks=[
+    [`${a}和${b}在窝里依偎着`,`${pick(["好幸福的一对~","世界上最暖的地方","谁也不想动"])}`],
+    [`${a}给${b}整理羽毛`,`${b}闭着眼享受，嘴角上扬`],
+    [`${a}对${b}说：我们永远在一起好不好`,`${b}蹭了蹭${a}作为回答`],
+    [`${a}和${b}一起看日落`,`${pick(["好浪漫啊~",""+a+"偷偷牵了"+b+"的翅膀","旁边的鸡都酸了"])}`],
+    [`${a}和${b}头靠着头打盹`,`${pick(["全场最甜","连梦都是甜的吧","Zzz...Zzz..."])}`]
+  ];
   // Combine pools
   const pool=[...talks];
   if(aff>=20)pool.push(...intimate);
+  if(aff>=35)pool.push(...flirty);
+  if(S.couples&&S.couples[buddyKey(S.chickens.find(c=>c.name===a)?.id||0,S.chickens.find(c=>c.name===b)?.id||0)])pool.push(...coupleTalks,...coupleTalks); // Extra weight for couples
   if(weatherActs.length)pool.push(...weatherActs);
   // Joint activities
   const act=pick(acts);
@@ -2141,23 +2159,68 @@ function checkBuddyMilestone(id1,id2,aff){
   }
 }
 // ===== ROMANCE SYSTEM =====
+const COURT_STAGES=[
+  {aff:35,id:"notice",msgs:[
+    "{a}偷偷看了{b}好几眼…","{a}经过{b}身边时走路都不自然了",
+    "{a}好像对{b}有点在意？","{b}发现{a}老是盯着自己看"
+  ]},
+  {aff:42,id:"shy",msgs:[
+    "{a}给{b}留了最好的虫子，然后假装若无其事","{a}和{b}对视了一下，两只都赶紧看别的地方",
+    "{b}靠近{a}时，{a}的鸡冠变红了","其他小鸡开始起哄了~"
+  ]},
+  {aff:50,id:"court",msgs:[
+    "{a}对着{b}跳起了求偶舞！扑棱着翅膀转圈圈~","{a}叼了一朵小花送给{b}，{b}害羞地接过来了",
+    "{a}用最好听的声音对{b}唱歌，{b}听得入迷了","{a}把自己梳得漂漂亮亮的，在{b}面前走来走去"
+  ]},
+  {aff:55,id:"accept",msgs:[
+    "{b}终于回应了{a}的心意！它们在月光下并肩站着~","{b}轻轻蹭了蹭{a}，{a}幸福得原地跳了起来",
+    "{a}和{b}互相啄了一下对方的脸，好甜！","全场小鸡都在鼓掌！👏"
+  ]},
+  {aff:60,id:"couple",msgs:[
+    "{a}和{b}正式在一起了！💘","{a}和{b}决定从今以后都要在一起~"
+  ]}
+];
 function checkRomance(id1,id2){
   const c1=S.chickens[id1],c2=S.chickens[id2];
-  // Need opposite gender, both adult or elder, high buddy affinity
   if(!c1||!c2)return;
   if(c1.gender===c2.gender)return;
   if(!["adult","elder"].includes(c1.stage)||!["adult","elder"].includes(c2.stage))return;
   const aff=getBuddyAff(id1,id2);
-  if(aff<60)return;
   if(!S.couples)S.couples={};
+  if(!S.courtship)S.courtship={};
   const ck=buddyKey(id1,id2);
   if(S.couples[ck])return; // Already a couple
-  S.couples[ck]={since:Date.now(),babies:0};
-  addLog(`💘 ${c1.name}和${c2.name}看对眼了！它们成为了一对！`,c1.name,"互动",c1);
-  addLog(`💘 ${c1.name}和${c2.name}决定住在一起了~`,c2.name,"互动",c2);
-  c1.happiness=cl(c1.happiness+20,0,100);
-  c2.happiness=cl(c2.happiness+20,0,100);
-  showMilestoneToast(c1.name+"&"+c2.name,"💘","它们在一起了！","恋爱");
+  // Check courtship stages
+  for(const stage of COURT_STAGES){
+    const sk=ck+"_"+stage.id;
+    if(aff>=stage.aff&&!S.courtship[sk]){
+      S.courtship[sk]=true;
+      const msg=pick(stage.msgs).replace(/\{a\}/g,c1.name).replace(/\{b\}/g,c2.name);
+      if(stage.id==="couple"){
+        // Final stage: become a couple!
+        S.couples[ck]={since:Date.now(),babies:0};
+        addLog(`💘 ${msg}`,c1.name,"互动",c1);
+        c1.happiness=cl(c1.happiness+20,0,100);
+        c2.happiness=cl(c2.happiness+20,0,100);
+        showMilestoneToast(c1.name+" & "+c2.name,"💘","它们在一起了！恭喜恭喜~","恋爱");
+      }else if(stage.id==="notice"){
+        addLog(`👀 ${msg}`,c1.name,"互动",c1);
+      }else if(stage.id==="shy"){
+        addLog(`😳 ${msg}`,c1.name,"互动",c1);
+        c1.happiness=cl(c1.happiness+5,0,100);c2.happiness=cl(c2.happiness+5,0,100);
+      }else if(stage.id==="court"){
+        addLog(`💃 ${msg}`,c1.name,"互动",c1);
+        c1.happiness=cl(c1.happiness+10,0,100);c2.happiness=cl(c2.happiness+10,0,100);
+        showMilestoneToast(c1.name,"💃",msg,"求偶");
+      }else if(stage.id==="accept"){
+        addLog(`💕 ${msg}`,c1.name,"互动",c1);
+        c1.happiness=cl(c1.happiness+15,0,100);c2.happiness=cl(c2.happiness+15,0,100);
+        showMilestoneToast(c1.name+" & "+c2.name,"💕",msg,"心意相通");
+      }
+      save();
+      break; // One stage at a time
+    }
+  }
 }
 
 function tryBaby(){
