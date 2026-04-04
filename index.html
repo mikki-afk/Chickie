@@ -1130,7 +1130,7 @@ function load(){
       if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};if(!S.buddyMilestones)S.buddyMilestones={};if(!S.couples)S.couples={};if(!S.courtship)S.courtship={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
-        S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*2,0,100);c.happiness=cl(c.happiness-m*1,0,100);c.thirst=cl(c.thirst-m*2,0,100);c.clean=cl(c.clean-m*1,0,100);c.fatigue=cl(c.fatigue+m*1,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*2,0,100)}else{c.fatigue=cl(c.fatigue-m*3,0,100);c.health=cl(c.health+m,0,100)}});
+        S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*1,0,100);c.happiness=cl(c.happiness-m*0.5,0,100);c.thirst=cl(c.thirst-m*1,0,100);c.clean=cl(c.clean-m*0.5,0,100);c.fatigue=cl(c.fatigue+m*0.5,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*1,0,100)}else{c.fatigue=cl(c.fatigue-m*3,0,100);c.health=cl(c.health+m,0,100)}});
         // Simulate offline auto-activities (1 round per 30 min away)
         const rounds=Math.min(Math.floor(m/0.5),20);
         // Offline food regen: +1 per 2 min, max 30
@@ -2644,7 +2644,7 @@ function renderStats(){
 // ===== AUTO DECAY =====
 function decay(){
   S.chickens.forEach(c=>{
-    if(!c.sleeping){c.hunger=cl(c.hunger-2,0,100);c.happiness=cl(c.happiness-1,0,100);c.thirst=cl(c.thirst-2,0,100);c.clean=cl(c.clean-1,0,100);c.fatigue=cl(c.fatigue+1,0,100);if(c.hunger<20||c.thirst<20||c.clean<20||c.fatigue>80)c.health=cl(c.health-2,0,100)}else{c.fatigue=cl(c.fatigue-3,0,100);c.health=cl(c.health+1,0,100)}
+    if(!c.sleeping){c.hunger=cl(c.hunger-1,0,100);c.happiness=cl(c.happiness-0.5,0,100);c.thirst=cl(c.thirst-1,0,100);c.clean=cl(c.clean-0.5,0,100);c.fatigue=cl(c.fatigue+0.5,0,100);if(c.hunger<20||c.thirst<20||c.clean<20||c.fatigue>80)c.health=cl(c.health-1,0,100)}else{c.fatigue=cl(c.fatigue-3,0,100);c.health=cl(c.health+1,0,100)}
     // Heater & lamp benefits (indoor only)
     if(c.location==="inside"&&c.heater>0){c.health=cl(c.health+c.heater*0.4,0,100);c.happiness=cl(c.happiness+c.heater*0.2,0,100)}
     if(c.location==="inside"&&c.lamp>0){c.health=cl(c.health+c.lamp*0.3,0,100);c.fatigue=cl(c.fatigue-c.lamp*0.3,0,100)}
