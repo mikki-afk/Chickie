@@ -385,7 +385,20 @@ h1{font-size:20px}
     <div class="log-header"><span class="log-title">📋 活动日志</span><button class="log-clear" onclick="clearLog()">清空</button></div>
     <div id="logList"></div>
   </div>
-  <div class="reset-area"><button class="reset-btn" onclick="resetGame()">🔄 重置游戏</button></div>
+  <div class="reset-area">
+    <button class="reset-btn" onclick="toggleNotion()" id="notionToggle">📝 Notion设置</button>
+    <button class="reset-btn" onclick="resetGame()">🔄 重置游戏</button>
+  </div>
+  <div id="notionSetup" style="display:none;background:rgba(255,255,255,.85);border-radius:12px;padding:12px;margin-bottom:10px;font-size:12px">
+    <div style="font-weight:700;color:#5a3e2b;margin-bottom:6px">📝 Notion 日志同步设置</div>
+    <input id="nToken" type="password" placeholder="Notion Integration Token" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:4px;font-size:12px">
+    <input id="nDb" placeholder="Database ID" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:6px;font-size:12px">
+    <div style="display:flex;gap:6px;justify-content:center">
+      <button onclick="saveNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#4682B4;color:#fff;cursor:pointer;font-size:12px">保存</button>
+      <button onclick="clearNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#ddd;cursor:pointer;font-size:12px">清除</button>
+    </div>
+    <div id="notionStatus" style="text-align:center;margin-top:4px;font-size:11px;color:#888"></div>
+  </div>
 </div>
 
 <div class="sel-popup" id="selPopup">
@@ -678,7 +691,7 @@ function yardFeed(){
       const a=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,a);
     });
     S.food--;S.totalInteractions++;setCD("yard","feed");updStages();save();
-    const fn=FOODS.find(x=>x.id===fid);addLog(`🌾 你给院子里的小鸡们喂了${fn?fn.icon+fn.name:"食物"}`);renderYard();
+    const fn=FOODS.find(x=>x.id===fid);addLog(`🌾 你给院子里的小鸡们喂了${fn?fn.icon+fn.name:"食物"}`,"全部","吃饭");renderYard();
   });
 }
 function yardPlay(){
@@ -691,13 +704,13 @@ function yardPlay(){
       const a=Math.min(p,100-c.happiness);c.happiness=cl(c.happiness+p,0,100);c.hunger=cl(c.hunger-hc,0,100);c.totalHappiness+=Math.max(0,a);
     });
     const gn=GAMES.find(x=>x.id===gid);S.totalInteractions++;setCD("yard","play");updStages();save();
-    addLog(`🎮 你带小鸡们玩了${gn?gn.icon+gn.name:"游戏"}`);renderYard();
+    addLog(`🎮 你带小鸡们玩了${gn?gn.icon+gn.name:"游戏"}`,"全部","玩耍");renderYard();
   });
 }
 function yardDrink(){
   if(getCD("yard","drink")>0)return;
   S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping)c.thirst=cl(c.thirst+25,0,100)});
-  S.totalInteractions++;setCD("yard","drink");save();addLog("💧 你给院子里的小鸡们喝水了");renderYard();
+  S.totalInteractions++;setCD("yard","drink");save();addLog("💧 你给院子里的小鸡们喝水了","全部","喝水");renderYard();
 }
 function yardSleep(){
   if(getCD("yard","sleep")>0)return;
@@ -707,16 +720,16 @@ function yardSleep(){
     if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
     if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   });
-  S.totalInteractions++;setCD("yard","sleep");updStages();save();addLog("💤 你让小鸡们都去休息了");renderYard();
+  S.totalInteractions++;setCD("yard","sleep");updStages();save();addLog("💤 你让小鸡们都去休息了","全部","睡觉");renderYard();
 }
 function yardBath(){
   if(getCD("yard","bath")>0)return;
   S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100)}});
-  S.totalInteractions++;setCD("yard","bath");save();addLog("🛁 你给院子里的小鸡们洗澡了");renderYard();
+  S.totalInteractions++;setCD("yard","bath");save();addLog("🛁 你给院子里的小鸡们洗澡了","全部","洗澡");renderYard();
 }
 function yardClean(){
   if(S.poops.length===0)return;
-  S.poops=[];S.totalInteractions++;save();addLog("🧹 你把粑粑都清理干净了");renderYard();
+  S.poops=[];S.totalInteractions++;save();addLog("🧹 你把粑粑都清理干净了","全部","清粑粑");renderYard();
 }
 
 // ===== CHICKEN MENU =====
@@ -867,7 +880,7 @@ function doRoomFeed(fid){
   c.hunger=cl(c.hunger+hA,0,100);c.happiness=cl(c.happiness+pA,0,100);
   c.totalHunger+=Math.max(0,ah);if(pA>0)c.totalHappiness+=Math.min(pA,100-c.happiness+pA);
   S.food--;S.totalInteractions++;setCD(roomId,"feed");updStages();save();
-  const fn2=FOODS.find(x=>x.id===fid);addLog(`🌾 你给${c.name}喂了${fn2?fn2.icon+fn2.name:"食物"}`);
+  const fn2=FOODS.find(x=>x.id===fid);addLog(`🌾 你给${c.name}喂了${fn2?fn2.icon+fn2.name:"食物"}`,c.name,"吃饭",c);
   setRoomExpr(ex,"anim-eat");
   showReact(c.favoriteFood.includes(fid)?"好吃！😍":c.hatedFood.includes(fid)?"不喜欢…😣":"吃饱啦~😊");
   moveToFurniture("furBowl");
@@ -892,7 +905,7 @@ function doRoomPlay(gid){
   c.happiness=cl(c.happiness+pA,0,100);c.hunger=cl(c.hunger-hC,0,100);
   c.totalHappiness+=Math.max(0,ap);S.totalInteractions++;
   setCD(roomId,"play");updStages();save();
-  addLog(`🎮 你带${c.name}玩了${game?game.icon+game.name:"游戏"}`);
+  addLog(`🎮 你带${c.name}玩了${game?game.icon+game.name:"游戏"}`,c.name,"玩耍",c);
   setRoomExpr(ex,game?game.anim:"");
   showReact(c.favoriteGame===gid?"超好玩！🥰":c.hatedGame===gid?"不想玩…😕":"好开心~😊");
   const rc=document.getElementById("roomChicken");if(rc)rc.style.left="55%";
@@ -905,7 +918,7 @@ function doRoomDrink(){
   if(!c||c.sleeping||getCD(roomId,"drink")>0)return;
   c.thirst=cl(c.thirst+30,0,100);c.happiness=cl(c.happiness+5,0,100);
   S.totalInteractions++;setCD(roomId,"drink");save();
-  addLog(`💧 你给${c.name}喝水了`);
+  addLog(`💧 你给${c.name}喝水了`,c.name,"喝水",c);
   setRoomExpr("happy","anim-drink");
   showReact("咕噜咕噜~ 💧");
   moveToFurniture("furWater");
@@ -919,7 +932,7 @@ function doRoomBath(){
   if(!c||c.sleeping||getCD(roomId,"bath")>0)return;
   c.clean=cl(c.clean+35,0,100);c.happiness=cl(c.happiness+10,0,100);
   S.totalInteractions++;setCD(roomId,"bath");save();
-  addLog(`🛁 你给${c.name}洗澡了`);
+  addLog(`🛁 你给${c.name}洗澡了`,c.name,"洗澡",c);
   setRoomExpr("love","anim-bath");
   showReact("洗香香~ 🛁✨");
   moveToFurniture("furTub");
@@ -934,7 +947,7 @@ function doSleep(){
   if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
   if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   c.sleeping=true;S.totalInteractions++;setCD(roomId,"sleep");updStages();save();
-  addLog(`💤 ${c.name}去睡觉了，晚安~`);
+  addLog(`💤 ${c.name}去睡觉了，晚安~`,c.name,"睡觉",c);
   setRoomExpr("sleep","anim-sleep");showReact("晚安~ 💤");
   moveToFurniture("furBed");
   const bd=document.getElementById("cssBed");if(bd)bd.classList.add("bed-sleeping");
@@ -948,7 +961,7 @@ function doWake(){
   const c=S.chickens[roomId];if(!c||!c.sleeping)return;
   c.sleeping=false;save();
   if(sTimers[roomId]){clearTimeout(sTimers[roomId]);delete sTimers[roomId]}
-  addLog(`⏰ 你把${c.name}叫起来了`);
+  addLog(`⏰ 你把${c.name}叫起来了`,c.name,"睡觉",c);
   setRoomExpr("satisfied","anim-wake");showReact("伸个懒腰~ 😄");
   setTimeout(()=>renderRoom(),1600);
 }
@@ -976,18 +989,58 @@ function showReact(t){
 
 // ===== ACTIVITY LOG =====
 let actLog=[];
-function addLog(msg){
+function addLog(msg,nChick,nType,nStats){
   const d=new Date(),pad=n=>String(n).padStart(2,'0');
   const t=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
   actLog.unshift({t,msg});
   if(actLog.length>50)actLog.length=50;
   renderLog();
+  if(nType)notionLog(nChick||null,nType,msg.replace(/[\u{1F000}-\u{1FFFF}]/gu,"").trim(),nStats||null);
 }
 function renderLog(){
   const el=document.getElementById("logList");if(!el)return;
   el.innerHTML=actLog.map(e=>`<div class="log-entry"><span class="log-time">${e.t}</span><span class="log-msg">${e.msg}</span></div>`).join("");
 }
 function clearLog(){actLog=[];renderLog()}
+
+// ===== NOTION SYNC =====
+let NOTION_TOKEN=localStorage.getItem("chickie_notion_token")||"";
+let NOTION_DB=localStorage.getItem("chickie_notion_db")||"";
+let notionQueue=[];let notionSending=false;
+function toggleNotion(){const el=document.getElementById("notionSetup");el.style.display=el.style.display==="none"?"block":"none";if(el.style.display==="block"){document.getElementById("nToken").value=NOTION_TOKEN;document.getElementById("nDb").value=NOTION_DB;document.getElementById("notionStatus").textContent=NOTION_TOKEN?"✅ 已配置":"未配置"}}
+function saveNotion(){NOTION_TOKEN=document.getElementById("nToken").value.trim();NOTION_DB=document.getElementById("nDb").value.trim();localStorage.setItem("chickie_notion_token",NOTION_TOKEN);localStorage.setItem("chickie_notion_db",NOTION_DB);document.getElementById("notionStatus").textContent="✅ 已保存！"}
+function clearNotion(){NOTION_TOKEN="";NOTION_DB="";localStorage.removeItem("chickie_notion_token");localStorage.removeItem("chickie_notion_db");document.getElementById("nToken").value="";document.getElementById("nDb").value="";document.getElementById("notionStatus").textContent="已清除"}
+function notionLog(chicken,type,detail,stats){
+  if(!NOTION_TOKEN||!NOTION_DB)return;
+  notionQueue.push({chicken,type,detail,stats});
+  if(!notionSending)flushNotion();
+}
+async function flushNotion(){
+  if(notionQueue.length===0){notionSending=false;return}
+  notionSending=true;
+  const item=notionQueue.shift();
+  const props={
+    "Name":{title:[{text:{content:item.detail}}]},
+    "小鸡":{select:{name:item.chicken||"全部"}},
+    "类型":{select:{name:item.type||"闲逛"}},
+    "时间":{date:{start:new Date().toISOString()}},
+    "详情":{rich_text:[{text:{content:item.detail}}]}
+  };
+  if(item.stats){
+    props["饥饿"]={number:item.stats.hunger};
+    props["快乐"]={number:item.stats.happiness};
+    props["口渴"]={number:item.stats.thirst};
+    props["清洁"]={number:item.stats.clean};
+  }
+  try{
+    await fetch("https://api.notion.com/v1/pages",{
+      method:"POST",
+      headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
+      body:JSON.stringify({parent:{database_id:NOTION_DB},properties:props})
+    });
+  }catch(e){console.log("Notion sync error:",e)}
+  setTimeout(flushNotion,300);
+}
 
 // ===== AUTO ACTIVITY =====
 let autoTimer=null;
@@ -1009,37 +1062,40 @@ function startAutoActivity(){
         // Not needy - maybe clean poop or idle
         if(S.poops.length>0&&Math.random()<0.4){
           S.poops.splice(Math.floor(Math.random()*S.poops.length),1);
-          addLog(`🧹 ${c.name} 把一坨粑粑踢走了，爱干净！`);
+          addLog(`🧹 ${c.name} 把一坨粑粑踢走了，爱干净！`,c.name,"清粑粑",c);
           return;
         }
         const idle=pick(["wander","chat","nap"]);
-        if(idle==="wander")addLog(`🐥 ${c.name} 在院子里溜达~`);
-        else if(idle==="chat")addLog(`🐥 ${c.name} 叽叽喳喳地叫着`);
-        else addLog(`🐥 ${c.name} 打了个小盹儿`);
+        if(idle==="wander")addLog(`🐥 ${c.name} 在院子里溜达~`,c.name,"闲逛",c);
+        else if(idle==="chat")addLog(`🐥 ${c.name} 叽叽喳喳地叫着`,c.name,"闲逛",c);
+        else addLog(`🐥 ${c.name} 打了个小盹儿`,c.name,"闲逛",c);
         return;
       }
       const act=pick(needs);
       if(act==="eat"&&S.food>0){
         const f=pick(FOODS);
         let h=20;
-        if(c.favoriteFood.includes(f.id)){h=30;c.happiness=cl(c.happiness+8,0,100);addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name}，好吃！😍`)}
-        else if(c.hatedFood.includes(f.id)){h=10;c.happiness=cl(c.happiness-5,0,100);addLog(`🌾 ${c.name} 尝了口${f.icon}${f.name}，不喜欢…😣`)}
-        else{addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name} 😊`)}
+        if(c.favoriteFood.includes(f.id)){h=30;c.happiness=cl(c.happiness+8,0,100)}
+        else if(c.hatedFood.includes(f.id)){h=10;c.happiness=cl(c.happiness-5,0,100)}
         const ah=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,ah);
         S.food--;
+        if(c.favoriteFood.includes(f.id))addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name}，好吃！😍`,c.name,"吃饭",c);
+        else if(c.hatedFood.includes(f.id))addLog(`🌾 ${c.name} 尝了口${f.icon}${f.name}，不喜欢…😣`,c.name,"吃饭",c);
+        else addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name} 😊`,c.name,"吃饭",c);
       }else if(act==="play"){
         const g=pick(GAMES);
         let p=20,hc=10;
-        if(c.favoriteGame===g.id){p=30;hc=5;addLog(`🎮 ${c.name} 自己玩${g.icon}${g.name}，超开心！🥰`)}
-        else if(c.hatedGame===g.id){p=10;hc=15;addLog(`🎮 ${c.name} 试了下${g.icon}${g.name}，不太想玩 😕`)}
-        else{addLog(`🎮 ${c.name} 自己玩了${g.icon}${g.name} 😊`)}
+        if(c.favoriteGame===g.id){p=30;hc=5}else if(c.hatedGame===g.id){p=10;hc=15}
         const ap=Math.min(p,100-c.happiness);c.happiness=cl(c.happiness+p,0,100);c.hunger=cl(c.hunger-hc,0,100);c.totalHappiness+=Math.max(0,ap);
+        if(c.favoriteGame===g.id)addLog(`🎮 ${c.name} 自己玩${g.icon}${g.name}，超开心！🥰`,c.name,"玩耍",c);
+        else if(c.hatedGame===g.id)addLog(`🎮 ${c.name} 试了下${g.icon}${g.name}，不太想玩 😕`,c.name,"玩耍",c);
+        else addLog(`🎮 ${c.name} 自己玩了${g.icon}${g.name} 😊`,c.name,"玩耍",c);
       }else if(act==="drink"){
         c.thirst=cl(c.thirst+20,0,100);
-        addLog(`💧 ${c.name} 自己跑去喝水了，咕噜咕噜~`);
+        addLog(`💧 ${c.name} 自己跑去喝水了，咕噜咕噜~`,c.name,"喝水",c);
       }else if(act==="bath"){
         c.clean=cl(c.clean+25,0,100);c.happiness=cl(c.happiness+5,0,100);
-        addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`);
+        addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`,c.name,"洗澡",c);
       }
     });
     updStages();save();
