@@ -60,13 +60,65 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .expr-satisfied .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}
 .expr-normal .chick-blush{opacity:.3}
 
-/* Stage */
-.stage-teen .chick-body{width:36px;height:30px}
-.stage-teen .chick-head{width:30px;height:28px}
-.stage-adult .chick-body{width:38px;height:32px;background:#f5f5f5}
-.stage-adult .chick-head{width:32px;height:30px;background:#f5f5f5}
-.stage-adult .chick-wing{background:#e0e0e0}
-.stage-adult .chick-hair{border-bottom-color:#e74c3c;border-bottom-width:9px}
+/* Stage extras (hidden by default) */
+.chick-comb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:3;opacity:0;pointer-events:none}
+.chick-wattle{position:absolute;top:17px;left:50%;transform:translateX(-50%);width:4px;height:5px;background:#e74c3c;border-radius:0 0 50% 50%;z-index:5;opacity:0}
+.chick-glasses{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:20px;height:8px;z-index:6;opacity:0;pointer-events:none}
+.chick-glasses::before,.chick-glasses::after{content:"";position:absolute;top:0;width:8px;height:7px;border:1.5px solid #555;border-radius:50%}
+.chick-glasses::before{left:0}.chick-glasses::after{right:0}
+.chick-tail{position:absolute;bottom:8px;right:-4px;width:0;height:0;border-left:6px solid transparent;border-right:0;border-bottom:8px solid #f0c000;z-index:0;opacity:0;transform:rotate(-20deg)}
+
+/* Stage: baby (default) - small yellow round chick, same for all */
+
+/* Stage: teen - slightly bigger, feathers starting to show individual color */
+.stage-teen .chick-body{width:36px;height:30px;background:var(--feather,#FFD700)}
+.stage-teen .chick-head{width:30px;height:28px;background:var(--feather,#FFD700)}
+.stage-teen .chick-hair{border-bottom-width:8px;border-bottom-color:var(--col2,#FFA500)}
+.stage-teen .chick-wing{width:9px;height:14px;background:var(--col1,#f0c000)}
+.stage-teen .chick-tail{opacity:1;border-bottom-color:var(--feather,#f0c000)}
+
+/* Stage: mature - bigger, comb growing, individual plumage */
+.stage-mature .chick-body{width:38px;height:32px;background:var(--feather,#f5e050)}
+.stage-mature .chick-head{width:32px;height:30px;background:var(--feather,#f5e050)}
+.stage-mature .chick-wing{width:10px;height:15px;background:var(--col1,#e0b800)}
+.stage-mature .chick-hair{border-bottom-width:9px;border-bottom-color:var(--col2,#e67e22)}
+.stage-mature .chick-comb{opacity:1;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:8px solid var(--comb,#e74c3c);top:-7px}
+.stage-mature .chick-wattle{opacity:.6;height:4px;background:var(--comb,#e74c3c)}
+.stage-mature .chick-tail{opacity:1;border-bottom-color:var(--col1,#e0b800);border-bottom-width:10px;border-left-width:7px}
+.stage-mature .chick-feet .chick-foot{width:8px;height:3px}
+.stage-mature .chick-eye{width:5px;height:5px}
+
+/* Stage: adult - full grown, unique plumage color per chicken */
+.stage-adult .chick-body{width:40px;height:34px;background:var(--plumage,#f5f5f5)}
+.stage-adult .chick-head{width:34px;height:32px;background:var(--plumage,#f5f5f5)}
+.stage-adult .chick-wing{width:11px;height:16px;background:var(--feather,#e0e0e0)}
+.stage-adult .chick-hair{border-bottom-color:var(--comb,#e74c3c);border-bottom-width:10px;border-left-width:4px;border-right-width:4px}
+.stage-adult .chick-comb{opacity:1;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:10px solid var(--comb,#e74c3c);top:-8px}
+.stage-adult .chick-wattle{opacity:1;height:6px;width:5px;background:var(--comb,#e74c3c)}
+.stage-adult .chick-tail{opacity:1;border-bottom-color:var(--feather,#d0d0d0);border-bottom-width:12px;border-left-width:8px;right:-6px}
+.stage-adult .chick-feet .chick-foot{width:9px;height:3px}
+.stage-adult .chick-eye{width:5px;height:5px}
+.stage-adult .chick-beak{border-left-width:4px;border-right-width:4px;border-top-width:5px}
+
+/* Stage: elder - softer colors, glasses, gentle vibe */
+.stage-elder .chick-body{width:38px;height:32px;background:var(--plumage,#f0ece0);opacity:.9}
+.stage-elder .chick-head{width:32px;height:30px;background:var(--plumage,#f0ece0);opacity:.9}
+.stage-elder .chick-wing{width:10px;height:14px;background:var(--feather,#ddd8c8);opacity:.85}
+.stage-elder .chick-hair{border-bottom-color:var(--comb,#c0392b);border-bottom-width:9px;border-left-width:4px;border-right-width:4px;opacity:.8}
+.stage-elder .chick-comb{opacity:.8;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:9px solid var(--comb,#c0392b);top:-7px}
+.stage-elder .chick-wattle{opacity:.8;height:5px;width:5px;background:var(--comb,#c0392b)}
+.stage-elder .chick-tail{opacity:.8;border-bottom-color:var(--feather,#d8d0c0);border-bottom-width:10px;border-left-width:7px;right:-5px}
+.stage-elder .chick-glasses{opacity:1}
+.stage-elder .chick-feet .chick-foot{width:8px;height:3px}
+.stage-elder .chick-eye{width:4px;height:4px}
+.stage-elder .chick-blush{opacity:.5!important}
+
+/* Tail style variations per chicken */
+.tail-fluffy .chick-tail{border-radius:0 0 3px 0;border-left-width:8px!important}
+.tail-sleek .chick-tail{transform:rotate(-30deg)!important}
+.tail-curly .chick-tail{border-radius:0 4px 4px 0;transform:rotate(-10deg)!important}
+.tail-spiky .chick-tail{border-left-width:4px!important;border-bottom-width:14px!important;transform:rotate(-25deg)!important}
+.tail-round .chick-tail{border-radius:50%;width:8px!important;height:8px!important;border:none!important;background:var(--feather,#d0c0e8)}
 
 /* Animations */
 @keyframes heartF{0%{transform:translateX(-50%) translateY(0);opacity:1}100%{transform:translateX(-50%) translateY(-10px);opacity:0}}
@@ -78,6 +130,9 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .chick{animation:breathe 2s ease-in-out infinite}
 .chick.big{animation:breatheBig 2s ease-in-out infinite!important}
 .chick.med{animation:breatheMed 2s ease-in-out infinite!important}
+.stage-elder{animation-duration:3s!important}
+.stage-elder.big{animation:breatheBig 3s ease-in-out infinite!important}
+.stage-elder.med{animation:breatheMed 3s ease-in-out infinite!important}
 .big.anim-eat{animation:eatB .4s ease 5!important}
 @keyframes eatB{0%,100%{transform:scale(1.7) rotate(0)}50%{transform:scale(1.7) rotate(12deg) translateY(3px)}}
 .big.anim-chase{animation:chaseB .8s ease 3!important}
@@ -483,11 +538,11 @@ const GAMES=[
   {id:"roll",icon:"🎪",name:"打滚游戏",anim:"anim-roll"}
 ];
 const CDEFS=[
-  {name:"玖宝",color:["#FFB6C1","#FF69B4"]},
-  {name:"期期小一",color:["#87CEEB","#4682B4"]},
-  {name:"毛毛",color:["#FFD700","#FFA500"]},
-  {name:"咕咕",color:["#90EE90","#32CD32"]},
-  {name:"叽叽",color:["#DDA0DD","#9370DB"]}
+  {name:"玖宝",color:["#FFB6C1","#FF69B4"],plumage:"#fff0f3",feather:"#ffccd5",comb:"#ff4d6d",tailStyle:"fluffy"},
+  {name:"期期小一",color:["#87CEEB","#4682B4"],plumage:"#e8f4f8",feather:"#b8dce8",comb:"#d63031",tailStyle:"sleek"},
+  {name:"毛毛",color:["#FFD700","#FFA500"],plumage:"#fff8dc",feather:"#f0d060",comb:"#e74c3c",tailStyle:"curly"},
+  {name:"咕咕",color:["#90EE90","#32CD32"],plumage:"#f0fff0",feather:"#b8e6b8",comb:"#c0392b",tailStyle:"spiky"},
+  {name:"叽叽",color:["#DDA0DD","#9370DB"],plumage:"#f5f0ff",feather:"#d0c0e8",comb:"#e84393",tailStyle:"round"}
 ];
 const CD_MS={feed:30000,play:30000,drink:30000,bath:60000,sleep:300000};
 const WEATHERS=["sunny","cloudy","rainy"];
@@ -501,26 +556,36 @@ function cl(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
 function days(){return Math.max(1,Math.floor((Date.now()-new Date(S.startDate).getTime())/864e5)+1)}
 function nowStr(){const d=new Date(new Date().toLocaleString("en-US",{timeZone:"America/Toronto"}));const pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
 function torontoISO(){return new Date().toLocaleString("sv-SE",{timeZone:"America/Toronto"}).replace(" ","T")+"-04:00"}
-function gPct(c){if(c.stage==="adult")return 100;const t=c.stage==="baby"?500:1000,p=c.stage==="baby"?0:500;return Math.floor(((Math.min(c.totalHunger,t)-p+Math.min(c.totalHappiness,t)-p)/((t-p)*2))*100)}
-function stgN(s){return s==="adult"?"成年":s==="teen"?"少年":"幼年"}
+function gPct(c){
+  const ranges={baby:[0,1000],teen:[1000,2400],mature:[2400,5000],adult:[5000,8000]};
+  if(c.stage==="elder")return 100;
+  const r=ranges[c.stage]||[0,1000];
+  const total=c.totalHunger+c.totalHappiness;
+  return cl(Math.floor((total-r[0])/(r[1]-r[0])*100),0,100);
+}
+function stgN(s){return{baby:"幼年",teen:"成长期",mature:"���熟期",adult:"成年",elder:"老��"}[s]||"幼年"}
 
 // ===== CHICKEN HTML =====
 function chickHTML(id,expr,sz,ex){
-  const c=S.chickens[id];
-  const cls=["chick","stage-"+c.stage,"expr-"+expr,sz||"",ex||""].join(" ").trim();
-  return `<div class="${cls}" data-id="${id}">
+  const c=S.chickens[id];const d=CDEFS[id];
+  const cls=["chick","stage-"+c.stage,"tail-"+d.tailStyle,"expr-"+expr,sz||"",ex||""].join(" ").trim();
+  const vars=`--plumage:${d.plumage};--feather:${d.feather};--comb:${d.comb};--col1:${d.color[0]};--col2:${d.color[1]}`;
+  return `<div class="${cls}" data-id="${id}" style="${vars}">
     <div class="chick-head">
+      <div class="chick-comb"></div>
       <div class="chick-cap"></div>
       <div class="chick-hair"></div>
+      <div class="chick-glasses"></div>
       <div class="chick-eyes"><span class="chick-eye"></span><span class="chick-eye"></span></div>
       <div class="chick-beak"></div>
+      <div class="chick-wattle"></div>
       <div class="chick-blush L"></div><div class="chick-blush R"></div>
       <div class="chick-tear L"></div><div class="chick-tear R"></div>
       <div class="chick-sweat"></div>
       <div class="chick-hearts">💕</div>
       <div class="chick-zzz">Zzz</div>
     </div>
-    <div class="chick-body"><div class="chick-wing L"></div><div class="chick-wing R"></div></div>
+    <div class="chick-body"><div class="chick-wing L"></div><div class="chick-wing R"></div><div class="chick-tail"></div></div>
     <div class="chick-feet"><div class="chick-foot"></div><div class="chick-foot"></div></div>
   </div>`;
 }
@@ -627,9 +692,14 @@ function load(){
 }
 function updStages(){
   S.chickens.forEach(c=>{
-    if(c.totalHunger>1000&&c.totalHappiness>1000)c.stage="adult";
-    else if(c.totalHunger>500&&c.totalHappiness>500)c.stage="teen";
+    const t=c.totalHunger+c.totalHappiness;
+    const oldStage=c.stage;
+    if(t>=8000)c.stage="elder";
+    else if(t>=5000)c.stage="adult";
+    else if(t>=2400)c.stage="mature";
+    else if(t>=1000)c.stage="teen";
     else c.stage="baby";
+    if(oldStage!==c.stage)addLog(`🌟 ${c.name}成长为${stgN(c.stage)}��！`,c.name,"状态",c);
   });
 }
 
