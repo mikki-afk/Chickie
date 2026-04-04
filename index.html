@@ -348,6 +348,13 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .toy-stick::before{content:"";position:absolute;right:-4px;top:-4px;width:10px;height:6px;background:#8B6914;border-radius:3px;transform:rotate(40deg)}
 
 
+/* Buddy interaction bubble */
+.buddy-bubble{position:absolute;top:-30px;left:50%;transform:translateX(-50%);background:#fff;border-radius:12px;padding:4px 10px;font-size:11px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:20;opacity:0;animation:bubblePop 3s ease forwards;pointer-events:none}
+.buddy-bubble::after{content:"";position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #fff}
+@keyframes bubblePop{0%{opacity:0;top:-20px}10%{opacity:1;top:-30px}80%{opacity:1}100%{opacity:0;top:-40px}}
+@keyframes buddyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.yard-chicken.buddy-active{animation:buddyBounce .5s ease 3}
+
 /* Poop counter badge */
 .poop-badge{position:absolute;top:4px;right:8px;background:rgba(139,105,20,.8);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;z-index:10}
 
@@ -547,7 +554,7 @@ function defState(){
       stage:"baby",totalHunger:0,totalHappiness:0,
       location:"outside",sleeping:false,...randPrefs()
     })),
-    food:20,poops:[],startDate:now,totalInteractions:0,lastUpdateTime:now
+    food:20,poops:[],buddyAff:{},startDate:now,totalInteractions:0,lastUpdateTime:now
   };
 }
 function save(){S.lastUpdateTime=new Date().toISOString();localStorage.setItem(SK,JSON.stringify(S));scheduleStateSync()}
@@ -591,7 +598,7 @@ function load(){
     if(r){S=JSON.parse(r);
       // migrate
       S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;});
-      if(!S.poops)S.poops=[];
+      if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
         S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*2,0,100);c.happiness=cl(c.happiness-m*1,0,100);c.thirst=cl(c.thirst-m*2,0,100);c.clean=cl(c.clean-m*1,0,100);c.fatigue=cl(c.fatigue+m*1,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*2,0,100)}else{c.fatigue=cl(c.fatigue-m*3,0,100);c.health=cl(c.health+m,0,100)}});
@@ -884,6 +891,7 @@ function renderRoom(){
   const hf=c.hatedFood.map(id=>{const f=FOODS.find(x=>x.id===id);return f?f.icon:""}).join("");
   const fg=(()=>{const g=GAMES.find(x=>x.id===c.favoriteGame);return g?g.icon:""})();
   const hg=(()=>{const g=GAMES.find(x=>x.id===c.hatedGame);return g?g.icon:""})();
+  const bb=bestBuddy(roomId);
 
   document.getElementById("roomBars").innerHTML=`
     <div class="room-bar-row"><span class="room-bar-label">❤️ 饱食</span><div class="room-bar-track"><div class="room-bar-fill hunger" style="width:${c.hunger}%"></div></div><span class="room-bar-val">${c.hunger}</span></div>
@@ -895,7 +903,8 @@ function renderRoom(){
     <div class="room-bar-row"><span class="room-bar-label">🤝 亲密(手动)</span><div class="room-bar-track"><div class="room-bar-fill aff-manual" style="width:${Math.min(c.affManual,100)}%"></div></div><span class="room-bar-val">${c.affManual}</span></div>
     <div class="room-bar-row"><span class="room-bar-label">📋 亲密(指令)</span><div class="room-bar-track"><div class="room-bar-fill aff-notion" style="width:${Math.min(c.affNotion,100)}%"></div></div><span class="room-bar-val">${c.affNotion}</span></div>
     <div class="room-growth"><div class="room-growth-label">🌱 成长 ${gp}% · ${stgN(c.stage)}</div><div class="room-growth-track"><div class="room-growth-fill" style="width:${gp}%"></div></div></div>
-    <div style="margin-top:4px;font-size:10px;color:#888">❤️喜欢:${ff}${fg} 💔讨厌:${hf}${hg}</div>`;
+    <div style="margin-top:4px;font-size:10px;color:#888">❤️喜欢:${ff}${fg} 💔讨厌:${hf}${hg}</div>
+    <div style="margin-top:2px;font-size:10px;color:#888">💕好友:${bb.best>=0?S.chickens[bb.best].name+"("+bb.bestV+")":"无"} 😐疏远:${bb.worst>=0&&bb.worstV<bb.bestV?S.chickens[bb.worst].name+"("+bb.worstV+")":"无"}</div>`;
   renderRoomBtns();
 }
 
@@ -1155,7 +1164,7 @@ function scheduleStateSync(){
 }
 async function syncStateToNotion(){
   if(!NOTION_TOKEN||!NOTION_DB)return;
-  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length});
+  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
   try{
     await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
       method:"PATCH",
@@ -1360,6 +1369,54 @@ async function markInstrDone(pageId){
 }
 
 // ===== AUTO ACTIVITY =====
+// ===== BUDDY SYSTEM =====
+function buddyKey(a,b){return a<b?a+":"+b:b+":"+a}
+function addBuddyAff(a,b,amt){const k=buddyKey(a,b);S.buddyAff[k]=(S.buddyAff[k]||0)+amt}
+function getBuddyAff(a,b){return S.buddyAff[buddyKey(a,b)]||0}
+function bestBuddy(ci){
+  let best=-1,bestV=-1,worst=-1,worstV=Infinity;
+  S.chickens.forEach((c,j)=>{if(j===ci)return;const v=getBuddyAff(ci,j);if(v>bestV){bestV=v;best=j}if(v<worstV){worstV=v;worst=j}});
+  return{best,bestV,worst,worstV};
+}
+const BUDDY_CHATS=[
+  ["{a}对{b}说：一起去吃虫子吧！","{b}：好呀好呀！"],
+  ["{a}对{b}说：你今天好漂亮~","{b}害羞地低下了头"],
+  ["{a}和{b}一起晒太阳","{b}靠在{a}旁边打盹"],
+  ["{a}追着{b}跑","{b}：你追不到我！"],
+  ["{a}给{b}梳了梳毛","{b}开心地叫了两声"],
+  ["{a}偷了{b}的食物","{b}：还给我！"],
+  ["{a}和{b}比赛跳高","{a}赢了！{b}不服气"],
+  ["{a}和{b}叽叽喳喳聊天","{b}点了点头表示赞同"],
+  ["{a}把好吃的分给{b}","{b}感动地蹭了蹭{a}"],
+  ["{a}和{b}一起看蚂蚁搬家","它们看得入迷了~"]
+];
+function triggerBuddyEvent(){
+  const outdoor=S.chickens.filter(c=>c.location==="outside"&&!c.sleeping);
+  if(outdoor.length<2)return;
+  // Pick two random outdoor chickens
+  const i1=Math.floor(Math.random()*outdoor.length);
+  let i2=Math.floor(Math.random()*(outdoor.length-1));if(i2>=i1)i2++;
+  const c1=outdoor[i1],c2=outdoor[i2];
+  // Increase buddy affinity
+  addBuddyAff(c1.id,c2.id,1);
+  const aff=getBuddyAff(c1.id,c2.id);
+  // Higher affinity = more interesting interactions
+  const chat=BUDDY_CHATS[Math.floor(Math.random()*BUDDY_CHATS.length)];
+  const line1=chat[0].replace(/\{a\}/g,c1.name).replace(/\{b\}/g,c2.name);
+  const line2=chat[1].replace(/\{a\}/g,c1.name).replace(/\{b\}/g,c2.name);
+  // Both gain happiness
+  c1.happiness=cl(c1.happiness+3,0,100);c2.happiness=cl(c2.happiness+3,0,100);
+  addLog(`🐥 ${line1} ${line2}`,c1.name,"闲逛",c1);
+  // Show bubble animation in yard
+  if(view==="yard"){
+    const el1=document.getElementById("yc"+c1.id);
+    const el2=document.getElementById("yc"+c2.id);
+    if(el1){el1.classList.add("buddy-active");const b=document.createElement("div");b.className="buddy-bubble";b.textContent=line1.replace(c1.name+"对"+c2.name+"说：","").replace(c1.name+"和"+c2.name,"").slice(0,15);el1.appendChild(b);setTimeout(()=>{b.remove();el1.classList.remove("buddy-active")},3500)}
+    if(el2){el2.classList.add("buddy-active");const b=document.createElement("div");b.className="buddy-bubble";b.textContent=line2.replace(c2.name+"：","").replace(c2.name,"").slice(0,12);el2.appendChild(b);setTimeout(()=>{b.remove();el2.classList.remove("buddy-active")},3500)}
+  }
+  save();
+}
+
 let autoTimer=null;
 function startAutoActivity(){
   if(autoTimer)clearInterval(autoTimer);
@@ -1415,6 +1472,8 @@ function startAutoActivity(){
         addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`,c.name,"洗澡",c);
       }
     });
+    // Random buddy interaction (30% chance per tick)
+    if(Math.random()<0.3)triggerBuddyEvent();
     updStages();save();
     if(view==="yard")renderYard();
     else if(view==="room")renderRoom();
