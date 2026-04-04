@@ -1555,12 +1555,12 @@ async function flushNotion(){
   const item=notionQueue.shift();
   const props={
     "Name":{title:[{text:{content:item.detail}}]},
-    "小鸡":{select:{name:item.chicken||"全部"}},
-    "类型":{select:{name:item.type||"闲逛"}},
+    "小鸡":{select:{name:item.chicken?("🐣 "+item.chicken):"🐥 全部"}},
+    "类型":{select:{name:({"串门":"🚶 串门","指令":"📋 指令","洗澡":"🛁 洗澡","吃饭":"🍽️ 吃饭","喝水":"💧 喝水","玩耍":"🎮 玩耍","睡觉":"💤 睡觉","清粑粑":"🧹 清粑粑","闲逛":"🐥 闲逛","喂药":"💊 喂药","位置":"📍 位置","食物":"🌾 食物","状态":"📊 状态","打扫":"🧼 打扫","互动":"💕 互动"})[item.type]||(item.type||"🐥 闲逛")}},
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
-  props["天气"]={select:{name:weather==="sunny"?"晴天":weather==="cloudy"?"多云":weather==="snowy"?"下雪":"下雨"}};
+  props["天气"]={select:{name:weather==="sunny"?"☀️ 晴天":weather==="cloudy"?"☁️ 多云":weather==="snowy"?"❄️ 下雪":"🌧️ 下雨"}};
   // Add expression emoji
   if(item.stats){
     const ex=getExpr(item.stats);
@@ -1581,7 +1581,7 @@ async function flushNotion(){
     if(item.stats.lamp!==undefined)props["照灯"]={number:item.stats.lamp};
     if(item.stats.light!==undefined)props["房灯"]={checkbox:item.stats.light};
     if(item.stats.curtain!==undefined)props["窗帘"]={checkbox:item.stats.curtain};
-    if(item.stats.stage!==undefined)props["阶段"]={select:{name:stgN(item.stats.stage)}};
+    if(item.stats.stage!==undefined){const stgE={"baby":"🥚","teen":"🌱","mature":"🌿","adult":"🐔","elder":"👴"};props["阶段"]={select:{name:(stgE[item.stats.stage]||"🥚")+" "+stgN(item.stats.stage)}};}
     if(item.stats.totalHunger!==undefined&&item.stats.totalHappiness!==undefined)props["成长进度"]={number:gPct(item.stats)};
     // Buddy affinity summary
     if(item.stats.id!==undefined&&S.buddyAff){
@@ -1591,7 +1591,8 @@ async function flushNotion(){
         const v=getBuddyAff(item.stats.id,c2.id);
         if(v>0){
           const bl=BUDDY_LEVELS.slice().reverse().find(l=>v>=l.threshold);
-          parts.push(`${c2.name}:${v}${bl?"("+bl.level+")":""}`);
+          const bE={"认识":"👋","玩伴":"🎮","好朋友":"🤝","闺蜜/铁哥们":"💕","灵魂伴侣":"💖"};
+          parts.push(`${bl?bE[bl.level]||"":""}${c2.name}:${v}${bl?"("+bl.level+")":""}`);
         }
       });
       if(parts.length)props["好友"]={rich_text:[{text:{content:parts.join(" | ")}}]};
