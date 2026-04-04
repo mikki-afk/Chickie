@@ -256,6 +256,15 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .no-food-msg{font-size:11px;color:#e17055;text-align:center;margin-bottom:6px;display:none}
 .no-food-msg.show{display:block}
 
+/* Activity log */
+.log-panel{background:rgba(255,255,255,.85);border-radius:12px;padding:10px 14px;margin-bottom:10px;box-shadow:0 2px 10px rgba(0,0,0,.08);max-height:180px;overflow-y:auto}
+.log-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.log-title{font-size:14px;font-weight:700;color:#5a3e2b}
+.log-clear{font-size:11px;background:none;border:1px dashed #c0a080;color:#b08060;padding:2px 8px;border-radius:6px;cursor:pointer}
+.log-entry{font-size:12px;color:#5a3e2b;padding:3px 0;border-bottom:1px solid rgba(0,0,0,.05);display:flex;gap:6px}
+.log-time{color:#999;font-size:11px;white-space:nowrap;flex-shrink:0}
+.log-msg{flex:1}
+
 /* Bathtub */
 .css-tub{width:80px;height:46px;position:relative}
 .tub-body{width:80px;height:32px;background:#e8e8e8;border-radius:6px 6px 28px 28px;position:absolute;bottom:0;border:3px solid #bbb}
@@ -372,6 +381,10 @@ h1{font-size:20px}
   </div>
 
   <div class="stats-bar" id="statsBar"></div>
+  <div class="log-panel" id="logPanel">
+    <div class="log-header"><span class="log-title">📋 活动日志</span><button class="log-clear" onclick="clearLog()">清空</button></div>
+    <div id="logList"></div>
+  </div>
   <div class="reset-area"><button class="reset-btn" onclick="resetGame()">🔄 重置游戏</button></div>
 </div>
 
@@ -664,7 +677,8 @@ function yardFeed(){
       else if(c.hatedFood.includes(fid)){h=10;c.happiness=cl(c.happiness-10,0,100)}
       const a=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,a);
     });
-    S.food--;S.totalInteractions++;setCD("yard","feed");updStages();save();renderYard();
+    S.food--;S.totalInteractions++;setCD("yard","feed");updStages();save();
+    const fn=FOODS.find(x=>x.id===fid);addLog(`🌾 你给院子里的小鸡们喂了${fn?fn.icon+fn.name:"食物"}`);renderYard();
   });
 }
 function yardPlay(){
@@ -676,13 +690,14 @@ function yardPlay(){
       if(c.favoriteGame===gid){p=30;hc=5}else if(c.hatedGame===gid){p=10;hc=15}
       const a=Math.min(p,100-c.happiness);c.happiness=cl(c.happiness+p,0,100);c.hunger=cl(c.hunger-hc,0,100);c.totalHappiness+=Math.max(0,a);
     });
-    S.totalInteractions++;setCD("yard","play");updStages();save();renderYard();
+    const gn=GAMES.find(x=>x.id===gid);S.totalInteractions++;setCD("yard","play");updStages();save();
+    addLog(`🎮 你带小鸡们玩了${gn?gn.icon+gn.name:"游戏"}`);renderYard();
   });
 }
 function yardDrink(){
   if(getCD("yard","drink")>0)return;
   S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping)c.thirst=cl(c.thirst+25,0,100)});
-  S.totalInteractions++;setCD("yard","drink");save();renderYard();
+  S.totalInteractions++;setCD("yard","drink");save();addLog("💧 你给院子里的小鸡们喝水了");renderYard();
 }
 function yardSleep(){
   if(getCD("yard","sleep")>0)return;
@@ -692,16 +707,16 @@ function yardSleep(){
     if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
     if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   });
-  S.totalInteractions++;setCD("yard","sleep");updStages();save();renderYard();
+  S.totalInteractions++;setCD("yard","sleep");updStages();save();addLog("💤 你让小鸡们都去休息了");renderYard();
 }
 function yardBath(){
   if(getCD("yard","bath")>0)return;
   S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100)}});
-  S.totalInteractions++;setCD("yard","bath");save();renderYard();
+  S.totalInteractions++;setCD("yard","bath");save();addLog("🛁 你给院子里的小鸡们洗澡了");renderYard();
 }
 function yardClean(){
   if(S.poops.length===0)return;
-  S.poops=[];S.totalInteractions++;save();renderYard();
+  S.poops=[];S.totalInteractions++;save();addLog("🧹 你把粑粑都清理干净了");renderYard();
 }
 
 // ===== CHICKEN MENU =====
@@ -852,6 +867,7 @@ function doRoomFeed(fid){
   c.hunger=cl(c.hunger+hA,0,100);c.happiness=cl(c.happiness+pA,0,100);
   c.totalHunger+=Math.max(0,ah);if(pA>0)c.totalHappiness+=Math.min(pA,100-c.happiness+pA);
   S.food--;S.totalInteractions++;setCD(roomId,"feed");updStages();save();
+  const fn2=FOODS.find(x=>x.id===fid);addLog(`🌾 你给${c.name}喂了${fn2?fn2.icon+fn2.name:"食物"}`);
   setRoomExpr(ex,"anim-eat");
   showReact(c.favoriteFood.includes(fid)?"好吃！😍":c.hatedFood.includes(fid)?"不喜欢…😣":"吃饱啦~😊");
   moveToFurniture("furBowl");
@@ -876,6 +892,7 @@ function doRoomPlay(gid){
   c.happiness=cl(c.happiness+pA,0,100);c.hunger=cl(c.hunger-hC,0,100);
   c.totalHappiness+=Math.max(0,ap);S.totalInteractions++;
   setCD(roomId,"play");updStages();save();
+  addLog(`🎮 你带${c.name}玩了${game?game.icon+game.name:"游戏"}`);
   setRoomExpr(ex,game?game.anim:"");
   showReact(c.favoriteGame===gid?"超好玩！🥰":c.hatedGame===gid?"不想玩…😕":"好开心~😊");
   const rc=document.getElementById("roomChicken");if(rc)rc.style.left="55%";
@@ -888,6 +905,7 @@ function doRoomDrink(){
   if(!c||c.sleeping||getCD(roomId,"drink")>0)return;
   c.thirst=cl(c.thirst+30,0,100);c.happiness=cl(c.happiness+5,0,100);
   S.totalInteractions++;setCD(roomId,"drink");save();
+  addLog(`💧 你给${c.name}喝水了`);
   setRoomExpr("happy","anim-drink");
   showReact("咕噜咕噜~ 💧");
   moveToFurniture("furWater");
@@ -901,6 +919,7 @@ function doRoomBath(){
   if(!c||c.sleeping||getCD(roomId,"bath")>0)return;
   c.clean=cl(c.clean+35,0,100);c.happiness=cl(c.happiness+10,0,100);
   S.totalInteractions++;setCD(roomId,"bath");save();
+  addLog(`🛁 你给${c.name}洗澡了`);
   setRoomExpr("love","anim-bath");
   showReact("洗香香~ 🛁✨");
   moveToFurniture("furTub");
@@ -915,6 +934,7 @@ function doSleep(){
   if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
   if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   c.sleeping=true;S.totalInteractions++;setCD(roomId,"sleep");updStages();save();
+  addLog(`💤 ${c.name}去睡觉了，晚安~`);
   setRoomExpr("sleep","anim-sleep");showReact("晚安~ 💤");
   moveToFurniture("furBed");
   const bd=document.getElementById("cssBed");if(bd)bd.classList.add("bed-sleeping");
@@ -928,6 +948,7 @@ function doWake(){
   const c=S.chickens[roomId];if(!c||!c.sleeping)return;
   c.sleeping=false;save();
   if(sTimers[roomId]){clearTimeout(sTimers[roomId]);delete sTimers[roomId]}
+  addLog(`⏰ 你把${c.name}叫起来了`);
   setRoomExpr("satisfied","anim-wake");showReact("伸个懒腰~ 😄");
   setTimeout(()=>renderRoom(),1600);
 }
@@ -951,6 +972,75 @@ function showReact(t){
   const el=document.getElementById("roomReact");if(!el)return;
   el.textContent=t;el.classList.remove("show");void el.offsetWidth;el.classList.add("show");
   setTimeout(()=>el.classList.remove("show"),2200);
+}
+
+// ===== ACTIVITY LOG =====
+let actLog=[];
+function addLog(msg){
+  const d=new Date(),pad=n=>String(n).padStart(2,'0');
+  const t=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  actLog.unshift({t,msg});
+  if(actLog.length>50)actLog.length=50;
+  renderLog();
+}
+function renderLog(){
+  const el=document.getElementById("logList");if(!el)return;
+  el.innerHTML=actLog.map(e=>`<div class="log-entry"><span class="log-time">${e.t}</span><span class="log-msg">${e.msg}</span></div>`).join("");
+}
+function clearLog(){actLog=[];renderLog()}
+
+// ===== AUTO ACTIVITY =====
+let autoTimer=null;
+function startAutoActivity(){
+  if(autoTimer)clearInterval(autoTimer);
+  autoTimer=setInterval(()=>{
+    S.chickens.forEach(c=>{
+      if(c.sleeping||c.location==="inside")return;
+      if(Math.random()>0.35)return; // 35% chance per chicken per tick
+      // Pick action based on needs
+      const needs=[];
+      if(c.hunger<60)needs.push("eat");
+      if(c.happiness<60)needs.push("play");
+      if(c.thirst<60)needs.push("drink");
+      if(c.clean<50)needs.push("bath");
+      if(c.hunger<25)needs.push("eat"); // extra weight if very hungry
+      if(c.thirst<25)needs.push("drink");
+      if(needs.length===0){
+        // Not needy, random idle action
+        const idle=pick(["wander","chat","nap"]);
+        if(idle==="wander")addLog(`🐥 ${c.name} 在院子里溜达~`);
+        else if(idle==="chat")addLog(`🐥 ${c.name} 叽叽喳喳地叫着`);
+        else addLog(`🐥 ${c.name} 打了个小盹儿`);
+        return;
+      }
+      const act=pick(needs);
+      if(act==="eat"&&S.food>0){
+        const f=pick(FOODS);
+        let h=20;
+        if(c.favoriteFood.includes(f.id)){h=30;c.happiness=cl(c.happiness+8,0,100);addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name}，好吃！😍`)}
+        else if(c.hatedFood.includes(f.id)){h=10;c.happiness=cl(c.happiness-5,0,100);addLog(`🌾 ${c.name} 尝了口${f.icon}${f.name}，不喜欢…😣`)}
+        else{addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name} 😊`)}
+        const ah=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,ah);
+        S.food--;
+      }else if(act==="play"){
+        const g=pick(GAMES);
+        let p=20,hc=10;
+        if(c.favoriteGame===g.id){p=30;hc=5;addLog(`🎮 ${c.name} 自己玩${g.icon}${g.name}，超开心！🥰`)}
+        else if(c.hatedGame===g.id){p=10;hc=15;addLog(`🎮 ${c.name} 试了下${g.icon}${g.name}，不太想玩 😕`)}
+        else{addLog(`🎮 ${c.name} 自己玩了${g.icon}${g.name} 😊`)}
+        const ap=Math.min(p,100-c.happiness);c.happiness=cl(c.happiness+p,0,100);c.hunger=cl(c.hunger-hc,0,100);c.totalHappiness+=Math.max(0,ap);
+      }else if(act==="drink"){
+        c.thirst=cl(c.thirst+20,0,100);
+        addLog(`💧 ${c.name} 自己跑去喝水了，咕噜咕噜~`);
+      }else if(act==="bath"){
+        c.clean=cl(c.clean+25,0,100);c.happiness=cl(c.happiness+5,0,100);
+        addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`);
+      }
+    });
+    updStages();save();
+    if(view==="yard")renderYard();
+    else if(view==="room")renderRoom();
+  },30000); // every 30 seconds
 }
 
 // ===== STATS =====
@@ -977,6 +1067,8 @@ function resetGame(){
   Object.values(wTimers).forEach(clearInterval);wTimers={};
   Object.values(sTimers).forEach(clearTimeout);sTimers={};
   if(rwTimer){clearInterval(rwTimer);rwTimer=null}
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null}
+  actLog=[];
   view="yard";roomId=-1;
   document.getElementById("yardView").classList.remove("hidden");
   document.getElementById("roomView").classList.remove("active");
@@ -985,7 +1077,8 @@ function resetGame(){
   const g=document.getElementById("yardGround");
   g.querySelectorAll(".grass").forEach(el=>el.remove());
   genGrass(g);
-  renderYard();renderStats();
+  startAutoActivity();
+  renderYard();renderStats();renderLog();
 }
 
 // ===== EVENTS =====
@@ -998,7 +1091,8 @@ load();
 genGrass(document.getElementById("yardGround"));
 initWeather();
 startPoopTimer();
-renderYard();renderStats();
+startAutoActivity();
+renderYard();renderStats();renderLog();
 setInterval(decay,60000);
 setInterval(()=>{
   if(view==="room")renderRoomBtns();
