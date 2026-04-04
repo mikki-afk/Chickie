@@ -2169,7 +2169,7 @@ async function markInstrDone(pageId){
     await fetch(NOTION_PROXY+"v1/pages/"+pageId,{
       method:"PATCH",
       headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
-      body:JSON.stringify({properties:{"已执行":{checkbox:true}}})
+      body:JSON.stringify({properties:{"已执行":{checkbox:true},"执行时间":{date:{start:torontoISO()}}}})
     });
   }catch(e){console.log("Mark instruction done error:",e)}
 }
