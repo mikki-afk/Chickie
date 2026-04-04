@@ -1210,6 +1210,22 @@ function execInstruction(cmd,pageId){
   if(!matched){m=cmd.match(/加食物(\d*)/);if(m){
     const amt=parseInt(m[1])||5;S.food=cl(S.food+amt,0,99);addLog(`📋 [指令] 加了${amt}份食物，现在${S.food}份`,"全部","食物");matched=true;
   }}
+  // 加水
+  if(!matched){m=cmd.match(/加水(\d*)/);if(m){
+    const amt=parseInt(m[1])||25;S.chickens.forEach(c=>{c.thirst=cl(c.thirst+amt,0,100)});addLog(`📋 [指令] 给所有小鸡补了水，水分+${amt}`,"全部","喝水");matched=true;
+  }}
+  // 放水盆（院子里放水盆，户外小鸡喝水）
+  if(!matched&&(cmd.includes("放水盆")||cmd.includes("摆水盆"))){
+    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+25,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水");matched=true;
+  }
+  // 放碗/放饭（院子里放食物碗，户外小鸡吃饭）
+  if(!matched&&(cmd.includes("放碗")||cmd.includes("放饭")||cmd.includes("摆碗")||cmd.includes("放食物"))){
+    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+20,0,100);S.food--;cnt++}});addLog(`📋 [指令] 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭");matched=true}
+  }
+  // 放玩具（院子里放玩具，户外小鸡玩耍）
+  if(!matched&&(cmd.includes("放玩具")||cmd.includes("摆玩具"))){
+    const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-5,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了${g.icon}${g.name}，${cnt}只小鸡跑来玩~`,"全部","玩耍");matched=true;
+  }
   // 叫出来（单个）
   if(!matched){m=cmd.match(/(?:叫|让)(.+?)出来/);if(m){
     const ci=names.indexOf(m[1]);
@@ -1245,7 +1261,7 @@ function execInstruction(cmd,pageId){
     let cnt=0;S.chickens.forEach(c=>{if(c.sleeping){c.sleeping=false;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡都被叫醒了`,"全部","睡觉");matched=true;
   }
   // 打扫房间
-  if(!matched&&(cmd.includes("打扫房间")||cmd.includes("打扫卫生")||cmd.includes("大扫除"))){
+  if(!matched&&(cmd.includes("打扫房间")||cmd.includes("打扫卫生")||cmd.includes("大扫除")||cmd.includes("收拾房间")||cmd.includes("搞卫生"))){
     S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});addLog(`📋 [指令] 大扫除！粑粑清了，小鸡们都干净了`,"全部","清粑粑");matched=true;
   }
   // 全部喂药
