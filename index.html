@@ -270,6 +270,37 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 /* Room floor */
 .room-floor{position:absolute;bottom:0;left:0;right:0;height:40px;border-radius:0 0 14px 14px}
 
+/* Heater */
+.css-heater{width:42px;height:52px;position:relative}
+.heater-body{width:32px;height:44px;background:linear-gradient(180deg,#e0e0e0,#bbb);border-radius:4px;position:absolute;bottom:0;left:5px;border:2px solid #999}
+.heater-lines{position:absolute;top:8px;left:10px;right:10px;height:28px}
+.heater-line{width:100%;height:2px;background:#999;border-radius:1px;margin-bottom:4px}
+.heater-feet{position:absolute;bottom:-3px;left:7px;right:7px;display:flex;justify-content:space-between}
+.heater-foot{width:6px;height:4px;background:#888;border-radius:0 0 2px 2px}
+/* Heater on glow */
+.heater-on .heater-body{background:linear-gradient(180deg,#ff8a65,#ef5350);border-color:#d32f2f;box-shadow:0 0 12px rgba(255,80,50,.4)}
+.heater-on .heater-line{background:#ff6b6b;box-shadow:0 0 4px rgba(255,80,50,.6)}
+.heater-on::after{content:"";position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:50px;height:20px;background:radial-gradient(ellipse,rgba(255,120,50,.15),transparent);pointer-events:none}
+@keyframes heatWave{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:.6;transform:translateY(-3px)}}
+.heater-on .heater-wave{opacity:1;animation:heatWave 1.5s ease-in-out infinite}
+.heater-wave{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:10px;opacity:0;pointer-events:none}
+
+/* Heat lamp */
+.css-lamp{width:36px;height:56px;position:relative}
+.lamp-pole{width:4px;height:36px;background:#888;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+.lamp-base{width:20px;height:4px;background:#777;border-radius:2px;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+.lamp-head{width:28px;height:16px;background:linear-gradient(180deg,#aaa,#888);border-radius:14px 14px 2px 2px;position:absolute;top:0;left:50%;transform:translateX(-50%);border:2px solid #777}
+.lamp-bulb{width:10px;height:6px;background:#ddd;border-radius:0 0 50% 50%;position:absolute;bottom:-2px;left:50%;transform:translateX(-50%)}
+/* Lamp on glow */
+.lamp-on .lamp-head{background:linear-gradient(180deg,#ffd54f,#ffb300);border-color:#f9a825}
+.lamp-on .lamp-bulb{background:#fff176;box-shadow:0 0 8px rgba(255,235,59,.8)}
+.lamp-on .lamp-cone{opacity:1}
+.lamp-cone{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:30px solid rgba(255,235,59,.12);pointer-events:none;opacity:0}
+
+/* Room warm overlay */
+.room-warm{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;border-radius:16px;transition:opacity .5s;opacity:0;z-index:0}
+.room-warm.active{opacity:1;background:radial-gradient(ellipse at center bottom,rgba(255,150,50,.06),transparent 70%)}
+
 /* Room bars */
 .room-bars{background:rgba(255,255,255,.6);border-radius:10px;padding:8px 12px;margin-bottom:10px}
 .room-bar-row{display:flex;align-items:center;gap:6px;margin:3px 0}
@@ -297,8 +328,21 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .btn-sleep{background:linear-gradient(135deg,#9370DB,#6c5ce7)}
 .btn-wake{background:linear-gradient(135deg,#FF8C00,#e67e22)}
 .btn-pet{background:linear-gradient(135deg,#fd79a8,#e84393)}
+.btn-heater{background:linear-gradient(135deg,#ff8a65,#ef5350)}
+.btn-lamp{background:linear-gradient(135deg,#ffd54f,#ffb300)}
 .btn-exit{background:linear-gradient(135deg,#95a5a6,#7f8c8d)}
 .cooldown-text{display:block;font-size:10px;font-weight:400;margin-top:1px}
+
+/* Room controls (heater/lamp sliders) */
+.room-controls{background:rgba(255,255,255,.6);border-radius:10px;padding:8px 14px;margin-top:8px;margin-bottom:8px}
+.rc-row{display:flex;align-items:center;gap:8px;margin:4px 0}
+.rc-label{font-size:12px;font-weight:600;color:#5a3e2b;min-width:90px;white-space:nowrap}
+.rc-slider{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;outline:none;cursor:pointer}
+.rc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.rc-heater{background:linear-gradient(90deg,#e0e0e0,#ff8a65,#ef5350)}
+.rc-heater::-webkit-slider-thumb{background:#ef5350}
+.rc-lamp{background:linear-gradient(90deg,#e0e0e0,#ffd54f,#ffb300)}
+.rc-lamp::-webkit-slider-thumb{background:#ffb300}
 
 /* Selection popup */
 .sel-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;justify-content:center;align-items:center}
@@ -493,6 +537,7 @@ h1{font-size:20px}
     <div class="room" id="roomScene"></div>
     <div class="room-bars" id="roomBars"></div>
     <div class="room-actions" id="roomActions"></div>
+    <div class="room-controls" id="roomControls"></div>
     <div class="no-food-msg" id="noFoodMsg">没有食物了🥺</div>
   </div>
 
@@ -648,7 +693,7 @@ function defState(){
   return{
     chickens:CDEFS.map((d,i)=>({
       id:i,name:d.name,hunger:50,happiness:50,thirst:50,clean:80,health:100,fatigue:0,
-      affManual:0,affNotion:0,
+      affManual:0,affNotion:0,heater:0,lamp:0,
       stage:"baby",totalHunger:0,totalHappiness:0,
       location:"outside",sleeping:false,...randPrefs()
     })),
@@ -695,7 +740,7 @@ function load(){
     const r=localStorage.getItem(SK);
     if(r){S=JSON.parse(r);
       // migrate
-      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;});
+      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;});
       if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
@@ -1013,10 +1058,19 @@ function renderRoom(){
         <div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div>
         <div class="fur-label">浴盆</div>
       </div>
+      <div class="furniture" id="furHeater">
+        <div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div>
+        <div class="fur-label">暖气</div>
+      </div>
+      <div class="furniture" id="furLamp">
+        <div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div>
+        <div class="fur-label">照灯</div>
+      </div>
       <div class="room-chicken-wrap" id="roomChicken" style="left:${cLeft}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
+      <div class="room-warm ${c.heater>0||c.lamp>0?"active":""}" id="roomWarm"></div>
       <div class="room-floor" style="background:${col[0]}30"></div>
     </div>
     <div class="toys-shelf">
@@ -1069,6 +1123,9 @@ function renderRoomBtns(){
   }
   h+=`<button class="action-btn btn-exit" onclick="exitRoom()">🚪 退出房间</button>`;
   document.getElementById("roomActions").innerHTML=h;
+  document.getElementById("roomControls").innerHTML=`
+    <div class="rc-row"><span class="rc-label">🔥 暖气 ${c.heater>0?c.heater+"级":"关"}</span><input type="range" min="0" max="5" value="${c.heater}" class="rc-slider rc-heater" oninput="setHeater(+this.value)"></div>
+    <div class="rc-row"><span class="rc-label">💡 照灯 ${c.lamp>0?c.lamp+"级":"关"}</span><input type="range" min="0" max="5" value="${c.lamp}" class="rc-slider rc-lamp" oninput="setLamp(+this.value)"></div>`;
   const nf=document.getElementById("noFoodMsg");
   if(nf){S.food<=0&&!c.sleeping?nf.classList.add("show"):nf.classList.remove("show")}
 }
@@ -1227,6 +1284,22 @@ function doRoomPet(pid){
   setTimeout(()=>renderRoom(),2200);
 }
 
+// ===== HEATER & LAMP =====
+function setHeater(val){
+  const c=S.chickens[roomId];if(!c)return;
+  const old=c.heater;c.heater=val;save();
+  if(old===0&&val>0)addLog(`🔥 给${c.name}的房间开了暖气 (${val}级)`,c.name,"状态",c);
+  else if(old>0&&val===0)addLog(`🔥 关了${c.name}房间的暖气`,c.name,"状态",c);
+  renderRoom();
+}
+function setLamp(val){
+  const c=S.chickens[roomId];if(!c)return;
+  const old=c.lamp;c.lamp=val;save();
+  if(old===0&&val>0)addLog(`💡 给${c.name}的房间开了照灯 (${val}级)`,c.name,"状态",c);
+  else if(old>0&&val===0)addLog(`💡 关了${c.name}房间的照灯`,c.name,"状态",c);
+  renderRoom();
+}
+
 // ===== ROOM HELPERS =====
 function setRoomExpr(ex,anim){
   const w=document.getElementById("roomChicken");if(!w)return;
@@ -1310,6 +1383,8 @@ async function flushNotion(){
     props["疲惫"]={number:item.stats.fatigue};
     if(item.stats.affManual!==undefined)props["亲密手动"]={number:item.stats.affManual};
     if(item.stats.affNotion!==undefined)props["亲密指令"]={number:item.stats.affNotion};
+    if(item.stats.heater!==undefined)props["暖气"]={number:item.stats.heater};
+    if(item.stats.lamp!==undefined)props["照灯"]={number:item.stats.lamp};
   }
   try{
     const r=await fetch(NOTION_PROXY+"v1/pages",{
@@ -1330,7 +1405,7 @@ function scheduleStateSync(){
 }
 async function syncStateToNotion(){
   if(!NOTION_TOKEN||!NOTION_DB)return;
-  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
+  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,heater:c.heater,lamp:c.lamp,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
   try{
     await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
       method:"PATCH",
@@ -1502,6 +1577,36 @@ function execInstruction(cmd,pageId){
       matched=true;
     }
   }}
+  // 暖气/照灯指令
+  if(!matched){m=cmd.match(/给(.+?)(?:开|调)暖气(\d*)/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){const c=S.chickens[ci];c.heater=cl(parseInt(m[2])||3,0,5);addLog(`📋 [指令] 给${c.name}的房间开了暖气 (${c.heater}级)`,c.name,"状态",c);matched=true}
+  }}
+  if(!matched){m=cmd.match(/给(.+?)关暖气/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){S.chickens[ci].heater=0;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的暖气`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}
+  }}
+  if(!matched){m=cmd.match(/给(.+?)(?:开|调)照灯(\d*)/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){const c=S.chickens[ci];c.lamp=cl(parseInt(m[2])||3,0,5);addLog(`📋 [指令] 给${c.name}的房间开了照灯 (${c.lamp}级)`,c.name,"状态",c);matched=true}
+  }}
+  if(!matched){m=cmd.match(/给(.+?)关照灯/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){S.chickens[ci].lamp=0;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的照灯`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}
+  }}
+  // 全部开暖气/照灯
+  if(!matched&&(cmd.includes("全部开暖气")||cmd.includes("都开暖气"))){
+    const lv=parseInt(cmd.match(/\d+/)?.[0])||3;S.chickens.forEach(c=>c.heater=cl(lv,0,5));addLog(`📋 [指令] 所有房间都开了暖气 (${lv}级)`,"全部","状态");matched=true;
+  }
+  if(!matched&&(cmd.includes("全部关暖气")||cmd.includes("都关暖气"))){
+    S.chickens.forEach(c=>c.heater=0);addLog(`📋 [指令] 所有房间暖气关了`,"全部","状态");matched=true;
+  }
+  if(!matched&&(cmd.includes("全部开照灯")||cmd.includes("都开照灯"))){
+    const lv=parseInt(cmd.match(/\d+/)?.[0])||3;S.chickens.forEach(c=>c.lamp=cl(lv,0,5));addLog(`📋 [指令] 所有房间都开了照灯 (${lv}级)`,"全部","状态");matched=true;
+  }
+  if(!matched&&(cmd.includes("全部关照灯")||cmd.includes("都关照灯"))){
+    S.chickens.forEach(c=>c.lamp=0);addLog(`📋 [指令] 所有房间照灯关了`,"全部","状态");matched=true;
+  }
   // 互动指令：给XX摸摸头/抱抱/亲亲/聊天/唱歌/挠痒痒/摸肚肚/梳毛毛/讲故事/跳舞
   if(!matched){
     const petMap={"摸摸头":"pat","摸头":"pat","抱抱":"hug","抱":"hug","亲亲":"kiss","亲":"kiss","聊天":"chat","说话":"chat","唱歌":"sing","挠痒痒":"tickle","挠痒":"tickle","摸肚肚":"belly","摸肚子":"belly","梳毛毛":"brush","梳毛":"brush","讲故事":"story","跳舞":"dance"};
@@ -1716,6 +1821,9 @@ function renderStats(){
 function decay(){
   S.chickens.forEach(c=>{
     if(!c.sleeping){c.hunger=cl(c.hunger-2,0,100);c.happiness=cl(c.happiness-1,0,100);c.thirst=cl(c.thirst-2,0,100);c.clean=cl(c.clean-1,0,100);c.fatigue=cl(c.fatigue+1,0,100);if(c.hunger<20||c.thirst<20||c.clean<20||c.fatigue>80)c.health=cl(c.health-2,0,100)}else{c.fatigue=cl(c.fatigue-3,0,100);c.health=cl(c.health+1,0,100)}
+    // Heater & lamp benefits (indoor only)
+    if(c.location==="inside"&&c.heater>0){c.health=cl(c.health+c.heater*0.4,0,100);c.happiness=cl(c.happiness+c.heater*0.2,0,100)}
+    if(c.location==="inside"&&c.lamp>0){c.health=cl(c.health+c.lamp*0.3,0,100);c.fatigue=cl(c.fatigue-c.lamp*0.3,0,100)}
   });
   // Auto food regen: +1 food every 2 minutes, max 30
   if(S.food<30){S.food++;if(S.food%5===0)addLog(`🌱 院子里长出了新食物，现在有${S.food}份`)}
