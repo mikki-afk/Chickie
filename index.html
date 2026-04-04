@@ -1073,14 +1073,12 @@ function save(){S.lastUpdateTime=new Date().toISOString();localStorage.setItem(S
 function offlineActivities(rounds){
   for(let r=0;r<rounds;r++){
     S.chickens.forEach(c=>{
-      if(c.sleeping||c.location==="inside")return;
-      if(Math.random()>0.5)return;
-      // Auto clean poop
-      if(S.poops.length>0&&Math.random()<0.3){
+      if(c.sleeping)return;
+      // Auto clean poop (low priority, doesn't block eating)
+      if(S.poops.length>0&&Math.random()<0.2){
         S.poops.splice(Math.floor(Math.random()*S.poops.length),1);
-        addLog(`🧹 ${c.name} 你不在时把粑粑踢走了`,c.name,"清粑粑",c);return;
       }
-      // Pick action by need
+      // Always try to eat/drink when hungry/thirsty (survival priority)
       if(c.hunger<50&&S.food>0){
         const f=pick(FOODS);let h=20;
         if(c.favoriteFood.includes(f.id)){h=30;c.happiness=cl(c.happiness+8,0,100)}
@@ -2553,17 +2551,20 @@ function startAutoActivity(){
   if(autoTimer)clearInterval(autoTimer);
   autoTimer=setInterval(()=>{
     S.chickens.forEach(c=>{
-      if(c.sleeping||c.location==="inside")return;
-      if(Math.random()>0.35)return; // 35% chance per chicken per tick
+      if(c.sleeping)return;
+      // Urgent needs always trigger (hunger/thirst < 30)
+      const urgent=c.hunger<30||c.thirst<30;
+      if(!urgent&&Math.random()>0.5)return; // 50% chance for non-urgent
       // Pick action based on needs
       const needs=[];
       if(c.hunger<60)needs.push("eat");
       if(c.happiness<60)needs.push("play");
       if(c.thirst<60)needs.push("drink");
       if(c.clean<50)needs.push("bath");
-      if(c.hunger<25)needs.push("eat"); // extra weight if very hungry
-      if(c.thirst<25)needs.push("drink");
+      if(c.hunger<30)needs.push("eat","eat"); // triple weight if very hungry
+      if(c.thirst<30)needs.push("drink","drink");
       if(needs.length===0){
+        if(c.location==="inside")return; // Indoor chickens rest quietly
         // Not needy - maybe clean poop or idle
         if(S.poops.length>0&&Math.random()<0.4){
           S.poops.splice(Math.floor(Math.random()*S.poops.length),1);
