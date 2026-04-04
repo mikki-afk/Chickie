@@ -392,7 +392,9 @@ h1{font-size:20px}
   <div id="notionSetup" style="display:none;background:rgba(255,255,255,.85);border-radius:12px;padding:12px;margin-bottom:10px;font-size:12px">
     <div style="font-weight:700;color:#5a3e2b;margin-bottom:6px">📝 Notion 日志同步设置</div>
     <input id="nToken" type="password" placeholder="Notion Integration Token" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:4px;font-size:12px">
-    <input id="nDb" placeholder="Database ID" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:6px;font-size:12px">
+    <input id="nDb" placeholder="Database ID" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:4px;font-size:12px">
+    <input id="nProxy" placeholder="CORS代理地址" value="https://corsproxy.io/?url=" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;margin-bottom:6px;font-size:12px">
+    <div style="font-size:10px;color:#999;margin-bottom:6px">默认用 corsproxy.io，也可以换自己的代理</div>
     <div style="display:flex;gap:6px;justify-content:center">
       <button onclick="saveNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#4682B4;color:#fff;cursor:pointer;font-size:12px">保存</button>
       <button onclick="clearNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#ddd;cursor:pointer;font-size:12px">清除</button>
@@ -1006,10 +1008,22 @@ function clearLog(){actLog=[];renderLog()}
 // ===== NOTION SYNC =====
 let NOTION_TOKEN=localStorage.getItem("chickie_notion_token")||"";
 let NOTION_DB=localStorage.getItem("chickie_notion_db")||"";
+let NOTION_PROXY=localStorage.getItem("chickie_notion_proxy")||"https://corsproxy.io/?url=";
 let notionQueue=[];let notionSending=false;
-function toggleNotion(){const el=document.getElementById("notionSetup");el.style.display=el.style.display==="none"?"block":"none";if(el.style.display==="block"){document.getElementById("nToken").value=NOTION_TOKEN;document.getElementById("nDb").value=NOTION_DB;document.getElementById("notionStatus").textContent=NOTION_TOKEN?"✅ 已配置":"未配置"}}
-function saveNotion(){NOTION_TOKEN=document.getElementById("nToken").value.trim();NOTION_DB=document.getElementById("nDb").value.trim();localStorage.setItem("chickie_notion_token",NOTION_TOKEN);localStorage.setItem("chickie_notion_db",NOTION_DB);document.getElementById("notionStatus").textContent="✅ 已保存！"}
+function toggleNotion(){const el=document.getElementById("notionSetup");el.style.display=el.style.display==="none"?"block":"none";if(el.style.display==="block"){document.getElementById("nToken").value=NOTION_TOKEN;document.getElementById("nDb").value=NOTION_DB;document.getElementById("nProxy").value=NOTION_PROXY;document.getElementById("notionStatus").textContent=NOTION_TOKEN?"✅ 已配置":"未配置"}}
+function saveNotion(){NOTION_TOKEN=document.getElementById("nToken").value.trim();NOTION_DB=document.getElementById("nDb").value.trim();NOTION_PROXY=document.getElementById("nProxy").value.trim();localStorage.setItem("chickie_notion_token",NOTION_TOKEN);localStorage.setItem("chickie_notion_db",NOTION_DB);localStorage.setItem("chickie_notion_proxy",NOTION_PROXY);document.getElementById("notionStatus").textContent="✅ 已保存！";testNotion()}
 function clearNotion(){NOTION_TOKEN="";NOTION_DB="";localStorage.removeItem("chickie_notion_token");localStorage.removeItem("chickie_notion_db");document.getElementById("nToken").value="";document.getElementById("nDb").value="";document.getElementById("notionStatus").textContent="已清除"}
+async function testNotion(){
+  if(!NOTION_TOKEN||!NOTION_DB)return;
+  const st=document.getElementById("notionStatus");st.textContent="🔄 测试连接中…";
+  try{
+    const r=await fetch(NOTION_PROXY+encodeURIComponent("https://api.notion.com/v1/databases/"+NOTION_DB),{
+      headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28"}
+    });
+    if(r.ok)st.textContent="✅ 连接成功！";
+    else st.textContent="❌ 连接失败: "+r.status;
+  }catch(e){st.textContent="❌ 代理错误: "+e.message}
+}
 function notionLog(chicken,type,detail,stats){
   if(!NOTION_TOKEN||!NOTION_DB)return;
   notionQueue.push({chicken,type,detail,stats});
@@ -1033,11 +1047,12 @@ async function flushNotion(){
     props["清洁"]={number:item.stats.clean};
   }
   try{
-    await fetch("https://api.notion.com/v1/pages",{
+    const r=await fetch(NOTION_PROXY+encodeURIComponent("https://api.notion.com/v1/pages"),{
       method:"POST",
       headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
       body:JSON.stringify({parent:{database_id:NOTION_DB},properties:props})
     });
+    if(!r.ok)console.log("Notion error:",r.status);
   }catch(e){console.log("Notion sync error:",e)}
   setTimeout(flushNotion,300);
 }
