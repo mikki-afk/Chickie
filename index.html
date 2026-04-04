@@ -155,11 +155,13 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .sky{position:relative;height:120px;background:linear-gradient(180deg,#5ba3d9 0%,#87CEEB 100%);overflow:hidden;transition:background .5s}
 .sky.cloudy{background:linear-gradient(180deg,#8899aa 0%,#a0b4c8 100%)}
 .sky.rainy{background:linear-gradient(180deg,#607080 0%,#8090a0 100%)}
+.sky.snowy{background:linear-gradient(180deg,#b0b8c8 0%,#c8d0e0 100%)}
 
 /* Sun */
 .sun{position:absolute;top:14px;right:30px;width:40px;height:40px;background:#FFE033;border-radius:50%;box-shadow:0 0 20px 8px rgba(255,224,51,.5),0 0 40px 15px rgba(255,200,0,.2);transition:opacity .5s}
 .sky.cloudy .sun{opacity:.3;box-shadow:none}
 .sky.rainy .sun{opacity:0}
+.sky.snowy .sun{opacity:.15;box-shadow:none}
 
 /* Clouds - CSS drawn */
 .cloud-wrap{position:absolute;pointer-events:none}
@@ -169,11 +171,15 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .cw3{top:10px;left:75%;animation:drift 10s ease-in-out infinite}
 .sky.cloudy .cloud-shape{background:#d0d8e0}
 .sky.rainy .cloud-shape{background:#8090a0}
+.sky.snowy .cloud-shape{background:#c0c8d8}
 @keyframes drift{0%,100%{transform:translateX(0)}50%{transform:translateX(20px)}}
 
 /* Rain */
 .rain{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .5s}
 .sky.rainy .rain{opacity:1}
+.sky.snowy .rain{opacity:1}
+.snowflake{position:absolute;color:#fff;font-size:10px;animation:snowFall linear infinite;opacity:.8}
+@keyframes snowFall{0%{transform:translateY(-20px) rotate(0deg)}100%{transform:translateY(130px) rotate(360deg)}}
 .raindrop{position:absolute;width:2px;background:linear-gradient(transparent,#a0c0ff);border-radius:0 0 2px 2px;animation:fall linear infinite}
 @keyframes fall{0%{transform:translateY(-20px)}100%{transform:translateY(130px)}}
 
@@ -447,7 +453,7 @@ h1{font-size:20px}
     <div class="yard">
       <!-- Sky -->
       <div class="sky" id="sky">
-        <div class="weather-badge" id="weatherBadge">☀️ 晴天</div>
+        <div class="weather-badge" id="weatherBadge">☀️ 晴天 --°C</div>
         <div class="sun"></div>
         <div class="cloud-wrap cw1"><div class="cloud-shape" style="width:40px;height:16px;top:0;left:0"></div><div class="cloud-shape" style="width:24px;height:12px;top:-6px;left:10px"></div><div class="cloud-shape" style="width:20px;height:10px;top:-4px;left:24px"></div></div>
         <div class="cloud-wrap cw2"><div class="cloud-shape" style="width:32px;height:14px;top:0;left:0"></div><div class="cloud-shape" style="width:20px;height:10px;top:-5px;left:8px"></div></div>
@@ -559,7 +565,8 @@ const PETS=[
   {id:"story",icon:"📖",name:"讲故事",react:"听得入迷了~",expr:"happy",anim:""},
   {id:"dance",icon:"💃",name:"跳舞",react:"跟着你一起跳！",expr:"adore",anim:"anim-chase"}
 ];
-const WEATHERS=["sunny","cloudy","rainy"];
+const WEATHERS=["sunny","cloudy","rainy","snowy"];
+let weatherTemp=null;
 
 let S=null,view="yard",roomId=-1,cds={},menuTgt=-1,wTimers={},rwTimer=null,sTimers={},weather="sunny",poopTimer=null;
 
@@ -717,29 +724,54 @@ function updStages(){
   });
 }
 
-// ===== WEATHER =====
+// ===== WEATHER (Real-time Toronto) =====
+async function fetchTorontoWeather(){
+  try{
+    const r=await fetch("https://api.open-meteo.com/v1/forecast?latitude=43.6532&longitude=-79.3832&current=temperature_2m,weather_code&timezone=America/Toronto");
+    if(!r.ok)return;
+    const d=await r.json();
+    const code=d.current.weather_code;
+    weatherTemp=Math.round(d.current.temperature_2m);
+    // WMO weather codes: 0-1 sunny, 2-3 cloudy, 51-67 rain/drizzle, 71-77 snow, 80-82 rain showers, 85-86 snow showers, 95-99 thunderstorm
+    if(code<=1)weather="sunny";
+    else if(code<=3)weather="cloudy";
+    else if((code>=51&&code<=67)||(code>=80&&code<=82)||code>=95)weather="rainy";
+    else if((code>=71&&code<=77)||(code>=85&&code<=86))weather="snowy";
+    else weather="cloudy";
+    applyWeather();
+  }catch(e){console.log("Weather fetch error:",e)}
+}
 function initWeather(){
-  weather=pick(WEATHERS);
-  applyWeather();
-  setInterval(()=>{weather=pick(WEATHERS);applyWeather()},180000); // change every 3 min
+  fetchTorontoWeather();
+  setInterval(fetchTorontoWeather,600000); // refresh every 10 min
 }
 function applyWeather(){
   const sky=document.getElementById("sky");
   sky.className="sky "+weather;
   const badge=document.getElementById("weatherBadge");
-  if(weather==="sunny")badge.textContent="☀️ 晴天";
-  else if(weather==="cloudy")badge.textContent="⛅ 多云";
-  else badge.textContent="🌧️ 下雨";
-  // Generate raindrops
+  const tempStr=weatherTemp!==null?` ${weatherTemp}°C`:"";
+  if(weather==="sunny")badge.textContent="☀️ 晴天"+tempStr;
+  else if(weather==="cloudy")badge.textContent="⛅ 多云"+tempStr;
+  else if(weather==="snowy")badge.textContent="🌨️ 下雪"+tempStr;
+  else badge.textContent="🌧️ 下雨"+tempStr;
+  // Generate raindrops or snowflakes
   const rain=document.getElementById("rain");
-  if(weather==="rainy"&&rain.children.length===0){
+  if(weather==="rainy"&&!rain.querySelector(".raindrop")){
     let h="";
     for(let i=0;i<30;i++){
       const l=Math.random()*100,d=Math.random()*2+0.5,del=Math.random()*2,ht=Math.random()*12+6;
       h+=`<div class="raindrop" style="left:${l}%;height:${ht}px;animation-duration:${d}s;animation-delay:${del}s"></div>`;
     }
     rain.innerHTML=h;
-  }else if(weather!=="rainy"){rain.innerHTML="";}
+  }else if(weather==="snowy"&&!rain.querySelector(".snowflake")){
+    let h="";
+    const flakes=["❄","❅","❆","*"];
+    for(let i=0;i<25;i++){
+      const l=Math.random()*100,d=Math.random()*4+3,del=Math.random()*3,sz=8+Math.random()*6;
+      h+=`<div class="snowflake" style="left:${l}%;font-size:${sz}px;animation-duration:${d}s;animation-delay:${del}s">${pick(flakes)}</div>`;
+    }
+    rain.innerHTML=h;
+  }else if(weather!=="rainy"&&weather!=="snowy"){rain.innerHTML="";}
 }
 
 // ===== GRASS =====
@@ -1267,7 +1299,8 @@ async function flushNotion(){
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
-  props["天气"]={select:{name:weather==="sunny"?"晴天":weather==="cloudy"?"多云":"下雨"}};
+  props["天气"]={select:{name:weather==="sunny"?"晴天":weather==="cloudy"?"多云":weather==="snowy"?"下雪":"下雨"}};
+  if(weatherTemp!==null)props["温度"]={number:weatherTemp};
   if(item.stats){
     props["饱食"]={number:item.stats.hunger};
     props["快乐"]={number:item.stats.happiness};
