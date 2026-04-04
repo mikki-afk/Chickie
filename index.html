@@ -113,6 +113,56 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .expr-angry .chick-body{animation:angryShake .3s ease infinite}
 @keyframes angryShake{0%,100%{transform:translateX(-50%)}33%{transform:translateX(calc(-50% + 2px))}66%{transform:translateX(calc(-50% - 2px))}}
 
+/* In love - heart eyes, floating, pink glow */
+.expr-inlove .chick-eye{background:#e84393;width:5px;height:5px;border-radius:50%}
+.expr-inlove .chick-blush{opacity:1;background:rgba(255,80,130,.6)}
+.expr-inlove .chick-hearts{opacity:1;animation:heartF 1.2s ease infinite}
+.expr-inlove .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+.expr-inlove .chick-body{box-shadow:0 0 8px rgba(255,105,180,.3)}
+
+/* Flirty - wink, smirk, one eye closed */
+.expr-flirty .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px}
+.expr-flirty .chick-eye:last-child{width:4px;height:4px;border-radius:50%}
+.expr-flirty .chick-blush{opacity:.8;background:rgba(255,100,120,.5)}
+.expr-flirty .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+
+/* Sick - pale, droopy, cross eyes */
+.expr-sick .chick-eye{width:4px;height:4px;border-radius:50%;opacity:.6}
+.expr-sick .chick-blush{opacity:.3;background:rgba(100,200,100,.3)}
+.expr-sick .chick-sweat{opacity:1}
+.expr-sick .chick-body{opacity:.8}
+
+/* Cold - shivering, blue tint */
+.expr-cold .chick-eye{height:2px;border-radius:1px;margin-top:2px}
+.expr-cold .chick-body{animation:shiver .2s ease infinite}
+.expr-cold .chick-blush{opacity:.6;background:rgba(100,150,255,.4)}
+.expr-cold .chick-sweat{opacity:.7}
+
+/* Warm - cozy closed eyes, rosy cheeks */
+.expr-warm .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}
+.expr-warm .chick-blush{opacity:.9;background:rgba(255,120,80,.5)}
+.expr-warm .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+
+/* Giggle - squinty happy eyes, open beak */
+.expr-giggle .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}
+.expr-giggle .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
+.expr-giggle .chick-blush{opacity:.7}
+.expr-giggle .chick-body{animation:giggleShake .3s ease 3}
+@keyframes giggleShake{0%,100%{transform:translateX(-50%)}50%{transform:translateX(calc(-50% + 1px))}}
+
+/* Clingy - big round eyes, reaching out */
+.expr-clingy .chick-eye{width:6px;height:6px;border-radius:50%}
+.expr-clingy .chick-blush{opacity:.8;background:rgba(255,100,100,.5)}
+.expr-clingy .chick-tear.L{opacity:.3;animation:tearD 2s ease-in infinite}
+.expr-clingy .chick-wing.L{transform:rotate(35deg)!important}
+
+/* Energetic - star eyes, jumping */
+.expr-energetic .chick-eye{width:5px;height:5px;border-radius:0;transform:rotate(45deg);background:#FFD700}
+.expr-energetic .chick-blush{opacity:.6}
+.expr-energetic .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
+.expr-energetic .chick-body{animation:energeticBounce .4s ease infinite}
+@keyframes energeticBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+
 /* Stage extras (hidden by default) */
 .chick-comb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:3;opacity:0;pointer-events:none}
 .chick-wattle{position:absolute;top:17px;left:50%;transform:translateX(-50%);width:4px;height:5px;background:#e74c3c;border-radius:0 0 50% 50%;z-index:5;opacity:0}
@@ -916,9 +966,20 @@ function chickHTML(id,expr,sz,ex){
 }
 
 // ===== EXPRESSIONS =====
+function isInCouple(cid){
+  if(!S.couples)return false;
+  for(const ck of Object.keys(S.couples)){const ids=ck.split(":").map(Number);if(ids.includes(cid))return true}
+  return false;
+}
+function isCourting(cid){
+  if(!S.courtship)return false;
+  for(const k of Object.keys(S.courtship)){if(k.includes(cid+":")||k.includes(":"+cid))return true}
+  return false;
+}
 function getExpr(c){
   if(c.sleeping)return"sleep";
   if(c.health<15)return"cry";
+  if(c.health<30)return"sick";
   if(c.fatigue>90)return"sleepy";
   if(c.fatigue>75)return"meh";
   if(c.hunger<15&&c.happiness<15)return"cry";
@@ -930,14 +991,22 @@ function getExpr(c){
   if(c.thirst<25)return"meh";
   if(c.clean<15)return"dirty";
   if(c.clean<25)return"meh";
-  if(c.health<35)return"scared";
   if(weatherThunder&&c.fearsThunder)return"scared";
+  if(weather==="snowy"&&c.location==="outside"&&!c.sleeping)return"cold";
+  if(c.location==="inside"&&c.heater>=3)return"warm";
+  // Romance expressions
+  if(isInCouple(c.id)&&c.happiness>=70)return"inlove";
+  if(isCourting(c.id)&&c.happiness>=50)return"flirty";
+  // Positive states
+  if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80&&c.fatigue<20)return"energetic";
   if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80)return"proud";
   if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"adore";
   if(c.hunger>=70&&c.happiness>=70)return"satisfied";
   if(c.happiness>=80)return"excited";
   if(c.happiness>=60)return"happy";
+  if(c.happiness>=50)return"giggle";
   if(c.happiness>=40)return"curious";
+  if(c.stage==="baby"&&c.happiness>=30)return"clingy";
   return"normal";
 }
 function getStatus(c){
@@ -1698,8 +1767,8 @@ async function flushNotion(){
   // Add expression emoji
   if(item.stats){
     const ex=getExpr(item.stats);
-    const exEmoji={sleep:"😴",cry:"😭",sad:"😢",upset:"😤",meh:"😑",satisfied:"😌",happy:"😊",love:"😍",adore:"🥰",normal:"🐥",hungry:"🤤",thirsty:"🥵",dirty:"🫣",excited:"🤩",scared:"😨",curious:"🧐",proud:"😎",sleepy:"🥱",angry:"😡"};
-    const exName={sleep:"睡觉",cry:"大哭",sad:"难过",upset:"不爽",meh:"无聊",satisfied:"满足",happy:"开心",love:"喜欢",adore:"超爱",normal:"普通",hungry:"好饿",thirsty:"好渴",dirty:"脏脏",excited:"兴奋",scared:"害怕",curious:"好奇",proud:"得意",sleepy:"犯困",angry:"生气"};
+    const exEmoji={sleep:"😴",cry:"😭",sad:"😢",upset:"😤",meh:"😑",satisfied:"😌",happy:"😊",love:"😍",adore:"🥰",normal:"🐥",hungry:"🤤",thirsty:"🥵",dirty:"🫣",excited:"🤩",scared:"😨",curious:"🧐",proud:"😎",sleepy:"🥱",angry:"😡",inlove:"💘",flirty:"😏",sick:"🤧",cold:"🥶",warm:"🤗",giggle:"🤭",clingy:"🥺",energetic:"💪"};
+    const exName={sleep:"睡觉",cry:"大哭",sad:"难过",upset:"不爽",meh:"无聊",satisfied:"满足",happy:"开心",love:"喜欢",adore:"超爱",normal:"普通",hungry:"好饿",thirsty:"好渴",dirty:"脏脏",excited:"兴奋",scared:"害怕",curious:"好奇",proud:"得意",sleepy:"犯困",angry:"生气",inlove:"恋爱中",flirty:"心动",sick:"生病",cold:"好冷",warm:"暖暖",giggle:"偷笑",clingy:"撒娇",energetic:"精力充沛"};
     props["表情"]={select:{name:(exEmoji[ex]||"🐥")+" "+(exName[ex]||"普通")}};
   }
   if(weatherTemp!==null)props["温度"]={number:weatherTemp};
