@@ -809,7 +809,11 @@ function updStages(){
     else if(t>=2400)c.stage="mature";
     else if(t>=1000)c.stage="teen";
     else c.stage="baby";
-    if(oldStage!==c.stage)addLog(`🌟 ${c.name}成长为${stgN(c.stage)}��！`,c.name,"状态",c);
+    if(oldStage!==c.stage){
+      const msgs={teen:`${c.name}开始长大了，进入成长期！羽毛变得更漂亮了~`,mature:`${c.name}越来越成熟了！长出了小鸡冠，好威风~`,adult:`${c.name}终于长大成年了！变成了一只漂亮的大鸡！`,elder:`${c.name}步入了老年，戴上了小眼镜，变得更有智慧了~`};
+      const icons={teen:"🌱",mature:"🌿",adult:"🌟",elder:"👴"};
+      addLog(`${icons[c.stage]||"🌟"} [成长] ${msgs[c.stage]||c.name+"成长了！"}`,c.name,"状态",c);
+    }
   });
 }
 
