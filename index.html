@@ -1477,6 +1477,19 @@ async function flushNotion(){
     if(item.stats.curtain!==undefined)props["窗帘"]={checkbox:item.stats.curtain};
     if(item.stats.stage!==undefined)props["阶段"]={select:{name:stgN(item.stats.stage)}};
     if(item.stats.totalHunger!==undefined&&item.stats.totalHappiness!==undefined)props["成长进度"]={number:gPct(item.stats)};
+    // Buddy affinity summary
+    if(item.stats.id!==undefined&&S.buddyAff){
+      const parts=[];
+      S.chickens.forEach(c2=>{
+        if(c2.id===item.stats.id)return;
+        const v=getBuddyAff(item.stats.id,c2.id);
+        if(v>0){
+          const bl=BUDDY_LEVELS.slice().reverse().find(l=>v>=l.threshold);
+          parts.push(`${c2.name}:${v}${bl?"("+bl.level+")":""}`);
+        }
+      });
+      if(parts.length)props["好友"]={rich_text:[{text:{content:parts.join(" | ")}}]};
+    }
   }
   try{
     const r=await fetch(NOTION_PROXY+"v1/pages",{
