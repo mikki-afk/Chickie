@@ -1713,7 +1713,7 @@ async function flushNotion(){
         const v=getBuddyAff(item.stats.id,c2.id);
         if(v>0){
           const bl=BUDDY_LEVELS.slice().reverse().find(l=>v>=l.threshold);
-          const bE={"认识":"👋","玩伴":"🎮","好朋友":"🤝","闺蜜/铁哥们":"💕","灵魂伴侣":"💖"};
+          const bE={"认识":"👋","玩伴":"🎮","好朋友":"🤝","闺蜜/铁哥们":"💕","伴侣":"💑","灵魂伴侣":"💖"};
           parts.push(`${bl?bE[bl.level]||"":""}${c2.name}:${v}${bl?"("+bl.level+")":""}`);
         }
       });
@@ -2143,6 +2143,7 @@ const BUDDY_LEVELS=[
   {threshold:15,level:"玩伴",msgs:["{a}和{b}开始经常一起玩了！","{a}一看到{b}就开心地跑过去"]},
   {threshold:30,level:"好朋友",msgs:["{a}和{b}成了好朋友！走哪都要一起","{a}和{b}开始互相梳毛了，好亲密~"]},
   {threshold:50,level:"闺蜜/铁哥们",msgs:["{a}和{b}形影不离！","{a}把最好吃的留给{b}，真友情！"]},
+  {threshold:65,level:"伴侣",msgs:["{a}和{b}已经密不可分了","{a}和{b}互相依靠，谁也离不开谁"]},
   {threshold:80,level:"灵魂伴侣",msgs:["{a}和{b}已经心有灵犀了！","{a}和{b}连睡觉都要挨着~"]}
 ];
 function checkBuddyMilestone(id1,id2,aff){
@@ -2159,27 +2160,49 @@ function checkBuddyMilestone(id1,id2,aff){
   }
 }
 // ===== ROMANCE SYSTEM =====
-const COURT_STAGES=[
-  {aff:35,id:"notice",msgs:[
-    "{a}偷偷看了{b}好几眼…","{a}经过{b}身边时走路都不自然了",
-    "{a}好像对{b}有点在意？","{b}发现{a}老是盯着自己看"
-  ]},
-  {aff:42,id:"shy",msgs:[
-    "{a}给{b}留了最好的虫子，然后假装若无其事","{a}和{b}对视了一下，两只都赶紧看别的地方",
-    "{b}靠近{a}时，{a}的鸡冠变红了","其他小鸡开始起哄了~"
-  ]},
-  {aff:50,id:"court",msgs:[
-    "{a}对着{b}跳起了求偶舞！扑棱着翅膀转圈圈~","{a}叼了一朵小花送给{b}，{b}害羞地接过来了",
-    "{a}用最好听的声音对{b}唱歌，{b}听得入迷了","{a}把自己梳得漂漂亮亮的，在{b}面前走来走去"
-  ]},
-  {aff:55,id:"accept",msgs:[
-    "{b}终于回应了{a}的心意！它们在月光下并肩站着~","{b}轻轻蹭了蹭{a}，{a}幸福得原地跳了起来",
-    "{a}和{b}互相啄了一下对方的脸，好甜！","全场小鸡都在鼓掌！👏"
-  ]},
-  {aff:60,id:"couple",msgs:[
-    "{a}和{b}正式在一起了！💘","{a}和{b}决定从今以后都要在一起~"
-  ]}
+const COURT_THRESHOLDS=[
+  {aff:35,id:"notice",emoji:"👀",hp:0,toast:false},
+  {aff:42,id:"shy",emoji:"😳",hp:5,toast:false},
+  {aff:50,id:"court",emoji:"💃",hp:10,toast:true,toastType:"求偶"},
+  {aff:55,id:"accept",emoji:"💕",hp:15,toast:true,toastType:"心意相通"},
+  {aff:60,id:"couple",emoji:"💘",hp:20,toast:true,toastType:"恋爱"}
 ];
+function genCourtMsg(stage,a,b){
+  const look=()=>pick(["偷偷看","悄悄瞄","忍不住多看","目不转睛地盯着","眼神一直跟着"]);
+  const gift=()=>pick(["最大的虫子","一颗亮晶晶的小石头","一朵小花","最甜的草莓","自己舍不得吃的好东西"]);
+  const react=()=>pick(["鸡冠都红了","心跳加速了","假装没看到但嘴角上扬","害羞地把头埋进翅膀","开心得翅膀都在抖"]);
+  const others=()=>pick(["其他小鸡在旁边偷看","全场都在起哄","旁边的鸡交头接耳","大家都看出来了","空气突然安静了"]);
+  const dance=()=>pick(["跳起了求偶舞，扑棱翅膀转圈圈","用最帅的姿势在面前走来走去","对着唱了一首自创情歌","把自己梳得漂漂亮亮展示羽毛","昂首挺胸迈着正步走过来"]);
+  const respond=()=>pick(["终于回应了！轻轻蹭了蹭","害羞地靠过来了","也偷偷送了一颗虫子回礼","碰了一下翅膀作为回答","小声叫了一声，好像在说我也是"]);
+  const scene=()=>pick(["在月光下","在夕阳里","在星空下","在花丛旁","在大树底下"]);
+  switch(stage){
+    case"notice":return pick([
+      `${a}${look()}${b}好几眼…`,`${a}经过${b}身边时${pick(["走路都不自然了","突然变得特别注意形象","不自觉地挺直了身子"])}`,
+      `${b}发现${a}老是${look()}自己`,`${a}${pick(["心不在焉地","发呆地","出神地"])}看着${b}的方向`,
+      `${a}一听到${b}的声音就${pick(["竖起耳朵","特别精神","立马看过去"])}`
+    ]);
+    case"shy":return pick([
+      `${a}给${b}留了${gift()}，然后假装若无其事`,`${a}和${b}对视了一下，两只都${pick(["赶紧看别处","假装在看天","不自然地低下头"])}`,
+      `${b}靠近${a}时，${a}${react()}`,`${others()}…${a}和${b}之间的气氛${pick(["微妙了起来","变得不一样了","让人忍不住想嗑"])}`,
+      `${a}${pick(["鼓起勇气想和"+b+"说话","想靠近"+b+"又退回来了","在"+b+"旁边坐下又紧张地站起来"])}`,
+      `${a}和${b}${pick(["翅膀不小心碰到了","不约而同看了对方","同时开口说话又同时停下来"])}，两只都${react()}`
+    ]);
+    case"court":return pick([
+      `${a}对着${b}${dance()}！`,`${a}叼了${gift()}送给${b}，${b}${react()}`,
+      `${a}${scene()}对${b}${pick(["唱起了歌","跳起了舞","展示自己最漂亮的羽毛"])}，${b}${pick(["看得入迷了","感动得不行","眼里都是星星"])}`,
+      `${a}${pick(["每天都把自己打扮得漂漂亮亮","开始疯狂锻炼想变帅","把窝收拾得特别干净"])}，${others()}`
+    ]);
+    case"accept":return pick([
+      `${b}${respond()}，${a}${pick(["幸福得原地跳了起来","开心得转了三圈","激动得叫了好久"])}！`,
+      `${a}和${b}${scene()}${pick(["并肩站着","头靠着头","互相啄了一下脸"])}，${pick(["好甜！","全场鼓掌！","空气中都是粉红泡泡"])}`,
+      `${b}终于${pick(["靠在了"+a+"身边","把头埋进"+a+"的羽毛里","握住了"+a+"的翅膀"])}，${a}${pick(["幸福地闭上了眼","感动得说不出话","轻轻地蹭了蹭"+b])}`
+    ]);
+    case"couple":return pick([
+      `${a}和${b}${scene()}正式在一起了！`,`${a}和${b}决定从今以后都要在一起~`,
+      `${a}和${b}${pick(["交换了羽毛作为信物","在所有小鸡面前宣布了","互相用翅膀环抱了对方"])}，它们是一对了！`
+    ]);
+  }
+}
 function checkRomance(id1,id2){
   const c1=S.chickens[id1],c2=S.chickens[id2];
   if(!c1||!c2)return;
@@ -2189,36 +2212,24 @@ function checkRomance(id1,id2){
   if(!S.couples)S.couples={};
   if(!S.courtship)S.courtship={};
   const ck=buddyKey(id1,id2);
-  if(S.couples[ck])return; // Already a couple
-  // Check courtship stages
-  for(const stage of COURT_STAGES){
-    const sk=ck+"_"+stage.id;
-    if(aff>=stage.aff&&!S.courtship[sk]){
+  if(S.couples[ck])return;
+  for(const st of COURT_THRESHOLDS){
+    const sk=ck+"_"+st.id;
+    if(aff>=st.aff&&!S.courtship[sk]){
       S.courtship[sk]=true;
-      const msg=pick(stage.msgs).replace(/\{a\}/g,c1.name).replace(/\{b\}/g,c2.name);
-      if(stage.id==="couple"){
-        // Final stage: become a couple!
+      const msg=genCourtMsg(st.id,c1.name,c2.name);
+      if(st.id==="couple"){
         S.couples[ck]={since:Date.now(),babies:0};
-        addLog(`💘 ${msg}`,c1.name,"互动",c1);
-        c1.happiness=cl(c1.happiness+20,0,100);
-        c2.happiness=cl(c2.happiness+20,0,100);
+        addLog(`${st.emoji} ${msg}`,c1.name,"互动",c1);
         showMilestoneToast(c1.name+" & "+c2.name,"💘","它们在一起了！恭喜恭喜~","恋爱");
-      }else if(stage.id==="notice"){
-        addLog(`👀 ${msg}`,c1.name,"互动",c1);
-      }else if(stage.id==="shy"){
-        addLog(`😳 ${msg}`,c1.name,"互动",c1);
-        c1.happiness=cl(c1.happiness+5,0,100);c2.happiness=cl(c2.happiness+5,0,100);
-      }else if(stage.id==="court"){
-        addLog(`💃 ${msg}`,c1.name,"互动",c1);
-        c1.happiness=cl(c1.happiness+10,0,100);c2.happiness=cl(c2.happiness+10,0,100);
-        showMilestoneToast(c1.name,"💃",msg,"求偶");
-      }else if(stage.id==="accept"){
-        addLog(`💕 ${msg}`,c1.name,"互动",c1);
-        c1.happiness=cl(c1.happiness+15,0,100);c2.happiness=cl(c2.happiness+15,0,100);
-        showMilestoneToast(c1.name+" & "+c2.name,"💕",msg,"心意相通");
+      }else{
+        addLog(`${st.emoji} ${msg}`,c1.name,"互动",c1);
+        if(st.toast)showMilestoneToast(c1.name+(st.id==="court"?"":" & "+c2.name),st.emoji,msg,st.toastType);
       }
+      c1.happiness=cl(c1.happiness+st.hp,0,100);
+      c2.happiness=cl(c2.happiness+st.hp,0,100);
       save();
-      break; // One stage at a time
+      break;
     }
   }
 }
