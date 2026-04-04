@@ -591,7 +591,7 @@ function load(){
       if(!S.poops)S.poops=[];
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
-        S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*5,0,100);c.happiness=cl(c.happiness-m*3,0,100);c.thirst=cl(c.thirst-m*4,0,100);c.clean=cl(c.clean-m*2,0,100);c.fatigue=cl(c.fatigue+m*2,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*3,0,100)}else{c.fatigue=cl(c.fatigue-m*5,0,100);c.health=cl(c.health+m,0,100)}});
+        S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*2,0,100);c.happiness=cl(c.happiness-m*1,0,100);c.thirst=cl(c.thirst-m*2,0,100);c.clean=cl(c.clean-m*1,0,100);c.fatigue=cl(c.fatigue+m*1,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*2,0,100)}else{c.fatigue=cl(c.fatigue-m*3,0,100);c.health=cl(c.health+m,0,100)}});
         // Simulate offline auto-activities (1 round per 30 min away)
         const rounds=Math.min(Math.floor(m/0.5),20);
         // Offline food regen: +1 per 2 min, max 30
@@ -1418,7 +1418,7 @@ function renderStats(){
 // ===== AUTO DECAY =====
 function decay(){
   S.chickens.forEach(c=>{
-    if(!c.sleeping){c.hunger=cl(c.hunger-5,0,100);c.happiness=cl(c.happiness-3,0,100);c.thirst=cl(c.thirst-4,0,100);c.clean=cl(c.clean-2,0,100);c.fatigue=cl(c.fatigue+2,0,100);if(c.hunger<20||c.thirst<20||c.clean<20||c.fatigue>80)c.health=cl(c.health-3,0,100)}else{c.fatigue=cl(c.fatigue-5,0,100);c.health=cl(c.health+1,0,100)}
+    if(!c.sleeping){c.hunger=cl(c.hunger-2,0,100);c.happiness=cl(c.happiness-1,0,100);c.thirst=cl(c.thirst-2,0,100);c.clean=cl(c.clean-1,0,100);c.fatigue=cl(c.fatigue+1,0,100);if(c.hunger<20||c.thirst<20||c.clean<20||c.fatigue>80)c.health=cl(c.health-2,0,100)}else{c.fatigue=cl(c.fatigue-3,0,100);c.health=cl(c.health+1,0,100)}
   });
   // Auto food regen: +1 food every 2 minutes, max 30
   if(S.food<30){S.food++;if(S.food%5===0)addLog(`🌱 院子里长出了新食物，现在有${S.food}份`)}
