@@ -748,8 +748,8 @@ const PETS=[
   {id:"sing",icon:"🎵",name:"唱歌",reacts:["跟着节拍摇头~","跟着你的歌声一起哼","翅膀打着拍子","听入迷了，站着不动","叫了两声，好像在合唱"],expr:"happy",anim:"anim-roll"},
   {id:"tickle",icon:"🫳",name:"挠痒痒",reacts:["哈哈好痒！","笑得在地上打滚","一边躲一边偷偷凑过来","痒得直扑棱翅膀","咯咯咯地笑个不停"],expr:"adore",anim:"anim-jump"},
   {id:"belly",icon:"🫄",name:"摸肚肚",reacts:["舒服得翻了个身~","四脚朝天享受中","满足地闭上了眼睛","肚子咕噜叫了一声","舒服到不想动了"],expr:"satisfied",anim:"anim-roll"},
-  {id:"brush",icon:"🪮",name:"梳毛毛",reacts:["羽毛变得好顺滑~","乖乖站着让你梳","羽毛被梳得闪闪发光","享受地伸展翅膀","变漂亮了，臭美地抖抖毛"],expr:"satisfied",anim:""},
-  {id:"story",icon:"📖",name:"讲故事",reacts:["听得入迷了~","眼睛越睁越大","紧张地缩成一团","听到精彩的地方叫了一声","困了，差点睡着"],expr:"happy",anim:""},
+  {id:"brush",icon:"🪮",name:"梳毛毛",reacts:["羽毛变得好顺滑~","乖乖站着让你梳","羽毛被梳得闪闪发光","享受地伸展翅膀","变漂亮了，臭美地抖抖毛"],expr:"satisfied",anim:"anim-brush"},
+  {id:"story",icon:"📖",name:"讲故事",reacts:["听得入迷了~","眼睛越睁越大","紧张地缩成一团","听到精彩的地方叫了一声","困了，差点睡着"],expr:"happy",anim:"anim-story"},
   {id:"dance",icon:"💃",name:"跳舞",reacts:["跟着你一起跳！","扭着小屁股左右摇","踩着你的脚跳起来","跳了一个旋转！","蹦蹦跳跳停不下来"],expr:"adore",anim:"anim-chase"}
 ];
 const WEATHERS=["sunny","cloudy","rainy","snowy"];
@@ -963,6 +963,14 @@ function applyWeather(){
     }
     rain.innerHTML=h;
   }else if(weather!=="rainy"&&weather!=="snowy"){rain.innerHTML="";}
+  // Puddles visibility
+  const puddles=document.getElementById("yardPuddles");
+  if(puddles){if(weather==="rainy")puddles.classList.remove("hidden");else puddles.classList.add("hidden")}
+  // Weather class on yard ground for butterfly hiding etc.
+  const yg=document.getElementById("yardGround");
+  if(yg){yg.className="yard-ground"+(weather!=="sunny"?" "+weather:"")}
+  // Lightning for rainy weather
+  startStopLightning();
 }
 
 // ===== GRASS =====
@@ -1956,7 +1964,16 @@ function genBuddyChat(a,b,aff){
   // Joint activities
   const act=pick(acts);
   pool.push([`${a}和${b}${act}`,`${pick(["好开心~","它们玩得不亦乐乎","哈哈太好玩了","输了的不服气，要再来一次","两只都累了，但很满足"])}`]);
-  return pick(pool);
+  const chosen=pick(pool);
+  // Determine animation type and emoji based on content
+  const txt=chosen[0]+chosen[1];
+  let anim="talk",emoji="🐥";
+  if(txt.includes("追")||txt.includes("跑")||txt.includes("比赛")){anim="chase";emoji="🏃"}
+  else if(txt.includes("梳")||txt.includes("理")||txt.includes("擦")){anim="groom";emoji="🪮"}
+  else if(txt.includes("靠")||txt.includes("挨")||txt.includes("盖")||txt.includes("挤")||txt.includes("蹭")){anim="cuddle";emoji="💕"}
+  else if(txt.includes("说")||txt.includes("聊")||txt.includes("讨论")||txt.includes("叽叽喳喳")){anim="talk";emoji="💬"}
+  else if(txt.includes("玩")||txt.includes("踩水")||txt.includes("看雪")||txt.includes("晒太阳")||txt.includes("跳")){anim="play";emoji="🎮"}
+  return{lines:chosen,anim:anim,emoji:emoji};
 }
 const BUDDY_LEVELS=[
   {threshold:5,level:"认识",msgs:["{a}和{b}开始互相点头打招呼了","{a}和{b}会在一起吃饭了"]},
@@ -1989,16 +2006,57 @@ function triggerBuddyEvent(){
   checkBuddyMilestone(c1.id,c2.id,aff);
   // Generate dynamic chat
   const chat=genBuddyChat(c1.name,c2.name,aff);
-  const line1=chat[0],line2=chat[1];
+  const line1=chat.lines[0],line2=chat.lines[1];
+  const buddyAnim="buddy-"+chat.anim;
   c1.happiness=cl(c1.happiness+3,0,100);c2.happiness=cl(c2.happiness+3,0,100);
-  addLog(`🐥 ${line1} ${line2}`,c1.name,"闲逛",c1);
+  addLog(`${chat.emoji} ${line1} ${line2}`,c1.name,"闲逛",c1);
   if(view==="yard"){
     const el1=document.getElementById("yc"+c1.id);
     const el2=document.getElementById("yc"+c2.id);
-    if(el1){el1.classList.add("buddy-active");const b=document.createElement("div");b.className="buddy-bubble";b.textContent=line1.replace(c1.name+"对"+c2.name+"说：","").replace(c1.name+"和"+c2.name,"").slice(0,15);el1.appendChild(b);setTimeout(()=>{b.remove();el1.classList.remove("buddy-active")},3500)}
-    if(el2){el2.classList.add("buddy-active");const b=document.createElement("div");b.className="buddy-bubble";b.textContent=line2.replace(c2.name+"：","").replace(c2.name,"").slice(0,12);el2.appendChild(b);setTimeout(()=>{b.remove();el2.classList.remove("buddy-active")},3500)}
+    if(el1){el1.classList.add(buddyAnim);const b=document.createElement("div");b.className="buddy-bubble";b.textContent=line1.replace(c1.name+"对"+c2.name+"说：","").replace(c1.name+"和"+c2.name,"").slice(0,15);el1.appendChild(b);setTimeout(()=>{b.remove();el1.classList.remove(buddyAnim)},3500)}
+    if(el2){el2.classList.add(buddyAnim);const b=document.createElement("div");b.className="buddy-bubble";b.textContent=line2.replace(c2.name+"：","").replace(c2.name,"").slice(0,12);el2.appendChild(b);setTimeout(()=>{b.remove();el2.classList.remove(buddyAnim)},3500)}
   }
   save();
+}
+
+// ===== YARD EFFECTS =====
+function showYardEffect(cid,type){
+  if(view!=="yard")return;
+  const el=document.getElementById("yc"+cid);
+  if(!el)return;
+  const b=document.createElement("div");
+  b.className="yard-effect";
+  if(type==="nap") b.textContent="\uD83D\uDCA4";
+  else if(type==="chat") b.textContent="\uD83D\uDCAC";
+  else if(type==="wander") b.textContent="\uD83D\uDC40";
+  else if(type==="eat") b.textContent="\uD83C\uDF7D\uFE0F";
+  else if(type==="play") b.textContent="\uD83C\uDFAE";
+  else if(type==="drink") b.textContent="\uD83D\uDCA7";
+  el.appendChild(b);
+  setTimeout(()=>b.remove(),2500);
+}
+
+// ===== LIGHTNING =====
+let lightningTimer=null;
+function triggerLightning(){
+  const el=document.getElementById("lightning");
+  if(!el)return;
+  el.classList.add("flash");
+  setTimeout(()=>el.classList.remove("flash"),120);
+  // Sometimes double flash
+  if(Math.random()<0.3){setTimeout(()=>{el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),80)},200)}
+}
+function startStopLightning(){
+  if(lightningTimer){clearTimeout(lightningTimer);lightningTimer=null}
+  if(weather!=="rainy")return;
+  function scheduleLightning(){
+    const delay=8000+Math.random()*7000; // 8-15 seconds
+    lightningTimer=setTimeout(()=>{
+      triggerLightning();
+      if(weather==="rainy")scheduleLightning();
+    },delay);
+  }
+  scheduleLightning();
 }
 
 let autoTimer=null;
@@ -2024,9 +2082,9 @@ function startAutoActivity(){
           return;
         }
         const idle=pick(["wander","chat","nap"]);
-        if(idle==="wander")addLog(`🐥 ${c.name} ${pick(["在院子里溜达~","到处走来走去找东西","绕着院子跑了一圈","好奇地东张西望","踢了一颗小石子玩"])}`,c.name,"闲逛",c);
-        else if(idle==="chat")addLog(`🐥 ${c.name} ${pick(["叽叽喳喳地叫着","对着天空唱歌","自言自语嘟囔着什么","学其他鸡叫，怪怪的","哼着不知道哪里学来的小曲"])}`,c.name,"闲逛",c);
-        else addLog(`🐥 ${c.name} ${pick(["打了个小盹儿","找了个舒服的地方趴下了","在阳光下眯了一会儿","靠着墙角睡着了","做了个美梦，嘴角上扬"])}`,c.name,"闲逛",c);
+        if(idle==="wander"){addLog(`👀 ${c.name} ${pick(["在院子里溜达~","到处走来走去找东西","绕着院子跑了一圈","好奇地东张西望","踢了一颗小石子玩"])}`,c.name,"闲逛",c);showYardEffect(c.id,"wander")}
+        else if(idle==="chat"){addLog(`💬 ${c.name} ${pick(["叽叽喳喳地叫着","对着天空唱歌","自言自语嘟囔着什么","学其他鸡叫，怪怪的","哼着不知道哪里学来的小曲"])}`,c.name,"闲逛",c);showYardEffect(c.id,"chat")}
+        else{addLog(`😴 ${c.name} ${pick(["打了个小盹儿","找了个舒服的地方趴下了","在阳光下眯了一会儿","靠着墙角睡着了","做了个美梦，嘴角上扬"])}`,c.name,"闲逛",c);showYardEffect(c.id,"nap")}
         return;
       }
       const act=pick(needs);
@@ -2040,6 +2098,7 @@ function startAutoActivity(){
         if(c.favoriteFood.includes(f.id))addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name}，好吃！😍`,c.name,"吃饭",c);
         else if(c.hatedFood.includes(f.id))addLog(`🌾 ${c.name} 尝了口${f.icon}${f.name}，不喜欢…😣`,c.name,"吃饭",c);
         else addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name} 😊`,c.name,"吃饭",c);
+        showYardEffect(c.id,"eat");
       }else if(act==="play"){
         const g=pick(GAMES);
         let p=20,hc=10;
@@ -2048,9 +2107,11 @@ function startAutoActivity(){
         if(c.favoriteGame===g.id)addLog(`🎮 ${c.name} 自己玩${g.icon}${g.name}，超开心！🥰`,c.name,"玩耍",c);
         else if(c.hatedGame===g.id)addLog(`🎮 ${c.name} 试了下${g.icon}${g.name}，不太想玩 😕`,c.name,"玩耍",c);
         else addLog(`🎮 ${c.name} 自己玩了${g.icon}${g.name} 😊`,c.name,"玩耍",c);
+        showYardEffect(c.id,"play");
       }else if(act==="drink"){
         c.thirst=cl(c.thirst+20,0,100);
         addLog(`💧 ${c.name} 自己跑去喝水了，咕噜咕噜~`,c.name,"喝水",c);
+        showYardEffect(c.id,"drink");
       }else if(act==="bath"){
         c.clean=cl(c.clean+25,0,100);c.happiness=cl(c.happiness+5,0,100);
         addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`,c.name,"洗澡",c);
