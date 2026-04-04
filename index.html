@@ -1471,6 +1471,8 @@ async function flushNotion(){
     if(item.stats.lamp!==undefined)props["照灯"]={number:item.stats.lamp};
     if(item.stats.light!==undefined)props["房灯"]={checkbox:item.stats.light};
     if(item.stats.curtain!==undefined)props["窗帘"]={checkbox:item.stats.curtain};
+    if(item.stats.stage!==undefined)props["阶段"]={select:{name:stgN(item.stats.stage)}};
+    if(item.stats.totalHunger!==undefined&&item.stats.totalHappiness!==undefined)props["成长进度"]={number:gPct(item.stats)};
   }
   try{
     const r=await fetch(NOTION_PROXY+"v1/pages",{
