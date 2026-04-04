@@ -335,6 +335,17 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-bar-fill.fatigue{background:linear-gradient(90deg,#dfe6e9,#636e72)}
 .yard-bar-fill.c{background:#a0d8ef}
 
+/* Yard-only toys */
+.toy-straw{width:28px;height:24px;position:relative;border-radius:50% 50% 40% 40%;background:linear-gradient(180deg,#d4a856,#b8912a);border:2px solid #a07820;overflow:hidden}
+.toy-straw::before{content:"";position:absolute;top:3px;left:3px;right:3px;bottom:3px;background:repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(255,255,255,.15) 2px,rgba(255,255,255,.15) 4px);border-radius:50%}
+.toy-straw::after{content:"";position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:12px;height:5px;background:#c49a30;border-radius:50%}
+.toy-log{width:32px;height:16px;position:relative;background:linear-gradient(180deg,#8B6914,#6B4F10);border-radius:8px;border:1px solid #5a4010}
+.toy-log::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:#a07820;border:1px solid #6B4F10}
+.toy-log::after{content:"";position:absolute;right:2px;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#a07820;border:1px solid #6B4F10}
+.toy-stick{width:30px;height:6px;position:relative;background:linear-gradient(180deg,#a07820,#7a5c18);border-radius:3px;transform:rotate(-15deg)}
+.toy-stick::before{content:"";position:absolute;right:-4px;top:-4px;width:10px;height:6px;background:#8B6914;border-radius:3px;transform:rotate(40deg)}
+
+
 /* Poop counter badge */
 .poop-badge{position:absolute;top:4px;right:8px;background:rgba(139,105,20,.8);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;z-index:10}
 
@@ -372,10 +383,13 @@ h1{font-size:20px}
       <div class="yard-ground" id="yardGround">
         <div class="yard-items">
           <div class="yard-item"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
+          <div class="yard-item"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
+          <div class="yard-item"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
           <div class="yard-item"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
           <div class="yard-item"><div class="toy"><div class="toy-ball"></div></div><span class="yard-item-label">球</span></div>
-          <div class="yard-item"><div class="toy"><div class="toy-yarn"></div></div><span class="yard-item-label">毛线</span></div>
-          <div class="yard-item"><div class="toy"><div class="toy-teddy"><div class="teddy-ear L"></div><div class="teddy-ear R"></div><div class="teddy-head"><div class="teddy-face"></div></div><div class="teddy-body"></div></div></div><span class="yard-item-label">小熊</span></div>
+          <div class="yard-item"><div class="toy"><div class="toy-straw"></div></div><span class="yard-item-label">草窝</span></div>
+          <div class="yard-item"><div class="toy"><div class="toy-log"></div></div><span class="yard-item-label">木桩</span></div>
+          <div class="yard-item"><div class="toy"><div class="toy-stick"></div></div><span class="yard-item-label">树枝</span></div>
           <div class="yard-item"><div class="toy"><div class="toy-duck"><div class="duck-body"></div><div class="duck-head"><div class="duck-eye"></div></div><div class="duck-beak"></div></div></div><span class="yard-item-label">小鸭</span></div>
         </div>
       </div>
