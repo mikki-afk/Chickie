@@ -133,6 +133,10 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 /* 🫂 hug */ .expr-hug .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-hug .chick-blush{opacity:.7;background:rgba(255,150,100,.4)}.expr-hug .chick-wing{transform:rotate(40deg)!important}.expr-hug .chick-body{box-shadow:0 0 8px rgba(255,200,100,.3)}
 /* 😜 playful */ .expr-playful .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-playful .chick-eye:last-child{width:4px;height:4px;border-radius:50%}.expr-playful .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px;margin-left:2px}.expr-playful .chick-body{animation:partyBounce .7s ease infinite}
 /* 😝 goofy */ .expr-goofy .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-goofy .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px;margin-left:3px}.expr-goofy .chick-blush{opacity:.6}.expr-goofy .chick-body{animation:partyBounce .8s ease infinite;transform:translateX(-50%) rotate(3deg)}
+/* ☺️ peaceful */ .expr-peaceful .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:4px}.expr-peaceful .chick-blush{opacity:.6;background:rgba(255,150,120,.4)}.expr-peaceful .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+/* 😀 grin */ .expr-grin .chick-eye{width:4px;height:4px;border-radius:50%;margin-top:1px}.expr-grin .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}.expr-grin .chick-blush{opacity:.7}
+/* 🤓 nerdy */ .expr-nerdy .chick-eye{width:5px;height:5px;border-radius:50%;border:1px solid #2c1810;background:#2c1810;margin-top:0}.expr-nerdy .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}.expr-nerdy .chick-head{transform:translateX(-50%) rotate(-3deg)}
+/* 🥸 disguise */ .expr-disguise .chick-eye{width:6px;height:3px;border-radius:3px;border:1px solid #2c1810;background:rgba(44,24,16,.3);margin-top:1px}.expr-disguise .chick-beak{width:6px;height:4px;border:none;background:#FF8C00;border-radius:0 0 50% 50%;top:14px;margin-left:-2px}.expr-disguise .chick-blush{opacity:0}
 /* 🫡 salute */ .expr-salute .chick-eye{width:4px;height:4px;border-radius:50%;margin-top:1px}.expr-salute .chick-wing.R{transform:rotate(-60deg)!important;transform-origin:bottom}.expr-salute .chick-blush{opacity:.4}
 /* 🤫 wise */ .expr-wise .chick-eye:first-child{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}.expr-wise .chick-eye:last-child{width:4px;height:4px;border-radius:50%}.expr-wise .chick-beak{width:4px;height:2px;border:none;background:#FF8C00;border-radius:1px;top:15px}.expr-wise .chick-blush{opacity:.3}
 /* 🙂‍↕️ nostalgic */ .expr-nostalgic .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:2px;width:4px}.expr-nostalgic .chick-blush{opacity:.4}.expr-nostalgic .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
@@ -1012,15 +1016,19 @@ function getExpr(c){
   if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"adore";  // 🥰
   // === Mid-positive ===
   if(c.hunger>=70&&c.happiness>=70)return"bliss";        // 😋
-  if(c.happiness>=88)return"mindblown";                  // 🤩
+  if(c.happiness>=90)return"mindblown";                  // 🤩
+  if(c.happiness>=86)return"grin";                       // 😀
   if(c.happiness>=82)return"starstruck";                 // 😍
-  if(c.happiness>=76)return"excited";                    // 🤪
-  if(c.happiness>=70)return"happy";                      // 😊
-  if(c.happiness>=64)return"hug";                        // 🫂
-  if(c.happiness>=58)return"giggle";                     // 🤭
-  if(c.happiness>=52)return"playful";                    // 😜
-  if(c.happiness>=46)return"goofy";                      // 😝
-  if(c.happiness>=42)return"content";                    // 🙂
+  if(c.happiness>=78)return"excited";                    // 🤪
+  if(c.happiness>=74)return"happy";                      // 😊
+  if(c.happiness>=70)return"hug";                        // 🫂
+  if(c.happiness>=66)return"giggle";                     // 🤭
+  if(c.happiness>=62)return"peaceful";                   // ☺️
+  if(c.happiness>=58)return"playful";                    // 😜
+  if(c.happiness>=54)return"goofy";                      // 😝
+  if(c.happiness>=50)return"nerdy";                      // 🤓
+  if(c.happiness>=46)return"content";                    // 🙂
+  if(c.happiness>=42)return"disguise";                   // 🥸
   if(c.happiness>=38)return"salute";                     // 🫡
   if(c.happiness>=35)return"curious";                    // 🧐
   // === Baby special ===
@@ -1799,8 +1807,8 @@ async function flushNotion(){
   // Add expression emoji
   if(item.stats){
     const ex=getExpr(item.stats);
-    const exEmoji={sleep:"😴",injured:"🤕",nausea:"🤮",fever:"🤒",sick:"🤧",dizzy:"🥴",despair:"😫",faint:"😵",exhausted:"😵‍💫",sleepy:"🥱",drowsy:"😪",starving:"🤤",hungry:"😣",parched:"🥵",thirsty:"😮‍💨",skull:"💀",rage:"👹",swear:"🤬",cry:"😭",angry:"😡",sad:"😢",upset:"😤",filthy:"🤢",dirty:"🫣",messy:"😶‍🌫️",terrified:"😱",shocked:"🫨",wet:"😰",cold:"🥶",melting:"🫠",warm:"🤗",pregnant:"🤰",nursing:"🤱",dadcare:"👨‍🍼",kiss:"😘",smitten:"🥰",smooch:"😙",inlove:"💘",devoted:"🫶",flirty:"😏",wink:"😉",shy:"😚",bashful:"😗",angel:"😇",cowboy:"🤠",party:"🥳",proud:"😎",rich:"🤑",adore:"🥰",bliss:"😋",mindblown:"🤩",starstruck:"😍",excited:"🤪",happy:"😊",hug:"🫂",giggle:"🤭",playful:"😜",goofy:"😝",content:"🙂",salute:"🫡",curious:"🧐",clingy:"🥺",innocent:"🥹",wise:"🤫",nostalgic:"🙂‍↕️",sigh:"😮‍💨",meh:"😐",confused:"😦",bored:"🙄",grumpy:"😒",worried:"😟",blank:"😶"};
-    const exName={sleep:"睡觉",injured:"受伤",nausea:"恶心",fever:"发烧",sick:"生病",dizzy:"头晕",despair:"绝望",faint:"晕倒",exhausted:"累瘫",sleepy:"犯困",drowsy:"打盹",starving:"饥饿",hungry:"好饿",parched:"干渴",thirsty:"口渴",skull:"濒死",rage:"暴怒",swear:"骂骂咧咧",cry:"大哭",angry:"生气",sad:"难过",upset:"不爽",filthy:"恶臭",dirty:"脏脏",messy:"邋遢",terrified:"恐惧",shocked:"惊吓",wet:"淋雨",cold:"好冷",melting:"热化",warm:"暖暖",pregnant:"怀孕",nursing:"哺育",dadcare:"奶爸",kiss:"亲亲",smitten:"迷恋",smooch:"么么哒",inlove:"恋爱中",devoted:"深情",flirty:"心动",wink:"放电",shy:"害羞",bashful:"腼腆",angel:"天使",cowboy:"牛仔",party:"派对",proud:"得意",rich:"发财",adore:"超爱",bliss:"幸福",mindblown:"震撼",starstruck:"花痴",excited:"兴奋",happy:"开心",hug:"拥抱",giggle:"偷笑",playful:"调皮",goofy:"搞怪",content:"满足",salute:"敬礼",curious:"好奇",clingy:"撒娇",innocent:"天真",wise:"智慧",nostalgic:"怀旧",sigh:"叹气",meh:"无聊",confused:"困惑",bored:"发呆",grumpy:"闷闷不乐",worried:"担忧",blank:"放空"};
+    const exEmoji={sleep:"😴",injured:"🤕",nausea:"🤮",fever:"🤒",sick:"🤧",dizzy:"🥴",despair:"😫",faint:"😵",exhausted:"😵‍💫",sleepy:"🥱",drowsy:"😪",starving:"🤤",hungry:"😣",parched:"🥵",thirsty:"😮‍💨",skull:"💀",rage:"👹",swear:"🤬",cry:"😭",angry:"😡",sad:"😢",upset:"😤",filthy:"🤢",dirty:"🫣",messy:"😶‍🌫️",terrified:"😱",shocked:"🫨",wet:"😰",cold:"🥶",melting:"🫠",warm:"🤗",pregnant:"🤰",nursing:"🤱",dadcare:"👨‍🍼",kiss:"😘",smitten:"🥰",smooch:"😙",inlove:"💘",devoted:"🫶",flirty:"😏",wink:"😉",shy:"😚",bashful:"😗",angel:"😇",cowboy:"🤠",party:"🥳",proud:"😎",rich:"🤑",adore:"🥰",bliss:"😋",mindblown:"🤩",grin:"😀",starstruck:"😍",excited:"🤪",happy:"😊",hug:"🫂",giggle:"🤭",peaceful:"☺️",playful:"😜",goofy:"😝",nerdy:"🤓",content:"🙂",disguise:"🥸",salute:"🫡",curious:"🧐",clingy:"🥺",innocent:"🥹",wise:"🤫",nostalgic:"🙂‍↕️",sigh:"😮‍💨",meh:"😐",confused:"😦",bored:"🙄",grumpy:"😒",worried:"😟",blank:"😶"};
+    const exName={sleep:"睡觉",injured:"受伤",nausea:"恶心",fever:"发烧",sick:"生病",dizzy:"头晕",despair:"绝望",faint:"晕倒",exhausted:"累瘫",sleepy:"犯困",drowsy:"打盹",starving:"饥饿",hungry:"好饿",parched:"干渴",thirsty:"口渴",skull:"濒死",rage:"暴怒",swear:"骂骂咧咧",cry:"大哭",angry:"生气",sad:"难过",upset:"不爽",filthy:"恶臭",dirty:"脏脏",messy:"邋遢",terrified:"恐惧",shocked:"惊吓",wet:"淋雨",cold:"好冷",melting:"热化",warm:"暖暖",pregnant:"怀孕",nursing:"哺育",dadcare:"奶爸",kiss:"亲亲",smitten:"迷恋",smooch:"么么哒",inlove:"恋爱中",devoted:"深情",flirty:"心动",wink:"放电",shy:"害羞",bashful:"腼腆",angel:"天使",cowboy:"牛仔",party:"派对",proud:"得意",rich:"发财",adore:"超爱",bliss:"幸福",mindblown:"震撼",grin:"大笑",starstruck:"花痴",excited:"兴奋",happy:"开心",hug:"拥抱",giggle:"偷笑",peaceful:"安详",playful:"调皮",goofy:"搞怪",nerdy:"书呆子",content:"满足",disguise:"伪装",salute:"敬礼",curious:"好奇",clingy:"撒娇",innocent:"天真",wise:"智慧",nostalgic:"怀旧",sigh:"叹气",meh:"无聊",confused:"困惑",bored:"发呆",grumpy:"闷闷不乐",worried:"担忧",blank:"放空"};
     props["表情"]={select:{name:(exEmoji[ex]||"🐥")+" "+(exName[ex]||"普通")}};
   }
   if(weatherTemp!==null)props["温度"]={number:weatherTemp};
