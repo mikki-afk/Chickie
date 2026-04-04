@@ -785,7 +785,7 @@ function load(){
     if(r){S=JSON.parse(r);
       // migrate
       S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;if(c.light===undefined)c.light=false;if(c.curtain===undefined)c.curtain=true;});
-      if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};
+      if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};if(!S.buddyMilestones)S.buddyMilestones={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
         S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*2,0,100);c.happiness=cl(c.happiness-m*1,0,100);c.thirst=cl(c.thirst-m*2,0,100);c.clean=cl(c.clean-m*1,0,100);c.fatigue=cl(c.fatigue+m*1,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*2,0,100)}else{c.fatigue=cl(c.fatigue-m*3,0,100);c.health=cl(c.health+m,0,100)}});
@@ -1166,7 +1166,7 @@ function renderRoom(){
     <div class="room-bar-row"><span class="room-bar-label">📋 亲密(指令)</span><div class="room-bar-track"><div class="room-bar-fill aff-notion" style="width:${Math.min(c.affNotion/1.2,100)}%"></div></div><span class="room-bar-val">${c.affNotion} ${(getAffLevel(c.affNotion)||{icon:"",level:"陌生"}).icon}${(getAffLevel(c.affNotion)||{level:"陌生"}).level}</span></div>
     <div class="room-growth"><div class="room-growth-label">🌱 成长 ${gp}% · ${stgN(c.stage)}</div><div class="room-growth-track"><div class="room-growth-fill" style="width:${gp}%"></div></div></div>
     <div style="margin-top:4px;font-size:10px;color:#888">❤️喜欢:${ff}${fg} 💔讨厌:${hf}${hg}</div>
-    <div style="margin-top:2px;font-size:10px;color:#888">💕好友:${bb.best>=0?S.chickens[bb.best].name+"("+bb.bestV+")":"无"} 😐疏远:${bb.worst>=0&&bb.worstV<bb.bestV?S.chickens[bb.worst].name+"("+bb.worstV+")":"无"}</div>`;
+    <div style="margin-top:2px;font-size:10px;color:#888">💕好友:${bb.best>=0?S.chickens[bb.best].name+"("+bb.bestV+(()=>{const bl=BUDDY_LEVELS.slice().reverse().find(l=>bb.bestV>=l.threshold);return bl?" · "+bl.level:""})()+")"  :"无"} 😐疏远:${bb.worst>=0&&bb.worstV<bb.bestV?S.chickens[bb.worst].name+"("+bb.worstV+")":"无"}</div>`;
   renderRoomBtns();
 }
 
@@ -1663,6 +1663,7 @@ function execInstruction(cmd,pageId){
       const c1=S.chickens[ci1],c2=S.chickens[ci2];
       c1.happiness=cl(c1.happiness+15,0,100);c2.happiness=cl(c2.happiness+10,0,100);
       c1.fatigue=cl(c1.fatigue+5,0,100);
+      addBuddyAff(ci1,ci2,3);checkBuddyMilestone(ci1,ci2,getBuddyAff(ci1,ci2));
       const acts=["聊天","一起吃零食","互相梳毛","玩捉迷藏","晒太阳"];
       const act=acts[Math.floor(Math.random()*acts.length)];
       addLog(`📋 [指令] ${c1.name}去找${c2.name}串门了，它们${act}~ | ${c1.name}快乐${c1.happiness} ${c2.name}快乐${c2.happiness}`,c1.name,"串门",c1);
@@ -1826,24 +1827,41 @@ const BUDDY_CHATS=[
   ["{a}把好吃的分给{b}","{b}感动地蹭了蹭{a}"],
   ["{a}和{b}一起看蚂蚁搬家","它们看得入迷了~"]
 ];
+const BUDDY_LEVELS=[
+  {threshold:5,level:"认识",msgs:["{a}和{b}开始互相点头打招呼了","{a}和{b}会在一起吃饭了"]},
+  {threshold:15,level:"玩伴",msgs:["{a}和{b}开始经常一起玩了！","{a}一看到{b}就开心地跑过去"]},
+  {threshold:30,level:"好朋友",msgs:["{a}和{b}成了好朋友！走哪都要一起","{a}和{b}开始互相梳毛了，好亲密~"]},
+  {threshold:50,level:"闺蜜/铁哥们",msgs:["{a}和{b}形影不离！","{a}把最好吃的留给{b}，真友情！"]},
+  {threshold:80,level:"灵魂伴侣",msgs:["{a}和{b}已经心有灵犀了！","{a}和{b}连睡觉都要挨着~"]}
+];
+function checkBuddyMilestone(id1,id2,aff){
+  if(!S.buddyMilestones)S.buddyMilestones={};
+  const c1=S.chickens[id1],c2=S.chickens[id2];
+  for(const lv of BUDDY_LEVELS){
+    const key=buddyKey(id1,id2)+"_"+lv.threshold;
+    if(aff>=lv.threshold&&!S.buddyMilestones[key]){
+      S.buddyMilestones[key]=true;
+      const msg=lv.msgs[Math.floor(Math.random()*lv.msgs.length)].replace(/\{a\}/g,c1.name).replace(/\{b\}/g,c2.name);
+      addLog(`💛 [友谊里程碑] ${c1.name}和${c2.name}的关系达到${lv.level}(${lv.threshold})！${msg}`,c1.name,"互动",c1);
+      c1.happiness=cl(c1.happiness+8,0,100);c2.happiness=cl(c2.happiness+8,0,100);
+    }
+  }
+}
 function triggerBuddyEvent(){
   const outdoor=S.chickens.filter(c=>c.location==="outside"&&!c.sleeping);
   if(outdoor.length<2)return;
-  // Pick two random outdoor chickens
   const i1=Math.floor(Math.random()*outdoor.length);
   let i2=Math.floor(Math.random()*(outdoor.length-1));if(i2>=i1)i2++;
   const c1=outdoor[i1],c2=outdoor[i2];
-  // Increase buddy affinity
   addBuddyAff(c1.id,c2.id,1);
   const aff=getBuddyAff(c1.id,c2.id);
-  // Higher affinity = more interesting interactions
+  checkBuddyMilestone(c1.id,c2.id,aff);
+  // Pick chat based on affinity level
   const chat=BUDDY_CHATS[Math.floor(Math.random()*BUDDY_CHATS.length)];
   const line1=chat[0].replace(/\{a\}/g,c1.name).replace(/\{b\}/g,c2.name);
   const line2=chat[1].replace(/\{a\}/g,c1.name).replace(/\{b\}/g,c2.name);
-  // Both gain happiness
   c1.happiness=cl(c1.happiness+3,0,100);c2.happiness=cl(c2.happiness+3,0,100);
   addLog(`🐥 ${line1} ${line2}`,c1.name,"闲逛",c1);
-  // Show bubble animation in yard
   if(view==="yard"){
     const el1=document.getElementById("yc"+c1.id);
     const el2=document.getElementById("yc"+c2.id);
