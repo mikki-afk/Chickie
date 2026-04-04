@@ -1210,15 +1210,38 @@ function execInstruction(cmd,pageId){
   if(!matched){m=cmd.match(/加食物(\d*)/);if(m){
     const amt=parseInt(m[1])||5;S.food=cl(S.food+amt,0,99);addLog(`📋 [指令] 加了${amt}份食物，现在${S.food}份`,"全部","食物");matched=true;
   }}
-  // 叫出来
+  // 叫出来（单个）
   if(!matched){m=cmd.match(/(?:叫|让)(.+?)出来/);if(m){
     const ci=names.indexOf(m[1]);
     if(ci>=0){const c=S.chickens[ci];if(c.location==="inside"){c.location="outside";addLog(`📋 [指令] 把${c.name}叫出来了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"位置",c);matched=true}}
   }}
-  // 喊回去
+  // 喊回去（单个）
   if(!matched){m=cmd.match(/(?:喊|让)(.+?)回去/);if(m){
     const ci=names.indexOf(m[1]);
     if(ci>=0){const c=S.chickens[ci];if(c.location==="outside"){c.location="inside";addLog(`📋 [指令] 把${c.name}喊回去了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"位置",c);matched=true}}
+  }}
+  // 全部出来
+  if(!matched&&(cmd.includes("全部出来")||cmd.includes("都出来")||cmd.includes("都叫出来"))){
+    let cnt=0;S.chickens.forEach(c=>{if(c.location==="inside"){c.location="outside";cnt++}});
+    if(cnt>0){addLog(`📋 [指令] 把${cnt}只小鸡都叫出来了`,"全部","位置");matched=true}
+  }
+  // 全部回去
+  if(!matched&&(cmd.includes("全部回去")||cmd.includes("都回去")||cmd.includes("都回家")||cmd.includes("全部回家"))){
+    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"){c.location="inside";cnt++}});
+    if(cnt>0){addLog(`📋 [指令] 把${cnt}只小鸡都喊回家了`,"全部","位置");matched=true}
+  }
+  // 串门：让XX去找YY
+  if(!matched){m=cmd.match(/让(.+?)(?:去找|串门|去看)(.+)/);if(m){
+    const ci1=names.indexOf(m[1]),ci2=names.indexOf(m[2]);
+    if(ci1>=0&&ci2>=0&&ci1!==ci2){
+      const c1=S.chickens[ci1],c2=S.chickens[ci2];
+      c1.happiness=cl(c1.happiness+15,0,100);c2.happiness=cl(c2.happiness+10,0,100);
+      c1.fatigue=cl(c1.fatigue+5,0,100);
+      const acts=["聊天","一起吃零食","互相梳毛","玩捉迷藏","晒太阳"];
+      const act=acts[Math.floor(Math.random()*acts.length)];
+      addLog(`📋 [指令] ${c1.name}去找${c2.name}串门了，它们${act}~ | ${c1.name}快乐${c1.happiness} ${c2.name}快乐${c2.happiness}`,c1.name,"串门",c1);
+      matched=true;
+    }
   }}
   if(!matched)addLog(`📋 [指令] 无法理解: ${cmd}`);
   // Update UI
