@@ -1111,9 +1111,9 @@ function offlineActivities(rounds){
       }
       // Always try to eat/drink when hungry/thirsty (survival priority)
       if(c.hunger<50&&S.food>0){
-        const f=pick(FOODS);let h=20;
-        if(c.favoriteFood.includes(f.id)){h=30;c.happiness=cl(c.happiness+8,0,100)}
-        else if(c.hatedFood.includes(f.id)){h=10;c.happiness=cl(c.happiness-5,0,100)}
+        const f=pick(FOODS);let h=30;
+        if(c.favoriteFood.includes(f.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
+        else if(c.hatedFood.includes(f.id)){h=15;c.happiness=cl(c.happiness-5,0,100)}
         const ah=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,ah);S.food--;
         addLog(`🌾 ${c.name} 你不在时自己吃了${f.icon}${f.name}`,c.name,"吃饭",c);
       }else if(c.happiness<50){
@@ -1363,9 +1363,9 @@ function yardFeed(){
   openSel("选择食物喂小鸡们",FOODS.map(f=>({...f,type:"food"})),function(fid){
     S.chickens.forEach(c=>{
       if(c.location!=="outside"||c.sleeping)return;
-      let h=20;
-      if(c.favoriteFood.includes(fid)){h=30;c.happiness=cl(c.happiness+10,0,100)}
-      else if(c.hatedFood.includes(fid)){h=10;c.happiness=cl(c.happiness-10,0,100)}
+      let h=30;
+      if(c.favoriteFood.includes(fid)){h=45;c.happiness=cl(c.happiness+10,0,100)}
+      else if(c.hatedFood.includes(fid)){h=15;c.happiness=cl(c.happiness-10,0,100)}
       const a=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,a);
     });
     S.food--;S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","feed");updStages();save();
@@ -1387,7 +1387,7 @@ function yardPlay(){
 }
 function yardDrink(){
   if(getCD("yard","drink")>0)return;
-  S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping)c.thirst=cl(c.thirst+25,0,100)});
+  S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping)c.thirst=cl(c.thirst+35,0,100)});
   S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","drink");save();addLog("💧 你给院子里的小鸡们喝水了","全部","喝水");renderYard();
 }
 function yardSleep(){
@@ -1938,9 +1938,9 @@ function execInstruction(cmd,pageId){
     const food=FOODS.find(f=>f.name===foodName)||FOODS[0];
     if(ci>=0&&S.food>0){
       const c=S.chickens[ci];
-      let h=20;
-      if(c.favoriteFood.includes(food.id)){h=30;c.happiness=cl(c.happiness+8,0,100)}
-      else if(c.hatedFood.includes(food.id)){h=10;c.happiness=cl(c.happiness-5,0,100)}
+      let h=30;
+      if(c.favoriteFood.includes(food.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
+      else if(c.hatedFood.includes(food.id)){h=15;c.happiness=cl(c.happiness-5,0,100)}
       c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.min(h,100);S.food--;
       addLog(`📋 [指令] 给${c.name}喂了${food.icon}${food.name} | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"吃饭",c);
       matched=true;
@@ -1949,7 +1949,7 @@ function execInstruction(cmd,pageId){
   // 给XX喝水
   if(!matched){m=cmd.match(/给(.+?)喝水/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.thirst=cl(c.thirst+25,0,100);addLog(`📋 [指令] 给${c.name}喝水了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"喝水",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.thirst=cl(c.thirst+35,0,100);addLog(`📋 [指令] 给${c.name}喝水了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"喝水",c);matched=true}
   }}
   // 给XX洗澡
   if(!matched){m=cmd.match(/给(.+?)洗澡/);if(m){
@@ -1985,11 +1985,11 @@ function execInstruction(cmd,pageId){
   }}
   // 放水盆（院子里放水盆，户外小鸡喝水）
   if(!matched&&(cmd.includes("放水盆")||cmd.includes("摆水盆"))){
-    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+25,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水");matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水");matched=true;
   }
   // 放碗/放饭（院子里放食物碗，户外小鸡吃饭）
   if(!matched&&(cmd.includes("放碗")||cmd.includes("放饭")||cmd.includes("摆碗")||cmd.includes("放食物"))){
-    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+20,0,100);S.food--;cnt++}});addLog(`📋 [指令] 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭");matched=true}
+    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});addLog(`📋 [指令] 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭");matched=true}
   }
   // 放玩具（院子里放玩具，户外小鸡玩耍）
   if(!matched&&(cmd.includes("放玩具")||cmd.includes("摆玩具"))){
@@ -2007,11 +2007,11 @@ function execInstruction(cmd,pageId){
   }}
   // 全部吃饭
   if(!matched&&(cmd.includes("全部吃饭")||cmd.includes("都吃饭")||cmd.includes("一起吃饭"))){
-    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+20,0,100);S.food--;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起吃了${f.icon}${f.name}`,"全部","吃饭");matched=true}
+    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起吃了${f.icon}${f.name}`,"全部","吃饭");matched=true}
   }
   // 全部喝水
   if(!matched&&(cmd.includes("全部喝水")||cmd.includes("都喝水")||cmd.includes("一起喝水"))){
-    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+25,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起喝水了`,"全部","喝水");matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起喝水了`,"全部","喝水");matched=true;
   }
   // 全部洗澡
   if(!matched&&(cmd.includes("全部洗澡")||cmd.includes("都洗澡")||cmd.includes("一起洗澡"))){
@@ -2611,9 +2611,9 @@ function startAutoActivity(){
       const act=pick(needs);
       if(act==="eat"&&S.food>0){
         const f=pick(FOODS);
-        let h=20;
-        if(c.favoriteFood.includes(f.id)){h=30;c.happiness=cl(c.happiness+8,0,100)}
-        else if(c.hatedFood.includes(f.id)){h=10;c.happiness=cl(c.happiness-5,0,100)}
+        let h=30;
+        if(c.favoriteFood.includes(f.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
+        else if(c.hatedFood.includes(f.id)){h=15;c.happiness=cl(c.happiness-5,0,100)}
         const ah=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,ah);
         S.food--;
         if(c.favoriteFood.includes(f.id))addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name}，好吃！😍`,c.name,"吃饭",c);
