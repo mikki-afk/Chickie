@@ -512,7 +512,7 @@ function defState(){
     food:20,poops:[],startDate:now,totalInteractions:0,lastUpdateTime:now
   };
 }
-function save(){S.lastUpdateTime=new Date().toISOString();localStorage.setItem(SK,JSON.stringify(S))}
+function save(){S.lastUpdateTime=new Date().toISOString();localStorage.setItem(SK,JSON.stringify(S));scheduleStateSync()}
 function offlineActivities(rounds){
   for(let r=0;r<rounds;r++){
     S.chickens.forEach(c=>{
@@ -1097,6 +1097,24 @@ async function flushNotion(){
     if(!r.ok)console.log("Notion error:",r.status);
   }catch(e){console.log("Notion sync error:",e)}
   setTimeout(flushNotion,300);
+}
+// Sync game state to Notion (for offline Worker updates)
+const STATE_PAGE="3383f76c-0e4f-819e-bc5b-ed84a684df63";
+let stateSyncTimer=null;
+function scheduleStateSync(){
+  if(stateSyncTimer)clearTimeout(stateSyncTimer);
+  stateSyncTimer=setTimeout(syncStateToNotion,5000);
+}
+async function syncStateToNotion(){
+  if(!NOTION_TOKEN||!NOTION_DB)return;
+  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length});
+  try{
+    await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
+      method:"PATCH",
+      headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
+      body:JSON.stringify({properties:{"详情":{rich_text:[{text:{content:stateStr.slice(0,2000)}}]},"时间":{date:{start:new Date().toISOString()}}}})
+    });
+  }catch(e){console.log("State sync error:",e)}
 }
 
 // ===== AUTO ACTIVITY =====
