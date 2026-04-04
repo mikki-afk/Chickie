@@ -677,6 +677,20 @@ h1{font-size:20px}
 .yard-chicken.buddy-play{animation:buddyPlay .5s ease 4}
 @keyframes buddyPlay{0%,100%{transform:translateY(0)}40%{transform:translateY(-10px)}}
 
+/* Courtship animations */
+.yard-chicken.court-notice{animation:courtNotice 1.5s ease 2}
+@keyframes courtNotice{0%,100%{transform:translateX(0)}20%{transform:translateX(3px)}40%{transform:translateX(-3px)}60%{transform:translateX(0) rotate(5deg)}80%{transform:rotate(-5deg)}}
+.yard-chicken.court-shy{animation:courtShy 1s ease 3}
+@keyframes courtShy{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-3px) scale(.95)}}
+.yard-chicken.court-dance{animation:courtDance .6s ease 5}
+@keyframes courtDance{0%{transform:translateY(0) rotate(0)}25%{transform:translateY(-8px) rotate(10deg)}50%{transform:translateY(0) rotate(-10deg)}75%{transform:translateY(-8px) rotate(5deg)}100%{transform:translateY(0) rotate(0)}}
+.yard-chicken.court-accept{animation:courtAccept 1.2s ease 2}
+@keyframes courtAccept{0%{transform:scale(1)}30%{transform:scale(1.15)}60%{transform:scale(1) translateY(-5px)}100%{transform:scale(1) translateY(0)}}
+.yard-chicken.court-couple{animation:courtCouple 1.5s ease 2}
+@keyframes courtCouple{0%{transform:scale(1)}25%{transform:scale(1.2) rotate(5deg)}50%{transform:scale(1.2) rotate(-5deg)}75%{transform:scale(1.1)}100%{transform:scale(1)}}
+.court-hearts{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:18px;pointer-events:none;z-index:30;opacity:0;animation:courtHeartsFloat 3s ease forwards}
+@keyframes courtHeartsFloat{0%{opacity:0;transform:translateX(-50%) translateY(0)}10%{opacity:1}70%{opacity:1;transform:translateX(-50%) translateY(-25px)}100%{opacity:0;transform:translateX(-50%) translateY(-40px)}}
+
 /* ===== YARD EFFECTS ===== */
 .yard-effect{position:absolute;top:-24px;left:50%;transform:translateX(-50%);font-size:16px;opacity:0;animation:yardEffectPop 2.5s ease forwards;pointer-events:none;z-index:25}
 @keyframes yardEffectPop{0%{opacity:0;transform:translateX(-50%) translateY(0)}15%{opacity:1}80%{opacity:1;transform:translateX(-50%) translateY(-15px)}100%{opacity:0;transform:translateX(-50%) translateY(-25px)}}
@@ -1676,7 +1690,7 @@ async function flushNotion(){
   const props={
     "Name":{title:[{text:{content:item.detail}}]},
     "小鸡":{select:{name:item.chicken||"全部"}},
-    "类型":{select:{name:({"串门":"🚶 串门","指令":"📋 指令","洗澡":"🛁 洗澡","吃饭":"🍽️ 吃饭","喝水":"💧 喝水","玩耍":"🎮 玩耍","睡觉":"💤 睡觉","清粑粑":"🧹 清粑粑","闲逛":"🐥 闲逛","喂药":"💊 喂药","位置":"📍 位置","食物":"🌾 食物","状态":"📊 状态","打扫":"🧼 打扫","互动":"💕 互动"})[item.type]||(item.type||"🐥 闲逛")}},
+    "类型":{select:{name:({"串门":"🚶 串门","指令":"📋 指令","洗澡":"🛁 洗澡","吃饭":"🍽️ 吃饭","喝水":"💧 喝水","玩耍":"🎮 玩耍","睡觉":"💤 睡觉","清粑粑":"🧹 清粑粑","闲逛":"🐥 闲逛","喂药":"💊 喂药","位置":"📍 位置","食物":"🌾 食物","状态":"📊 状态","打扫":"🧼 打扫","互动":"💕 互动","求偶":"💘 求偶"})[item.type]||(item.type||"🐥 闲逛")}},
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
@@ -2220,14 +2234,28 @@ function checkRomance(id1,id2){
       const msg=genCourtMsg(st.id,c1.name,c2.name);
       if(st.id==="couple"){
         S.couples[ck]={since:Date.now(),babies:0};
-        addLog(`${st.emoji} ${msg}`,c1.name,"互动",c1);
+        addLog(`${st.emoji} ${msg}`,c1.name,"求偶",c1);
         showMilestoneToast(c1.name+" & "+c2.name,"💘","它们在一起了！恭喜恭喜~","恋爱");
       }else{
-        addLog(`${st.emoji} ${msg}`,c1.name,"互动",c1);
+        addLog(`${st.emoji} ${msg}`,c1.name,"求偶",c1);
         if(st.toast)showMilestoneToast(c1.name+(st.id==="court"?"":" & "+c2.name),st.emoji,msg,st.toastType);
       }
       c1.happiness=cl(c1.happiness+st.hp,0,100);
       c2.happiness=cl(c2.happiness+st.hp,0,100);
+      // Yard animations
+      if(view==="yard"){
+        const animMap={notice:"court-notice",shy:"court-shy",court:"court-dance",accept:"court-accept",couple:"court-couple"};
+        const heartMap={notice:"👀",shy:"😳",court:"💃",accept:"💕",couple:"💘"};
+        const anim=animMap[st.id]||"court-notice";
+        const el1=document.getElementById("yc"+id1),el2=document.getElementById("yc"+id2);
+        [el1,el2].forEach(el=>{
+          if(!el)return;
+          el.classList.add(anim);
+          const h=document.createElement("div");h.className="court-hearts";h.textContent=heartMap[st.id]||"💕";
+          el.appendChild(h);
+          setTimeout(()=>{el.classList.remove(anim);h.remove()},4000);
+        });
+      }
       save();
       break;
     }
