@@ -27,15 +27,15 @@ h1 {
 /* ===== CSS CHICKEN SPRITE ===== */
 .chick {
   display: inline-block; position: relative;
-  width: 48px; height: 56px;
+  width: 52px; height: 50px;
 }
-.chick.big { transform: scale(1.6); transform-origin: bottom center; margin: 20px 16px 10px; }
-.chick.medium { transform: scale(1.1); transform-origin: bottom center; }
+.chick.big { transform: scale(1.8); transform-origin: bottom center; margin: 30px 20px 10px; }
+.chick.medium { transform: scale(1.2); transform-origin: bottom center; }
 
 /* Body */
 .chick-body {
   position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 38px; height: 36px; border-radius: 50%;
+  width: 36px; height: 30px; border-radius: 50%;
   background: #FFD700;
   box-shadow: inset -3px -3px 6px rgba(0,0,0,0.1), inset 3px 3px 6px rgba(255,255,255,0.3);
 }
@@ -43,7 +43,7 @@ h1 {
 /* Head */
 .chick-head {
   position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 32px; height: 30px; border-radius: 50%;
+  width: 30px; height: 28px; border-radius: 50%;
   background: #FFD700;
   box-shadow: inset -2px -2px 4px rgba(0,0,0,0.08), inset 2px 2px 4px rgba(255,255,255,0.3);
   z-index: 2;
@@ -194,64 +194,71 @@ h1 {
 }
 
 /* Stage differences */
-.stage-teen .chick-body { width: 42px; height: 40px; }
-.stage-teen .chick-head { width: 34px; height: 32px; }
-.stage-adult .chick-body { width: 46px; height: 44px; background: #f5f5f5; }
-.stage-adult .chick-head { width: 36px; height: 34px; background: #f5f5f5; }
+.stage-teen .chick-body { width: 38px; height: 32px; }
+.stage-teen .chick-head { width: 32px; height: 30px; }
+.stage-adult .chick-body { width: 40px; height: 34px; background: #f5f5f5; }
+.stage-adult .chick-head { width: 34px; height: 32px; background: #f5f5f5; }
 .stage-adult .chick-wing { background: #e0e0e0; }
 .stage-adult .chick-hair { border-bottom-color: #e74c3c; border-bottom-width: 10px; }
 
-/* Breathing animation on body */
+/* Breathing animation */
 .chick { animation: chickBreathe 2s ease-in-out infinite; }
 @keyframes chickBreathe {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
 }
-.chick.big { animation: chickBreatheBig 2s ease-in-out infinite; }
+.chick.big { animation: chickBreatheBig 2s ease-in-out infinite !important; }
 @keyframes chickBreatheBig {
-  0%, 100% { transform: scale(1.6) translateY(0); }
-  50% { transform: scale(1.6) translateY(-2px); }
+  0%, 100% { transform: scale(1.8) translateY(0); }
+  50% { transform: scale(1.8) translateY(-2px); }
 }
 
-/* Action animations */
-.anim-eat { animation: chickEat 0.4s ease 5 !important; }
-@keyframes chickEat {
-  0%, 100% { transform: scale(1.6) rotate(0); }
-  50% { transform: scale(1.6) rotate(15deg) translateY(4px); }
+/* Action animations - big (room) */
+.big.anim-eat { animation: chickEatBig 0.4s ease 5 !important; }
+@keyframes chickEatBig {
+  0%, 100% { transform: scale(1.8) rotate(0); }
+  50% { transform: scale(1.8) rotate(15deg) translateY(4px); }
 }
-.anim-chase { animation: chickRun 0.8s ease 3 !important; }
-@keyframes chickRun {
-  0% { transform: scale(1.6) translateX(0); }
-  25% { transform: scale(1.6) translateX(-20px); }
-  75% { transform: scale(1.6) translateX(20px); }
-  100% { transform: scale(1.6) translateX(0); }
+.big.anim-chase { animation: chickRunBig 0.8s ease 3 !important; }
+@keyframes chickRunBig {
+  0% { transform: scale(1.8) translateX(0); }
+  25% { transform: scale(1.8) translateX(-20px); }
+  75% { transform: scale(1.8) translateX(20px); }
+  100% { transform: scale(1.8) translateX(0); }
 }
-.anim-jump { animation: chickJump 0.5s ease 4 !important; }
-@keyframes chickJump {
-  0%, 100% { transform: scale(1.6) translateY(0); }
-  40% { transform: scale(1.6) translateY(-18px); }
+.big.anim-jump { animation: chickJumpBig 0.5s ease 4 !important; }
+@keyframes chickJumpBig {
+  0%, 100% { transform: scale(1.8) translateY(0); }
+  40% { transform: scale(1.8) translateY(-18px); }
 }
-.anim-roll { animation: chickRoll 0.8s linear 3 !important; }
-@keyframes chickRoll {
-  0% { transform: scale(1.6) rotate(0); }
-  100% { transform: scale(1.6) rotate(360deg); }
+.big.anim-roll { animation: chickRollBig 0.8s linear 3 !important; }
+@keyframes chickRollBig {
+  0% { transform: scale(1.8) rotate(0); }
+  100% { transform: scale(1.8) rotate(360deg); }
 }
-.anim-sleep { animation: chickSleep 2s ease-in-out infinite !important; }
-@keyframes chickSleep {
-  0%, 100% { transform: scale(1.6) translateY(0); }
-  50% { transform: scale(1.6) translateY(2px); }
+.big.anim-sleep { animation: chickSleepBig 2s ease-in-out infinite !important; }
+@keyframes chickSleepBig {
+  0%, 100% { transform: scale(1.8) translateY(0); }
+  50% { transform: scale(1.8) translateY(2px); }
 }
-.anim-wake { animation: chickWake 0.6s ease 2 !important; }
-@keyframes chickWake {
-  0%, 100% { transform: scale(1.6) scaleY(1); }
-  50% { transform: scale(1.6) scaleY(1.15); }
+.big.anim-wake { animation: chickWakeBig 0.6s ease 2 !important; }
+@keyframes chickWakeBig {
+  0%, 100% { transform: scale(1.8) scaleY(1); }
+  50% { transform: scale(1.8) scaleY(1.15); }
 }
 
-/* Small chicken animations for yard */
-.anim-eat-sm { animation: chickEatSm 0.4s ease 5 !important; }
+/* Action animations - small (yard) */
+.anim-eat:not(.big) { animation: chickEatSm 0.4s ease 5 !important; }
 @keyframes chickEatSm {
   0%, 100% { transform: rotate(0); }
   50% { transform: rotate(15deg) translateY(3px); }
+}
+.anim-chase:not(.big) { animation: chickRunSm 0.8s ease 3 !important; }
+@keyframes chickRunSm {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+  100% { transform: translateX(0); }
 }
 
 /* ===== YARD VIEW ===== */
@@ -495,8 +502,7 @@ h1 {
   .coop-roof { top: -12px; left: -4px; right: -4px; height: 16px; }
   .coop-door { width: 16px; height: 22px; }
   .coop-name { font-size: 9px; }
-  .chick.big { transform: scale(1.3); }
-  .anim-eat { animation-name: chickEatSm !important; }
+  .chick.big { transform: scale(1.4); margin: 20px 12px 8px; }
   .room-actions { gap: 6px; }
   .action-btn { padding: 10px 12px; font-size: 13px; }
 }
