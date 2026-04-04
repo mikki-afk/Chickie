@@ -930,7 +930,7 @@ function pickN(a,n){const c=[...a],r=[];for(let i=0;i<n&&c.length;i++){const j=M
 function cl(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
 function days(){return Math.max(1,Math.floor((Date.now()-new Date(S.startDate).getTime())/864e5)+1)}
 function nowStr(){const d=new Date(new Date().toLocaleString("en-US",{timeZone:"America/Toronto"}));const pad=n=>String(n).padStart(2,'0');return d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
-function torontoISO(){return new Date().toLocaleString("sv-SE",{timeZone:"America/Toronto"}).replace(" ","T")+"-04:00"}
+function torontoISO(){const d=new Date();const s=d.toLocaleString("sv-SE",{timeZone:"America/Toronto"}).replace(" ","T");const utc=d.getTime();const tor=new Date(d.toLocaleString("en-US",{timeZone:"America/Toronto"})).getTime();const off=Math.round((tor-utc)/60000);const h=String(Math.floor(Math.abs(off)/60)).padStart(2,"0");const m=String(Math.abs(off)%60).padStart(2,"0");return s+(off>=0?"+":"-")+h+":"+m}
 function gPct(c){
   const ranges={baby:[0,1000],teen:[1000,2400],mature:[2400,5000],adult:[5000,8000]};
   if(c.stage==="elder")return 100;
