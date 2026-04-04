@@ -1517,7 +1517,7 @@ function addLog(msg,nChick,nType,nStats){
   actLog.unshift({t,msg});
   if(actLog.length>50)actLog.length=50;
   renderLog();
-  if(nType)notionLog(nChick||null,nType,msg.replace(/[\u{1F000}-\u{1FFFF}]/gu,"").trim(),nStats||null);
+  if(nType)notionLog(nChick||null,nType,msg.trim(),nStats||null);
 }
 function renderLog(){
   const el=document.getElementById("logList");if(!el)return;
