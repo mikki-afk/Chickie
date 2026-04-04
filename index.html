@@ -218,7 +218,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-bar-fill.hunger{background:linear-gradient(90deg,#ff6b6b,#ee5a24)}
 .room-bar-fill.happiness{background:linear-gradient(90deg,#ffd93d,#f0932b)}
 .room-bar-fill.thirst{background:linear-gradient(90deg,#74b9ff,#0984e3)}
-.room-bar-val{font-size:12px;width:26px;text-align:right;color:#5a3e2b;font-weight:700}
+.room-bar-val{font-size:12px;min-width:26px;text-align:right;color:#5a3e2b;font-weight:700;white-space:nowrap}
 .room-growth{margin-top:4px}
 .room-growth-label{font-size:10px;color:#888;margin-bottom:1px}
 .room-growth-track{height:5px;background:rgba(0,0,0,.06);border-radius:3px;overflow:hidden}
@@ -351,6 +351,18 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 /* Buddy interaction bubble */
 .buddy-bubble{position:absolute;top:-30px;left:50%;transform:translateX(-50%);background:#fff;border-radius:12px;padding:4px 10px;font-size:11px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:20;opacity:0;animation:bubblePop 3s ease forwards;pointer-events:none}
 .buddy-bubble::after{content:"";position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #fff}
+
+/* Milestone toast */
+.milestone-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,#fff5f5,#ffe0ec);border:3px solid #fd79a8;border-radius:20px;padding:18px 28px;z-index:10000;box-shadow:0 8px 30px rgba(253,121,168,.4);text-align:center;transition:transform .4s cubic-bezier(.34,1.56,.64,1),opacity .3s;opacity:0;max-width:90vw}
+.milestone-toast.show{transform:translate(-50%,-50%) scale(1);opacity:1}
+.milestone-toast .ms-icon{font-size:36px;display:block;margin-bottom:4px}
+.milestone-toast .ms-title{font-size:16px;font-weight:700;color:#e84393;margin-bottom:2px}
+.milestone-toast .ms-msg{font-size:13px;color:#5a3e2b}
+.milestone-toast .ms-level{font-size:11px;color:#6c5ce7;margin-top:4px;font-weight:600}
+/* Floating hearts animation */
+@keyframes heartRise{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1.3)}}
+.ms-hearts{position:absolute;top:-10px;left:0;right:0;pointer-events:none;text-align:center}
+.ms-heart{display:inline-block;font-size:16px;animation:heartRise 2s ease-out forwards;position:absolute}
 @keyframes bubblePop{0%{opacity:0;top:-20px}10%{opacity:1;top:-30px}80%{opacity:1}100%{opacity:0;top:-40px}}
 @keyframes buddyBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 .yard-chicken.buddy-active{animation:buddyBounce .5s ease 3}
@@ -598,7 +610,7 @@ function load(){
     if(r){S=JSON.parse(r);
       // migrate
       S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;});
-      if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};
+      if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
         S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*2,0,100);c.happiness=cl(c.happiness-m*1,0,100);c.thirst=cl(c.thirst-m*2,0,100);c.clean=cl(c.clean-m*1,0,100);c.fatigue=cl(c.fatigue+m*1,0,100);if(c.hunger<20||c.thirst<20)c.health=cl(c.health-m*2,0,100)}else{c.fatigue=cl(c.fatigue-m*3,0,100);c.health=cl(c.health+m,0,100)}});
@@ -779,7 +791,7 @@ function yardFeed(){
       else if(c.hatedFood.includes(fid)){h=10;c.happiness=cl(c.happiness-10,0,100)}
       const a=Math.min(h,100-c.hunger);c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.max(0,a);
     });
-    S.food--;S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping)x.affManual+=1});setCD("yard","feed");updStages();save();
+    S.food--;S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","feed");updStages();save();
     const fn=FOODS.find(x=>x.id===fid);addLog(`🌾 你给院子里的小鸡们喂了${fn?fn.icon+fn.name:"食物"}`,"全部","吃饭");renderYard();
   });
 }
@@ -792,14 +804,14 @@ function yardPlay(){
       if(c.favoriteGame===gid){p=30;hc=5}else if(c.hatedGame===gid){p=10;hc=15}
       const a=Math.min(p,100-c.happiness);c.happiness=cl(c.happiness+p,0,100);c.hunger=cl(c.hunger-hc,0,100);c.totalHappiness+=Math.max(0,a);
     });
-    const gn=GAMES.find(x=>x.id===gid);S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping)x.affManual+=1});setCD("yard","play");updStages();save();
+    const gn=GAMES.find(x=>x.id===gid);S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","play");updStages();save();
     addLog(`🎮 你带小鸡们玩了${gn?gn.icon+gn.name:"游戏"}`,"全部","玩耍");renderYard();
   });
 }
 function yardDrink(){
   if(getCD("yard","drink")>0)return;
   S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping)c.thirst=cl(c.thirst+25,0,100)});
-  S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping)x.affManual+=1});setCD("yard","drink");save();addLog("💧 你给院子里的小鸡们喝水了","全部","喝水");renderYard();
+  S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","drink");save();addLog("💧 你给院子里的小鸡们喝水了","全部","喝水");renderYard();
 }
 function yardSleep(){
   if(getCD("yard","sleep")>0)return;
@@ -809,12 +821,12 @@ function yardSleep(){
     if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
     if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   });
-  S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping)x.affManual+=1});setCD("yard","sleep");updStages();save();addLog("💤 你让小鸡们都去休息了","全部","睡觉");renderYard();
+  S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","sleep");updStages();save();addLog("💤 你让小鸡们都去休息了","全部","睡觉");renderYard();
 }
 function yardBath(){
   if(getCD("yard","bath")>0)return;
   S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100)}});
-  S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping)x.affManual+=1});setCD("yard","bath");save();addLog("🛁 你给院子里的小鸡们洗澡了","全部","洗澡");renderYard();
+  S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","bath");save();addLog("🛁 你给院子里的小鸡们洗澡了","全部","洗澡");renderYard();
 }
 function yardClean(){
   if(S.poops.length===0)return;
@@ -900,8 +912,8 @@ function renderRoom(){
     <div class="room-bar-row"><span class="room-bar-label">🛁 清洁值</span><div class="room-bar-track"><div class="room-bar-fill clean" style="width:${c.clean}%"></div></div><span class="room-bar-val">${c.clean}</span></div>
     <div class="room-bar-row"><span class="room-bar-label">💚 健康</span><div class="room-bar-track"><div class="room-bar-fill health" style="width:${c.health}%"></div></div><span class="room-bar-val">${c.health}</span></div>
     <div class="room-bar-row"><span class="room-bar-label">😴 疲惫</span><div class="room-bar-track"><div class="room-bar-fill fatigue" style="width:${c.fatigue}%"></div></div><span class="room-bar-val">${c.fatigue}</span></div>
-    <div class="room-bar-row"><span class="room-bar-label">🤝 亲密(手动)</span><div class="room-bar-track"><div class="room-bar-fill aff-manual" style="width:${Math.min(c.affManual,100)}%"></div></div><span class="room-bar-val">${c.affManual}</span></div>
-    <div class="room-bar-row"><span class="room-bar-label">📋 亲密(指令)</span><div class="room-bar-track"><div class="room-bar-fill aff-notion" style="width:${Math.min(c.affNotion,100)}%"></div></div><span class="room-bar-val">${c.affNotion}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">🤝 亲密(手动)</span><div class="room-bar-track"><div class="room-bar-fill aff-manual" style="width:${Math.min(c.affManual/1.2,100)}%"></div></div><span class="room-bar-val">${c.affManual} ${(getAffLevel(c.affManual)||{icon:"",level:"陌生"}).icon}${(getAffLevel(c.affManual)||{level:"陌生"}).level}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">📋 亲密(指令)</span><div class="room-bar-track"><div class="room-bar-fill aff-notion" style="width:${Math.min(c.affNotion/1.2,100)}%"></div></div><span class="room-bar-val">${c.affNotion} ${(getAffLevel(c.affNotion)||{icon:"",level:"陌生"}).icon}${(getAffLevel(c.affNotion)||{level:"陌生"}).level}</span></div>
     <div class="room-growth"><div class="room-growth-label">🌱 成长 ${gp}% · ${stgN(c.stage)}</div><div class="room-growth-track"><div class="room-growth-fill" style="width:${gp}%"></div></div></div>
     <div style="margin-top:4px;font-size:10px;color:#888">❤️喜欢:${ff}${fg} 💔讨厌:${hf}${hg}</div>
     <div style="margin-top:2px;font-size:10px;color:#888">💕好友:${bb.best>=0?S.chickens[bb.best].name+"("+bb.bestV+")":"无"} 😐疏远:${bb.worst>=0&&bb.worstV<bb.bestV?S.chickens[bb.worst].name+"("+bb.worstV+")":"无"}</div>`;
@@ -975,7 +987,7 @@ function doRoomFeed(fid){
   const ah=Math.min(hA,100-c.hunger);
   c.hunger=cl(c.hunger+hA,0,100);c.happiness=cl(c.happiness+pA,0,100);
   c.totalHunger+=Math.max(0,ah);if(pA>0)c.totalHappiness+=Math.min(pA,100-c.happiness+pA);
-  S.food--;S.totalInteractions++;c.affManual+=2;setCD(roomId,"feed");updStages();save();
+  S.food--;S.totalInteractions++;{const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}setCD(roomId,"feed");updStages();save();
   const fn2=FOODS.find(x=>x.id===fid);addLog(`🌾 你给${c.name}喂了${fn2?fn2.icon+fn2.name:"食物"}`,c.name,"吃饭",c);
   setRoomExpr(ex,"anim-eat");
   showReact(c.favoriteFood.includes(fid)?"好吃！😍":c.hatedFood.includes(fid)?"不喜欢…😣":"吃饱啦~😊");
@@ -999,7 +1011,7 @@ function doRoomPlay(gid){
   else{pA=20;hC=10;ex="happy"}
   const ap=Math.min(pA,100-c.happiness);
   c.happiness=cl(c.happiness+pA,0,100);c.hunger=cl(c.hunger-hC,0,100);
-  c.totalHappiness+=Math.max(0,ap);S.totalInteractions++;c.affManual+=2;
+  c.totalHappiness+=Math.max(0,ap);S.totalInteractions++;{const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}
   setCD(roomId,"play");updStages();save();
   addLog(`🎮 你带${c.name}玩了${game?game.icon+game.name:"游戏"}`,c.name,"玩耍",c);
   setRoomExpr(ex,game?game.anim:"");
@@ -1013,7 +1025,7 @@ function doRoomDrink(){
   const c=S.chickens[roomId];
   if(!c||c.sleeping||getCD(roomId,"drink")>0)return;
   c.thirst=cl(c.thirst+30,0,100);c.happiness=cl(c.happiness+5,0,100);
-  S.totalInteractions++;c.affManual+=2;setCD(roomId,"drink");save();
+  S.totalInteractions++;{const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}setCD(roomId,"drink");save();
   addLog(`💧 你给${c.name}喝水了`,c.name,"喝水",c);
   setRoomExpr("happy","anim-drink");
   showReact("咕噜咕噜~ 💧");
@@ -1027,7 +1039,7 @@ function doRoomBath(){
   const c=S.chickens[roomId];
   if(!c||c.sleeping||getCD(roomId,"bath")>0)return;
   c.clean=cl(c.clean+35,0,100);c.happiness=cl(c.happiness+10,0,100);
-  S.totalInteractions++;c.affManual+=2;setCD(roomId,"bath");save();
+  S.totalInteractions++;{const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}setCD(roomId,"bath");save();
   addLog(`🛁 你给${c.name}洗澡了`,c.name,"洗澡",c);
   setRoomExpr("love","anim-bath");
   showReact("洗香香~ 🛁✨");
@@ -1042,7 +1054,7 @@ function doSleep(){
   if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}
   if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
   if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;c.fatigue=cl(c.fatigue-30,0,100);
-  c.sleeping=true;S.totalInteractions++;c.affManual+=1;setCD(roomId,"sleep");updStages();save();
+  c.sleeping=true;S.totalInteractions++;{const ov=c.affManual;c.affManual+=1;checkAffMilestone(c.id,"manual",ov,c.affManual)}setCD(roomId,"sleep");updStages();save();
   addLog(`💤 ${c.name}去睡觉了，晚安~`,c.name,"睡觉",c);
   setRoomExpr("sleep","anim-sleep");showReact("晚安~ 💤");
   moveToFurniture("furBed");
@@ -1339,8 +1351,8 @@ function execInstruction(cmd,pageId){
   if(!matched)addLog(`📋 [指令] 无法理解: ${cmd}`);
   // Increase Notion affinity for targeted chicken(s)
   if(matched){
-    if(m&&m[1]){const ci=names.indexOf(m[1]);if(ci>=0)S.chickens[ci].affNotion+=2}
-    else S.chickens.forEach(c=>c.affNotion+=1);
+    if(m&&m[1]){const ci=names.indexOf(m[1]);if(ci>=0){const ov=S.chickens[ci].affNotion;S.chickens[ci].affNotion+=2;checkAffMilestone(ci,"notion",ov,S.chickens[ci].affNotion)}}
+    else S.chickens.forEach((c,i)=>{const ov=c.affNotion;c.affNotion+=1;checkAffMilestone(i,"notion",ov,c.affNotion)});
   }
   // Update UI
   updStages();save();scheduleStateSync();
@@ -1366,6 +1378,50 @@ async function markInstrDone(pageId){
       body:JSON.stringify({properties:{"已执行":{checkbox:true}}})
     });
   }catch(e){console.log("Mark instruction done error:",e)}
+}
+
+// ===== AFFINITY MILESTONES =====
+const AFF_LEVELS=[
+  {threshold:5,level:"认识",icon:"👋",manual:["#name#看了你一眼，似乎认出你了","#name#小声叫了一声，好像在说你好"],notion:["#name#收到指令后乖乖照做了","#name#好像开始听懂你的指令了"]},
+  {threshold:15,level:"熟悉",icon:"😊",manual:["#name#主动朝你走了过来","#name#在你面前开心地转了个圈"],notion:["#name#一看到指令就兴奋起来","#name#执行指令的时候特别认真"]},
+  {threshold:30,level:"朋友",icon:"🤝",manual:["#name#用小脑袋蹭了蹭你的手","#name#开心地扑扇翅膀欢迎你！"],notion:["#name#已经很信任你的指令了","#name#看到新指令会开心地叽叽叫"]},
+  {threshold:50,level:"好朋友",icon:"💕",manual:["#name#开心地蹭过来要你摸摸头","#name#跳到你手上不肯走了"],notion:["#name#对你的指令充满期待","#name#觉得你是最好的主人！"]},
+  {threshold:80,level:"挚友",icon:"💖",manual:["#name#发出了幸福的咕咕声~","#name#紧紧地靠在你身边"],notion:["#name#只要是你说的都会开心地去做","#name#每次收到指令都像收到礼物一样"]},
+  {threshold:120,level:"至亲",icon:"👑",manual:["#name#觉得你是世界上最好的人！","#name#对你露出了最灿烂的笑容"],notion:["#name#已经把你当成家人了","#name#对你的信任无可替代"]}
+];
+function getAffLevel(val){
+  let lv=null;
+  for(const l of AFF_LEVELS)if(val>=l.threshold)lv=l;
+  return lv;
+}
+function checkAffMilestone(ci,type,oldVal,newVal){
+  const c=S.chickens[ci];if(!c)return;
+  if(!S.milestones)S.milestones={};
+  for(const lv of AFF_LEVELS){
+    if(oldVal<lv.threshold&&newVal>=lv.threshold){
+      const key=ci+"_"+type+"_"+lv.threshold;
+      if(S.milestones[key])continue;
+      S.milestones[key]=true;
+      const msgs=type==="manual"?lv.manual:lv.notion;
+      const msg=msgs[Math.floor(Math.random()*msgs.length)].replace(/#name#/g,c.name);
+      const typeLabel=type==="manual"?"手动":"指令";
+      showMilestoneToast(c.name,lv,msg,typeLabel);
+      c.happiness=cl(c.happiness+10,0,100);
+      addLog(`💝 [亲密里程碑] ${c.name}的${typeLabel}亲密达到${lv.level}(${lv.threshold})！${msg}`,c.name,"互动",c);
+      save();
+    }
+  }
+}
+function showMilestoneToast(name,lv,msg,typeLabel){
+  let t=document.getElementById("milestoneToast");
+  if(!t){t=document.createElement("div");t.id="milestoneToast";t.className="milestone-toast";document.body.appendChild(t)}
+  t.innerHTML=`<div class="ms-icon">${lv.icon}</div><div class="ms-title">亲密度提升！</div><div class="ms-msg">${msg}</div><div class="ms-level">${name} · ${typeLabel}亲密 · ${lv.level}</div>`;
+  t.classList.remove("show");void t.offsetWidth;t.classList.add("show");
+  // Floating hearts
+  const hearts=document.createElement("div");hearts.className="ms-hearts";
+  for(let i=0;i<6;i++){const h=document.createElement("span");h.className="ms-heart";h.textContent=pick(["💕","💖","✨","🌟","💗","❤️"]);h.style.left=(15+Math.random()*70)+"%";h.style.animationDelay=(Math.random()*0.8)+"s";hearts.appendChild(h)}
+  t.appendChild(hearts);
+  setTimeout(()=>{t.classList.remove("show");setTimeout(()=>{if(hearts.parentNode)hearts.remove()},400)},3500);
 }
 
 // ===== AUTO ACTIVITY =====
