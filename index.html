@@ -340,6 +340,8 @@ h1{font-size:20px}
 .action-btn{padding:8px 10px;font-size:12px}
 .sky{height:90px}
 }
+.instr-toast{position:fixed;top:-60px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:600;box-shadow:0 4px 15px rgba(0,0,0,.3);z-index:9999;transition:top .4s ease;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+.instr-toast.show{top:20px}
 </style>
 </head>
 <body>
@@ -1118,6 +1120,110 @@ async function syncStateToNotion(){
   }catch(e){console.log("State sync error:",e)}
 }
 
+// ===== NOTION INSTRUCTION POLLING =====
+let instrTimer=null;
+function startInstrPoll(){
+  if(instrTimer)clearInterval(instrTimer);
+  pollInstructions();
+  instrTimer=setInterval(pollInstructions,30000);
+}
+async function pollInstructions(){
+  if(!NOTION_TOKEN||!NOTION_DB)return;
+  try{
+    const r=await fetch(NOTION_PROXY+"v1/databases/"+NOTION_DB+"/query",{
+      method:"POST",
+      headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
+      body:JSON.stringify({filter:{and:[{property:"类型",select:{equals:"指令"}},{property:"已执行",checkbox:{equals:false}}]},sorts:[{timestamp:"created_time",direction:"ascending"}]})
+    });
+    if(!r.ok)return;
+    const data=await r.json();
+    if(!data.results||data.results.length===0)return;
+    for(const page of data.results){
+      const titleArr=page.properties["Name"]?.title;
+      const cmd=titleArr&&titleArr.length>0?titleArr[0].plain_text:"";
+      if(!cmd)continue;
+      execInstruction(cmd,page.id);
+    }
+  }catch(e){console.log("Instruction poll error:",e)}
+}
+function execInstruction(cmd,pageId){
+  const names=S.chickens.map(c=>c.name);
+  let matched=false;
+  // 给XX喂YY
+  let m=cmd.match(/给(.+?)喂(.+)/);
+  if(m){
+    const ci=names.indexOf(m[1]);const foodName=m[2];
+    const food=FOODS.find(f=>f.name===foodName)||FOODS[0];
+    if(ci>=0&&S.food>0){
+      const c=S.chickens[ci];
+      let h=20;
+      if(c.favoriteFood.includes(food.id)){h=30;c.happiness=cl(c.happiness+8,0,100)}
+      else if(c.hatedFood.includes(food.id)){h=10;c.happiness=cl(c.happiness-5,0,100)}
+      c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.min(h,100);S.food--;
+      addLog(`📋 [指令] 给${c.name}喂了${food.icon}${food.name}`,c.name,"吃饭",c);
+      matched=true;
+    }
+  }
+  // 给XX喝水
+  if(!matched){m=cmd.match(/给(.+?)喝水/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){const c=S.chickens[ci];c.thirst=cl(c.thirst+25,0,100);addLog(`📋 [指令] 给${c.name}喝水了`,c.name,"喝水",c);matched=true}
+  }}
+  // 给XX洗澡
+  if(!matched){m=cmd.match(/给(.+?)洗澡/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){const c=S.chickens[ci];c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);addLog(`📋 [指令] 给${c.name}洗澡了`,c.name,"洗澡",c);matched=true}
+  }}
+  // 让XX玩
+  if(!matched){m=cmd.match(/让(.+?)玩/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){const c=S.chickens[ci];const g=pick(GAMES);c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);c.totalHappiness+=Math.min(20,100);addLog(`📋 [指令] 让${c.name}玩了${g.icon}${g.name}`,c.name,"玩耍",c);matched=true}
+  }}
+  // 让XX睡觉
+  if(!matched){m=cmd.match(/让(.+?)睡觉/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){const c=S.chickens[ci];if(!c.sleeping){c.sleeping=true;if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;addLog(`📋 [指令] 让${c.name}去睡觉了`,c.name,"睡觉",c);matched=true}}
+  }}
+  // 叫醒XX
+  if(!matched){m=cmd.match(/叫醒(.+)/);if(m){
+    const ci=names.indexOf(m[1]);
+    if(ci>=0){const c=S.chickens[ci];if(c.sleeping){c.sleeping=false;addLog(`📋 [指令] 叫醒了${c.name}`,c.name,"睡觉",c);matched=true}}
+  }}
+  // 清粑粑
+  if(!matched&&cmd.includes("清粑粑")){
+    if(S.poops.length>0){S.poops=[];addLog("📋 [指令] 清理了所有粑粑","全部","清粑粑");matched=true}
+  }
+  // 加食物
+  if(!matched){m=cmd.match(/加食物(\d*)/);if(m){
+    const amt=parseInt(m[1])||5;S.food=cl(S.food+amt,0,99);addLog(`📋 [指令] 加了${amt}份食物，现在${S.food}份`,"全部","食物");matched=true;
+  }}
+  if(!matched)addLog(`📋 [指令] 无法理解: ${cmd}`);
+  // Update UI
+  updStages();save();scheduleStateSync();
+  if(view==="yard")renderYard();else if(view==="room")renderRoom();
+  renderStats();renderLog();
+  showInstrToast(cmd,matched);
+  // Mark as executed in Notion
+  markInstrDone(pageId);
+}
+function showInstrToast(cmd,ok){
+  let t=document.getElementById("instrToast");
+  if(!t){t=document.createElement("div");t.id="instrToast";document.body.appendChild(t)}
+  t.textContent=ok?`✅ 执行指令: ${cmd}`:`❓ 未知指令: ${cmd}`;
+  t.className="instr-toast show";
+  setTimeout(()=>t.className="instr-toast",3000);
+}
+async function markInstrDone(pageId){
+  if(!NOTION_TOKEN)return;
+  try{
+    await fetch(NOTION_PROXY+"v1/pages/"+pageId,{
+      method:"PATCH",
+      headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
+      body:JSON.stringify({properties:{"已执行":{checkbox:true}}})
+    });
+  }catch(e){console.log("Mark instruction done error:",e)}
+}
+
 // ===== AUTO ACTIVITY =====
 let autoTimer=null;
 function startAutoActivity(){
@@ -1231,6 +1337,7 @@ genGrass(document.getElementById("yardGround"));
 initWeather();
 startPoopTimer();
 startAutoActivity();
+startInstrPoll();
 renderYard();renderStats();renderLog();
 setInterval(decay,60000);
 setInterval(()=>{
