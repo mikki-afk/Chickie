@@ -173,6 +173,41 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .tail-spiky .chick-tail{border-left-width:4px!important;border-bottom-width:14px!important;transform:rotate(-25deg)!important}
 .tail-round .chick-tail{border-radius:50%;width:8px!important;height:8px!important;border:none!important;background:var(--feather,#d0c0e8)}
 
+/* ===== GENDER DIFFERENCES ===== */
+/* Male: bigger comb, wattle, dramatic tail */
+.gender-male.stage-mature .chick-comb{border-bottom-width:10px!important;top:-9px!important}
+.gender-male.stage-mature .chick-wattle{height:6px!important;opacity:.8!important}
+.gender-male.stage-mature .chick-tail{border-bottom-width:14px!important;border-left-width:9px!important;transform:rotate(-25deg)!important}
+
+.gender-male.stage-adult .chick-body{width:42px;height:36px}
+.gender-male.stage-adult .chick-head{width:36px;height:34px}
+.gender-male.stage-adult .chick-comb{border-bottom-width:13px!important;border-left-width:6px!important;border-right-width:6px!important;top:-10px!important}
+.gender-male.stage-adult .chick-wattle{height:8px!important;width:6px!important}
+.gender-male.stage-adult .chick-tail{border-bottom-width:16px!important;border-left-width:10px!important;right:-8px!important;transform:rotate(-30deg)!important}
+.gender-male.stage-adult .chick-hair{border-bottom-width:12px!important}
+.gender-male.stage-adult .chick-feet .chick-foot{width:10px;height:4px}
+
+.gender-male.stage-elder .chick-comb{border-bottom-width:11px!important;top:-8px!important}
+.gender-male.stage-elder .chick-wattle{height:7px!important}
+.gender-male.stage-elder .chick-tail{border-bottom-width:13px!important;border-left-width:8px!important}
+
+/* Female: rounder, smaller comb, neat tail, eyelashes */
+.gender-female.stage-mature .chick-body{width:40px;height:30px;border-radius:45%}
+.gender-female.stage-mature .chick-comb{border-bottom-width:5px!important;top:-5px!important;opacity:.7!important}
+.gender-female.stage-mature .chick-wattle{opacity:.3!important;height:3px!important}
+.gender-female.stage-mature .chick-tail{border-bottom-width:7px!important;border-left-width:5px!important;transform:rotate(-15deg)!important}
+
+.gender-female.stage-adult .chick-body{width:42px;height:32px;border-radius:45%}
+.gender-female.stage-adult .chick-head{width:33px;height:31px}
+.gender-female.stage-adult .chick-comb{border-bottom-width:6px!important;border-left-width:3px!important;border-right-width:3px!important;top:-6px!important;opacity:.8!important}
+.gender-female.stage-adult .chick-wattle{height:4px!important;width:4px!important;opacity:.6!important}
+.gender-female.stage-adult .chick-tail{border-bottom-width:8px!important;border-left-width:6px!important;transform:rotate(-15deg)!important}
+.gender-female.stage-adult .chick-eye::after{content:"";position:absolute;top:-1px;right:-1px;width:2px;height:1px;background:#2c1810;transform:rotate(15deg)}
+
+.gender-female.stage-elder .chick-body{border-radius:45%}
+.gender-female.stage-elder .chick-comb{border-bottom-width:5px!important;opacity:.6!important}
+.gender-female.stage-elder .chick-tail{border-bottom-width:7px!important}
+
 /* Animations */
 @keyframes heartF{0%{transform:translateX(-50%) translateY(0);opacity:1}100%{transform:translateX(-50%) translateY(-10px);opacity:0}}
 @keyframes tearD{0%{transform:translateY(0);opacity:1}100%{transform:translateY(6px);opacity:0}}
@@ -829,7 +864,7 @@ function stgN(s){return{baby:"幼年",teen:"成长期",mature:"���熟期",
 // ===== CHICKEN HTML =====
 function chickHTML(id,expr,sz,ex){
   const c=S.chickens[id];const d=CDEFS[id];
-  const cls=["chick","stage-"+c.stage,"tail-"+d.tailStyle,"expr-"+expr,sz||"",ex||""].join(" ").trim();
+  const cls=["chick","stage-"+c.stage,"gender-"+(c.gender||"female"),"tail-"+d.tailStyle,"expr-"+expr,sz||"",ex||""].join(" ").trim();
   const vars=`--plumage:${d.plumage};--feather:${d.feather};--comb:${d.comb};--col1:${d.color[0]};--col2:${d.color[1]}`;
   return `<div class="${cls}" data-id="${id}" style="${vars}">
     <div class="chick-head">
@@ -884,6 +919,7 @@ function getStatus(c){
   if(c.thirst<20)return"渴了";
   if(c.clean<20)return"脏脏的…";
   if(c.hunger>=80&&c.happiness>=80)return"很满足~";
+  if(S.couples){for(const ck of Object.keys(S.couples)){const ids=ck.split(":").map(Number);if(ids.includes(c.id)){const pid=ids[0]===c.id?ids[1]:ids[0];return"💕"+S.chickens[pid]?.name}}}
   return"";
 }
 
@@ -892,7 +928,7 @@ function randPrefs(){
   const fi=FOODS.map(f=>f.id),gi=GAMES.map(g=>g.id);
   const fv=pickN(fi,2),rm=fi.filter(f=>!fv.includes(f)),ht=pickN(rm,2);
   const fg=pick(gi),hg=pick(gi.filter(g=>g!==fg));
-  return{favoriteFood:fv,hatedFood:ht,favoriteGame:fg,hatedGame:hg,fearsThunder:Math.random()<0.4};
+  return{favoriteFood:fv,hatedFood:ht,favoriteGame:fg,hatedGame:hg,fearsThunder:Math.random()<0.4,gender:Math.random()<0.5?"male":"female"};
 }
 function defState(){
   const now=new Date().toISOString();
@@ -946,7 +982,7 @@ function load(){
     const r=localStorage.getItem(SK);
     if(r){S=JSON.parse(r);
       // migrate
-      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;if(c.light===undefined)c.light=false;if(c.curtain===undefined)c.curtain=true;if(c.fearsThunder===undefined)c.fearsThunder=Math.random()<0.4;});
+      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;if(c.light===undefined)c.light=false;if(c.curtain===undefined)c.curtain=true;if(c.fearsThunder===undefined)c.fearsThunder=Math.random()<0.4;if(c.gender===undefined)c.gender=Math.random()<0.5?"male":"female";});
       if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};if(!S.buddyMilestones)S.buddyMilestones={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
@@ -1120,7 +1156,7 @@ function renderYardChickens(){
     div.style.left=pos.left;div.style.top=pos.top;
     div.onclick=function(e){showMenu(e,c.id)};
     div.innerHTML=`${chickHTML(c.id,expr,"med")}
-      <span class="yc-name">${c.name}</span>
+      <span class="yc-name">${c.gender==="male"?"♂":"♀"}${c.name}</span>
       <span class="yc-status">${st}</span>
       <div class="yard-bars">
         <div class="yard-bar-track"><div class="yard-bar-fill h" style="width:${c.hunger}%"></div></div>
@@ -1262,7 +1298,7 @@ function renderRoom(){
   const curtCls=c.curtain?"open":"";
   const curtCol=col[0];
   sc.innerHTML=`
-    <div class="room-header">🏠 ${c.name}的房间</div>
+    <div class="room-header">🏠 ${c.gender==="male"?"♂":"♀"}${c.name}的房间</div>
     <div class="room-scene">
       <div class="room-ceiling-light ${c.light?"on":""}"><div class="cl-wire"></div><div class="cl-shade"><div class="cl-bulb"></div></div><div class="cl-glow"></div></div>
       <div class="room-window">
@@ -1649,6 +1685,7 @@ async function flushNotion(){
     if(item.stats.light!==undefined)props["房灯"]={checkbox:item.stats.light};
     if(item.stats.curtain!==undefined)props["窗帘"]={checkbox:item.stats.curtain};
     if(item.stats.stage!==undefined){const stgE={"baby":"🥚","teen":"🌱","mature":"🌿","adult":"🐔","elder":"👴"};props["阶段"]={select:{name:(stgE[item.stats.stage]||"🥚")+" "+stgN(item.stats.stage)}};}
+    if(item.stats.gender!==undefined)props["性别"]={select:{name:item.stats.gender==="male"?"♂ 公鸡":"♀ 母鸡"}};
     if(item.stats.totalHunger!==undefined&&item.stats.totalHappiness!==undefined)props["成长进度"]={number:gPct(item.stats)};
     // Buddy affinity summary
     if(item.stats.id!==undefined&&S.buddyAff){
@@ -1684,7 +1721,7 @@ function scheduleStateSync(){
 }
 async function syncStateToNotion(){
   if(!NOTION_TOKEN||!NOTION_DB)return;
-  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,heater:c.heater,lamp:c.lamp,light:c.light,curtain:c.curtain,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
+  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,heater:c.heater,lamp:c.lamp,light:c.light,curtain:c.curtain,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame,gender:c.gender,parents:c.parents})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
   try{
     await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
       method:"PATCH",
@@ -2063,6 +2100,83 @@ function checkBuddyMilestone(id1,id2,aff){
     }
   }
 }
+// ===== ROMANCE SYSTEM =====
+function checkRomance(id1,id2){
+  const c1=S.chickens[id1],c2=S.chickens[id2];
+  // Need opposite gender, both adult or elder, high buddy affinity
+  if(!c1||!c2)return;
+  if(c1.gender===c2.gender)return;
+  if(!["adult","elder"].includes(c1.stage)||!["adult","elder"].includes(c2.stage))return;
+  const aff=getBuddyAff(id1,id2);
+  if(aff<60)return;
+  if(!S.couples)S.couples={};
+  const ck=buddyKey(id1,id2);
+  if(S.couples[ck])return; // Already a couple
+  S.couples[ck]={since:Date.now(),babies:0};
+  addLog(`💘 ${c1.name}和${c2.name}看对眼了！它们成为了一对！`,c1.name,"互动",c1);
+  addLog(`💘 ${c1.name}和${c2.name}决定住在一起了~`,c2.name,"互动",c2);
+  c1.happiness=cl(c1.happiness+20,0,100);
+  c2.happiness=cl(c2.happiness+20,0,100);
+  showMilestoneToast(c1.name+"&"+c2.name,"💘","它们在一起了！","恋爱");
+}
+
+function tryBaby(){
+  if(!S.couples)return;
+  for(const ck of Object.keys(S.couples)){
+    const cp=S.couples[ck];
+    const ids=ck.split(":").map(Number);
+    const c1=S.chickens[ids[0]],c2=S.chickens[ids[1]];
+    if(!c1||!c2)continue;
+    // Both need to be healthy and happy
+    if(c1.health<50||c2.health<50)continue;
+    if(c1.happiness<60||c2.happiness<60)continue;
+    // Cooldown: at least 5 minutes since last baby or couple formation
+    const lastTime=cp.lastBaby||cp.since;
+    if(Date.now()-lastTime<300000)continue; // 5 min cooldown
+    // 10% chance per check
+    if(Math.random()>0.1)continue;
+    // Max babies limit
+    if(S.chickens.length>=10){addLog(`🥚 ${c1.name}和${c2.name}想生宝宝，但家里太挤了…`,c1.name,"互动",c1);continue}
+    // Create baby!
+    cp.babies++;cp.lastBaby=Date.now();
+    const babyGender=Math.random()<0.5?"male":"female";
+    const parentColors=[CDEFS[ids[0]],CDEFS[ids[1]]];
+    const mixColor=(a,b)=>{
+      const ha=parseInt(a.slice(1),16),hb=parseInt(b.slice(1),16);
+      const r=Math.round(((ha>>16)+(hb>>16))/2);
+      const g=Math.round((((ha>>8)&0xFF)+((hb>>8)&0xFF))/2);
+      const bl=Math.round(((ha&0xFF)+(hb&0xFF))/2);
+      return"#"+((r<<16)|(g<<8)|bl).toString(16).padStart(6,"0");
+    };
+    const babyId=S.chickens.length;
+    const babyName=c1.name.charAt(0)+c2.name.charAt(0)+"宝"+cp.babies;
+    // Mix parent colors
+    const p1=parentColors[0],p2=parentColors[1];
+    const babyCDef={
+      name:babyName,
+      color:[mixColor(p1.color[0],p2.color[0]),mixColor(p1.color[1],p2.color[1])],
+      plumage:mixColor(p1.plumage,p2.plumage),
+      feather:mixColor(p1.feather,p2.feather),
+      comb:mixColor(p1.comb,p2.comb),
+      tailStyle:pick([p1.tailStyle,p2.tailStyle])
+    };
+    CDEFS.push(babyCDef);
+    S.chickens.push({
+      id:babyId,name:babyName,hunger:80,happiness:90,thirst:80,clean:90,health:100,fatigue:0,
+      affManual:0,affNotion:0,heater:0,lamp:0,light:false,curtain:true,
+      stage:"baby",totalHunger:0,totalHappiness:0,
+      location:"outside",sleeping:false,...randPrefs(),gender:babyGender,
+      parents:[ids[0],ids[1]]
+    });
+    addLog(`🥚🐣 ${c1.name}和${c2.name}的宝宝${babyName}(${babyGender==="male"?"♂公":"♀母"})出生了！！！`,babyName,"互动",c1);
+    showMilestoneToast(babyName,"🐣","新生命诞生了！"+c1.name+"和"+c2.name+"的宝宝！","诞生");
+    c1.happiness=cl(c1.happiness+30,0,100);
+    c2.happiness=cl(c2.happiness+30,0,100);
+    save();
+    if(view==="yard")renderYard();
+  }
+}
+
 function triggerBuddyEvent(){
   const outdoor=S.chickens.filter(c=>c.location==="outside"&&!c.sleeping);
   if(outdoor.length<2)return;
@@ -2072,6 +2186,7 @@ function triggerBuddyEvent(){
   addBuddyAff(c1.id,c2.id,1);
   const aff=getBuddyAff(c1.id,c2.id);
   checkBuddyMilestone(c1.id,c2.id,aff);
+  checkRomance(c1.id,c2.id);
   // Generate dynamic chat
   const chat=genBuddyChat(c1.name,c2.name,aff);
   const line1=chat.lines[0],line2=chat.lines[1];
@@ -2197,6 +2312,7 @@ function startAutoActivity(){
     });
     // Random buddy interaction (30% chance per tick)
     if(Math.random()<0.3)triggerBuddyEvent();
+    tryBaby();
     updStages();save();
     if(view==="yard")renderYard();
     else if(view==="room")renderRoom();
