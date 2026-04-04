@@ -1220,6 +1220,38 @@ function execInstruction(cmd,pageId){
     const ci=names.indexOf(m[1]);
     if(ci>=0){const c=S.chickens[ci];if(c.location==="outside"){c.location="inside";addLog(`📋 [指令] 把${c.name}喊回去了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"位置",c);matched=true}}
   }}
+  // 全部吃饭
+  if(!matched&&(cmd.includes("全部吃饭")||cmd.includes("都吃饭")||cmd.includes("一起吃饭"))){
+    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+20,0,100);S.food--;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起吃了${f.icon}${f.name}`,"全部","吃饭");matched=true}
+  }
+  // 全部喝水
+  if(!matched&&(cmd.includes("全部喝水")||cmd.includes("都喝水")||cmd.includes("一起喝水"))){
+    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+25,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起喝水了`,"全部","喝水");matched=true;
+  }
+  // 全部洗澡
+  if(!matched&&(cmd.includes("全部洗澡")||cmd.includes("都洗澡")||cmd.includes("一起洗澡"))){
+    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起洗澡了`,"全部","洗澡");matched=true;
+  }
+  // 全部玩 / 一起做游戏
+  if(!matched&&(cmd.includes("全部玩")||cmd.includes("都玩")||cmd.includes("一起玩")||cmd.includes("一起做游戏"))){
+    const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起玩了${g.icon}${g.name}`,"全部","玩耍");matched=true;
+  }
+  // 全部睡觉
+  if(!matched&&(cmd.includes("全部睡觉")||cmd.includes("都睡觉")||cmd.includes("一起睡觉"))){
+    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.sleeping=true;if(c.hunger<80)c.hunger=80;if(c.happiness<80)c.happiness=80;if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;c.fatigue=cl(c.fatigue-30,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡都去睡觉了`,"全部","睡觉");matched=true;
+  }
+  // 全部叫醒
+  if(!matched&&(cmd.includes("全部叫醒")||cmd.includes("都叫醒")||cmd.includes("都起床"))){
+    let cnt=0;S.chickens.forEach(c=>{if(c.sleeping){c.sleeping=false;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡都被叫醒了`,"全部","睡觉");matched=true;
+  }
+  // 打扫房间
+  if(!matched&&(cmd.includes("打扫房间")||cmd.includes("打扫卫生")||cmd.includes("大扫除"))){
+    S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});addLog(`📋 [指令] 大扫除！粑粑清了，小鸡们都干净了`,"全部","清粑粑");matched=true;
+  }
+  // 全部喂药
+  if(!matched&&(cmd.includes("全部喂药")||cmd.includes("都喂药")||cmd.includes("一起吃药"))){
+    S.chickens.forEach(c=>{c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100)});addLog(`📋 [指令] 所有小鸡都吃了药`,"全部","喂药");matched=true;
+  }
   // 全部出来
   if(!matched&&(cmd.includes("全部出来")||cmd.includes("都出来")||cmd.includes("都叫出来"))){
     let cnt=0;S.chickens.forEach(c=>{if(c.location==="inside"){c.location="outside";cnt++}});
