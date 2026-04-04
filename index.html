@@ -1291,7 +1291,7 @@ function execInstruction(cmd,pageId){
   }
   // 打扫房间
   if(!matched&&(cmd.includes("打扫房间")||cmd.includes("打扫卫生")||cmd.includes("大扫除")||cmd.includes("收拾房间")||cmd.includes("搞卫生"))){
-    S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});addLog(`📋 [指令] 大扫除！粑粑清了，小鸡们都干净了`,"全部","清粑粑");matched=true;
+    S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});addLog(`📋 [指令] 大扫除！粑粑清了，小鸡们都干净了`,"全部","打扫");matched=true;
   }
   // 全部喂药
   if(!matched&&(cmd.includes("全部喂药")||cmd.includes("都喂药")||cmd.includes("一起吃药"))){
