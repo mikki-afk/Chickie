@@ -8,393 +8,664 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   background: linear-gradient(135deg, #ffecd2, #fcb69f);
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: 16px;
+  padding: 12px;
+  user-select: none;
 }
 
-.container {
-  width: 100%;
-  max-width: 800px;
-}
+.container { width: 100%; max-width: 800px; }
 
 h1 {
-  text-align: center;
-  font-size: 32px;
-  padding: 20px 0 12px;
-  color: #5a3e2b;
-  text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+  text-align: center; font-size: 28px; padding: 16px 0 10px;
+  color: #5a3e2b; text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
 }
 
-/* Nest area */
-.nest {
-  background: linear-gradient(180deg, #87CEEB 55%, #90EE90 55%);
-  border-radius: 20px;
-  border: 4px solid #8B4513;
-  padding: 30px 16px 24px;
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-  min-height: 160px;
+/* ===== CSS CHICKEN SPRITE ===== */
+.chick {
+  display: inline-block; position: relative;
+  width: 52px; height: 50px;
+}
+.chick.big { transform: scale(1.8); transform-origin: bottom center; margin: 30px 20px 10px; }
+.chick.medium { transform: scale(1.2); transform-origin: bottom center; }
+
+/* Body */
+.chick-body {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 36px; height: 30px; border-radius: 50%;
+  background: #FFD700;
+  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.1), inset 3px 3px 6px rgba(255,255,255,0.3);
 }
 
-.nest::before {
-  content: "☁️";
-  position: absolute;
-  top: 10px; left: 20%;
-  font-size: 28px;
-  opacity: 0.7;
-  animation: cloudDrift 8s ease-in-out infinite;
+/* Head */
+.chick-head {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 30px; height: 28px; border-radius: 50%;
+  background: #FFD700;
+  box-shadow: inset -2px -2px 4px rgba(0,0,0,0.08), inset 2px 2px 4px rgba(255,255,255,0.3);
+  z-index: 2;
 }
 
-.nest::after {
-  content: "☁️";
-  position: absolute;
-  top: 24px; right: 15%;
-  font-size: 20px;
-  opacity: 0.5;
-  animation: cloudDrift 12s ease-in-out infinite reverse;
+/* Hair tuft */
+.chick-hair {
+  position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 8px solid #FFA500;
+  z-index: 3;
 }
 
-@keyframes cloudDrift {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(20px); }
+/* Eyes */
+.chick-eyes {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 20px; display: flex; justify-content: space-between;
+  z-index: 4;
+}
+.chick-eye {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: #2c1810;
 }
 
-.chickens-display {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 12px;
-  flex-wrap: wrap;
-  position: relative;
+/* Eye variations */
+.expr-happy .chick-eye { height: 3px; border-radius: 3px 3px 0 0; background: #2c1810; margin-top: 1px; }
+.expr-love .chick-eye { background: #e74c3c; width: 6px; height: 6px; border-radius: 50%; }
+.expr-adore .chick-eye { height: 3px; border-radius: 3px 3px 0 0; background: #e74c3c; margin-top: 1px; width: 6px; }
+.expr-sad .chick-eye { border-radius: 0 0 5px 5px; height: 4px; }
+.expr-cry .chick-eye { border-radius: 0 0 5px 5px; height: 4px; }
+.expr-upset .chick-eye { width: 6px; height: 3px; border-radius: 0; border-bottom: 2px solid #2c1810; background: none; }
+.expr-meh .chick-eye { height: 2px; border-radius: 1px; margin-top: 2px; }
+.expr-sleep .chick-eye { height: 2px; border-radius: 2px; margin-top: 2px; width: 6px; }
+.expr-satisfied .chick-eye { height: 3px; border-radius: 3px 3px 0 0; margin-top: 1px; }
+
+/* Beak */
+.chick-beak {
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #FF8C00;
+  z-index: 4;
+}
+
+/* Beak variations */
+.expr-happy .chick-beak, .expr-love .chick-beak, .expr-adore .chick-beak, .expr-satisfied .chick-beak {
+  border-top: 0; border-bottom: 4px solid #FF8C00;
+  top: 17px;
+}
+.expr-cry .chick-beak {
+  border-top: 3px solid #FF8C00; border-bottom: 0; top: 18px;
+}
+.expr-upset .chick-beak {
+  border-left: 3px solid transparent; border-right: 3px solid transparent;
+  border-top: 4px solid #FF8C00;
+}
+.expr-sleep .chick-beak {
+  width: 6px; height: 2px; border: none; background: #FF8C00;
+  border-radius: 1px; top: 17px; margin-left: -3px;
+}
+
+/* Cheek blush */
+.chick-blush {
+  position: absolute; top: 13px; width: 6px; height: 4px;
+  border-radius: 50%; background: rgba(255, 100, 100, 0.5);
+  z-index: 4;
+}
+.chick-blush.left { left: 2px; }
+.chick-blush.right { right: 2px; }
+.expr-normal .chick-blush { opacity: 0.3; }
+.expr-happy .chick-blush, .expr-satisfied .chick-blush { opacity: 0.7; }
+.expr-love .chick-blush, .expr-adore .chick-blush { opacity: 1; background: rgba(255, 80, 80, 0.7); }
+.expr-sad .chick-blush, .expr-cry .chick-blush, .expr-upset .chick-blush, .expr-meh .chick-blush { opacity: 0; }
+.expr-sleep .chick-blush { opacity: 0.4; }
+
+/* Tear drops for crying */
+.chick-tear {
+  position: absolute; top: 14px; width: 3px; height: 6px;
+  background: #74b9ff; border-radius: 0 0 3px 3px;
+  z-index: 5; opacity: 0;
+}
+.chick-tear.left { left: 5px; }
+.chick-tear.right { right: 5px; }
+.expr-cry .chick-tear { opacity: 1; animation: tearDrop 1s ease-in infinite; }
+.expr-sad .chick-tear.left { opacity: 0.7; animation: tearDrop 1.5s ease-in infinite; }
+
+@keyframes tearDrop {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(8px); opacity: 0; }
+}
+
+/* Heart particles for love */
+.chick-hearts {
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  z-index: 6; opacity: 0; font-size: 10px; pointer-events: none;
+}
+.expr-love .chick-hearts, .expr-adore .chick-hearts {
+  opacity: 1; animation: heartFloat 1.5s ease infinite;
+}
+@keyframes heartFloat {
+  0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(-12px); opacity: 0; }
+}
+
+/* Zzz for sleep */
+.chick-zzz {
+  position: absolute; top: -10px; right: -8px;
+  font-size: 10px; font-weight: 700; color: #9370DB;
+  z-index: 6; opacity: 0; pointer-events: none;
+}
+.expr-sleep .chick-zzz {
+  opacity: 1; animation: zzzFloat 2s ease-in-out infinite;
+}
+@keyframes zzzFloat {
+  0%, 100% { opacity: 0.4; transform: translateY(0) scale(0.8); }
+  50% { opacity: 1; transform: translateY(-8px) scale(1.1); }
+}
+
+/* Sweat drop for upset */
+.chick-sweat {
+  position: absolute; top: 4px; right: 0px;
+  width: 4px; height: 5px; background: #74b9ff;
+  border-radius: 50% 50% 50% 0; transform: rotate(45deg);
+  z-index: 6; opacity: 0;
+}
+.expr-upset .chick-sweat, .expr-meh .chick-sweat { opacity: 0.8; }
+
+/* Wing */
+.chick-wing {
+  position: absolute; bottom: 8px; width: 10px; height: 14px;
+  border-radius: 50%; background: #f0c000;
   z-index: 1;
 }
+.chick-wing.left { left: 0; transform: rotate(15deg); }
+.chick-wing.right { right: 0; transform: rotate(-15deg); }
 
-.chicken-sprite {
-  text-align: center;
-  cursor: default;
+/* Feet */
+.chick-feet {
+  position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px;
+}
+.chick-foot {
+  width: 8px; height: 3px; background: #FF8C00;
+  border-radius: 0 0 2px 2px;
 }
 
-.chicken-emoji {
-  font-size: 48px;
-  display: block;
-  animation: breathe 2s ease-in-out infinite;
-}
+/* Stage differences */
+.stage-teen .chick-body { width: 38px; height: 32px; }
+.stage-teen .chick-head { width: 32px; height: 30px; }
+.stage-adult .chick-body { width: 40px; height: 34px; background: #f5f5f5; }
+.stage-adult .chick-head { width: 34px; height: 32px; background: #f5f5f5; }
+.stage-adult .chick-wing { background: #e0e0e0; }
+.stage-adult .chick-hair { border-bottom-color: #e74c3c; border-bottom-width: 10px; }
 
-.chicken-sprite .name {
-  font-size: 13px;
-  color: #5a3e2b;
-  font-weight: 600;
-  margin-top: 2px;
-}
-
-.chicken-sprite .status-text {
-  font-size: 11px;
-  color: #c0392b;
-  font-weight: 600;
-  min-height: 16px;
-}
-
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-}
-
-@keyframes bounce {
+/* Breathing animation */
+.chick { animation: chickBreathe 2s ease-in-out infinite; }
+@keyframes chickBreathe {
   0%, 100% { transform: translateY(0); }
-  25% { transform: translateY(-14px); }
-  50% { transform: translateY(0); }
-  75% { transform: translateY(-8px); }
+  50% { transform: translateY(-2px); }
+}
+.chick.big { animation: chickBreatheBig 2s ease-in-out infinite !important; }
+@keyframes chickBreatheBig {
+  0%, 100% { transform: scale(1.8) translateY(0); }
+  50% { transform: scale(1.8) translateY(-2px); }
 }
 
-@keyframes wobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-12deg); }
-  75% { transform: rotate(12deg); }
+/* Action animations - big (room) */
+.big.anim-eat { animation: chickEatBig 0.4s ease 5 !important; }
+@keyframes chickEatBig {
+  0%, 100% { transform: scale(1.8) rotate(0); }
+  50% { transform: scale(1.8) rotate(15deg) translateY(4px); }
+}
+.big.anim-chase { animation: chickRunBig 0.8s ease 3 !important; }
+@keyframes chickRunBig {
+  0% { transform: scale(1.8) translateX(0); }
+  25% { transform: scale(1.8) translateX(-20px); }
+  75% { transform: scale(1.8) translateX(20px); }
+  100% { transform: scale(1.8) translateX(0); }
+}
+.big.anim-jump { animation: chickJumpBig 0.5s ease 4 !important; }
+@keyframes chickJumpBig {
+  0%, 100% { transform: scale(1.8) translateY(0); }
+  40% { transform: scale(1.8) translateY(-18px); }
+}
+.big.anim-roll { animation: chickRollBig 0.8s linear 3 !important; }
+@keyframes chickRollBig {
+  0% { transform: scale(1.8) rotate(0); }
+  100% { transform: scale(1.8) rotate(360deg); }
+}
+.big.anim-sleep { animation: chickSleepBig 2s ease-in-out infinite !important; }
+@keyframes chickSleepBig {
+  0%, 100% { transform: scale(1.8) translateY(0); }
+  50% { transform: scale(1.8) translateY(2px); }
+}
+.big.anim-wake { animation: chickWakeBig 0.6s ease 2 !important; }
+@keyframes chickWakeBig {
+  0%, 100% { transform: scale(1.8) scaleY(1); }
+  50% { transform: scale(1.8) scaleY(1.15); }
 }
 
-@keyframes sleepAnim {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.92); opacity: 0.7; }
+/* Action animations - small (yard) */
+.anim-eat:not(.big) { animation: chickEatSm 0.4s ease 5 !important; }
+@keyframes chickEatSm {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(15deg) translateY(3px); }
+}
+.anim-chase:not(.big) { animation: chickRunSm 0.8s ease 3 !important; }
+@keyframes chickRunSm {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  75% { transform: translateX(10px); }
+  100% { transform: translateX(0); }
 }
 
-.chicken-emoji.feed { animation: bounce 0.5s ease 3; }
-.chicken-emoji.play { animation: wobble 0.4s ease 4; }
-.chicken-emoji.rest { animation: sleepAnim 1s ease 3; }
-
-/* Status cards */
-.status-panel {
-  background: rgba(255,255,255,0.85);
-  border-radius: 16px;
-  padding: 14px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+/* ===== YARD VIEW ===== */
+.yard {
+  background: linear-gradient(180deg, #87CEEB 50%, #90EE90 50%);
+  border-radius: 20px; border: 5px solid #8B4513;
+  padding: 16px; margin-bottom: 14px;
+  position: relative; overflow: hidden; min-height: 420px;
+}
+.yard-clouds {
+  position: absolute; top: 0; left: 0; right: 0; height: 50%;
+  pointer-events: none; overflow: hidden;
+}
+.cloud {
+  position: absolute; font-size: 24px; opacity: 0.6;
+  animation: cloudDrift 10s ease-in-out infinite;
+}
+.cloud:nth-child(1) { top: 8px; left: 10%; animation-duration: 9s; }
+.cloud:nth-child(2) { top: 30px; left: 55%; animation-duration: 13s; font-size: 18px; }
+.cloud:nth-child(3) { top: 18px; left: 80%; animation-duration: 11s; font-size: 20px; }
+@keyframes cloudDrift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(25px); }
 }
 
-.chicken-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0e0d0;
+.coops-row {
+  display: flex; justify-content: center; gap: 8px;
+  margin-bottom: 12px; flex-wrap: wrap;
+  position: relative; z-index: 2;
+}
+.coop { width: 90px; text-align: center; cursor: pointer; transition: transform 0.2s; }
+.coop:hover { transform: scale(1.05); }
+.coop-building {
+  width: 80px; height: 65px; margin: 0 auto;
+  border-radius: 6px 6px 0 0; position: relative;
+  border: 2px solid rgba(0,0,0,0.12);
+}
+.coop-roof {
+  position: absolute; top: -16px; left: -6px; right: -6px;
+  height: 20px; border-radius: 6px 6px 0 0;
+  border: 2px solid rgba(0,0,0,0.12);
+}
+.coop-door {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 22px; height: 30px; border-radius: 11px 11px 0 0;
+  background: rgba(0,0,0,0.2); transition: all 0.3s;
+}
+.coop-door.open { height: 8px; border-radius: 4px 4px 0 0; background: rgba(0,0,0,0.08); }
+.coop-window {
+  position: absolute; top: 10px; right: 10px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.08);
+}
+.coop-name { font-size: 11px; font-weight: 700; margin-top: 3px; color: #5a3e2b; }
+.coop-btn {
+  font-size: 11px; padding: 3px 8px; border: none;
+  border-radius: 8px; cursor: pointer; margin-top: 2px;
+  background: rgba(255,255,255,0.8); color: #5a3e2b;
+  font-weight: 600; transition: background 0.2s;
+}
+.coop-btn:hover { background: #fff; }
+
+.yard-ground {
+  position: relative; min-height: 180px; margin-top: 8px; z-index: 1;
+}
+.yard-chicken {
+  position: absolute; text-align: center; cursor: pointer;
+  transition: left 2.5s ease-in-out, top 2.5s ease-in-out;
+  z-index: 3;
+}
+.yard-chicken .yc-name {
+  font-size: 10px; font-weight: 700; color: #3e2b1a;
+  background: rgba(255,255,255,0.7); border-radius: 6px;
+  padding: 1px 5px; white-space: nowrap; display: block; margin-top: 2px;
+}
+.yard-chicken .yc-status {
+  font-size: 9px; color: #c0392b; font-weight: 600; min-height: 13px; display: block;
+}
+.yard-bars { display: flex; gap: 3px; justify-content: center; margin-top: 1px; }
+.yard-bar-track {
+  width: 26px; height: 4px; background: rgba(0,0,0,0.12);
+  border-radius: 2px; overflow: hidden;
+}
+.yard-bar-fill { height: 100%; border-radius: 2px; transition: width 0.3s; }
+.yard-bar-fill.h { background: #ff6b6b; }
+.yard-bar-fill.p { background: #ffd93d; }
+
+/* Chicken popup menu */
+.chicken-menu {
+  display: none; position: absolute; bottom: 100%; left: 50%;
+  transform: translateX(-50%); background: #fff;
+  border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  padding: 6px; z-index: 100; white-space: nowrap;
+}
+.chicken-menu.show { display: flex; gap: 4px; }
+.chicken-menu button {
+  padding: 6px 10px; border: none; border-radius: 8px;
+  cursor: pointer; font-size: 12px; font-weight: 600;
+  background: #f0f0f0; transition: background 0.2s;
+}
+.chicken-menu button:hover { background: #ddd; }
+
+/* ===== ROOM VIEW ===== */
+.room-view { display: none; }
+.room-view.active { display: block; }
+.yard-view.hidden { display: none; }
+
+.room {
+  border-radius: 20px; border: 4px solid rgba(0,0,0,0.08);
+  padding: 20px; margin-bottom: 14px;
+  position: relative; overflow: hidden; min-height: 300px;
+}
+.room-header {
+  text-align: center; font-size: 20px; font-weight: 700;
+  color: #5a3e2b; margin-bottom: 10px;
+}
+.room-scene {
+  display: flex; justify-content: space-around; align-items: flex-end;
+  min-height: 150px; position: relative; padding: 10px;
+}
+.room-item { text-align: center; flex-shrink: 0; }
+.room-item .item-icon { font-size: 36px; }
+.room-item .item-label { font-size: 11px; color: #5a3e2b; font-weight: 600; margin-top: 2px; }
+
+.room-chicken-wrap {
+  position: absolute; text-align: center;
+  transition: left 1.5s ease-in-out, bottom 1.5s ease-in-out;
+  z-index: 5; bottom: 20px;
 }
 
-.chicken-card:last-child { border-bottom: none; }
-
-.card-emoji { font-size: 28px; flex-shrink: 0; }
-
-.card-info { flex: 1; min-width: 0; }
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
-  flex-wrap: wrap;
+/* Room reaction bubble */
+.room-reaction {
+  position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+  font-size: 24px; opacity: 0; pointer-events: none; white-space: nowrap;
+}
+.room-reaction.show {
+  opacity: 1; animation: reactionPop 2s ease forwards;
+}
+@keyframes reactionPop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+  20% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+  40% { transform: translateX(-50%) scale(1); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-25px); }
 }
 
-.card-header .name {
-  font-weight: 700;
-  color: #5a3e2b;
-  font-size: 15px;
+/* Room bars */
+.room-bars {
+  background: rgba(255,255,255,0.6); border-radius: 12px;
+  padding: 10px 14px; margin-bottom: 12px;
 }
-
-.card-header .stage-badge {
-  font-size: 13px;
-  background: #fff3e0;
-  border-radius: 8px;
-  padding: 1px 6px;
+.room-bar-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.room-bar-label { font-size: 13px; width: 80px; color: #5a3e2b; font-weight: 600; }
+.room-bar-track {
+  flex: 1; height: 12px; background: rgba(0,0,0,0.08);
+  border-radius: 6px; overflow: hidden;
 }
+.room-bar-fill { height: 100%; border-radius: 6px; transition: width 0.3s; }
+.room-bar-fill.hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
+.room-bar-fill.happiness { background: linear-gradient(90deg, #ffd93d, #f0932b); }
+.room-bar-val { font-size: 13px; width: 28px; text-align: right; color: #5a3e2b; font-weight: 700; }
+.room-growth { margin-top: 6px; }
+.room-growth-label { font-size: 11px; color: #888; margin-bottom: 2px; }
+.room-growth-track { height: 6px; background: rgba(0,0,0,0.06); border-radius: 3px; overflow: hidden; }
+.room-growth-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #a29bfe, #6c5ce7); transition: width 0.3s; }
 
-.bars { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.bar-group {
-  flex: 1;
-  min-width: 100px;
+/* Room actions */
+.room-actions {
+  display: flex; gap: 8px; justify-content: center;
+  flex-wrap: wrap; margin-bottom: 10px;
 }
-
-.bar-label {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 2px;
-}
-
-.bar-track {
-  height: 10px;
-  background: #eee;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  border-radius: 5px;
-  transition: width 0.3s ease;
-}
-
-.bar-fill.hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
-.bar-fill.happiness { background: linear-gradient(90deg, #ffd93d, #f0932b); }
-
-/* Growth progress */
-.growth-bar-track {
-  height: 6px;
-  background: #eee;
-  border-radius: 3px;
-  overflow: hidden;
-  margin-top: 4px;
-}
-
-.growth-bar-fill {
-  height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #a29bfe, #6c5ce7);
-  transition: width 0.3s ease;
-}
-
-/* Buttons */
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-  justify-content: center;
-}
-
 .action-btn {
-  flex: 1;
-  max-width: 200px;
-  padding: 14px 10px;
-  border: none;
-  border-radius: 16px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-  position: relative;
-  overflow: hidden;
+  padding: 12px 16px; border: none; border-radius: 14px;
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
 }
-
 .action-btn:hover:not(:disabled) { transform: scale(1.05); }
 .action-btn:active:not(:disabled) { transform: scale(0.97); }
-
-.action-btn:disabled {
-  background: #ccc !important;
-  cursor: not-allowed;
-  transform: none;
-  color: #999;
-}
-
+.action-btn:disabled { background: #ccc !important; cursor: not-allowed; color: #999; }
 .btn-feed { background: linear-gradient(135deg, #FFD700, #f39c12); }
 .btn-play { background: linear-gradient(135deg, #FF69B4, #e84393); }
-.btn-rest { background: linear-gradient(135deg, #9370DB, #6c5ce7); }
+.btn-sleep { background: linear-gradient(135deg, #9370DB, #6c5ce7); }
+.btn-wake { background: linear-gradient(135deg, #FF8C00, #e67e22); }
+.btn-exit { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+.cooldown-text { display: block; font-size: 11px; font-weight: 400; margin-top: 2px; }
 
-.cooldown-text {
-  display: block;
-  font-size: 12px;
-  font-weight: 400;
-  margin-top: 2px;
+/* Selection popup */
+.selection-popup {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 200;
+  justify-content: center; align-items: center;
+}
+.selection-popup.show { display: flex; }
+.selection-box {
+  background: #fff; border-radius: 20px; padding: 20px;
+  max-width: 360px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.selection-title { text-align: center; font-size: 17px; font-weight: 700; color: #5a3e2b; margin-bottom: 14px; }
+.selection-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.selection-item {
+  padding: 10px 6px; border: 2px solid #eee; border-radius: 12px;
+  text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa;
+}
+.selection-item:hover { border-color: #f39c12; background: #fff8e7; transform: scale(1.05); }
+.selection-item .sel-icon { font-size: 26px; display: block; }
+.selection-item .sel-name { font-size: 11px; color: #5a3e2b; font-weight: 600; margin-top: 3px; }
+.selection-item .pref-hint { font-size: 10px; margin-top: 2px; min-height: 14px; }
+.pref-like { color: #e74c3c; }
+.pref-hate { color: #7f8c8d; }
+.selection-cancel {
+  display: block; margin: 12px auto 0; padding: 8px 24px;
+  border: none; border-radius: 10px; background: #eee; cursor: pointer; font-size: 13px; color: #888;
 }
 
-/* Stats bar */
-.stats {
-  background: rgba(255,255,255,0.85);
-  border-radius: 16px;
-  padding: 14px 18px;
-  display: flex;
-  justify-content: space-around;
-  font-size: 15px;
-  color: #5a3e2b;
-  font-weight: 600;
+/* Stats */
+.stats-bar {
+  background: rgba(255,255,255,0.85); border-radius: 14px;
+  padding: 12px 16px; display: flex; justify-content: space-around;
+  font-size: 14px; color: #5a3e2b; font-weight: 600;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
 }
+.stats-bar span { white-space: nowrap; }
 
-.stats span { white-space: nowrap; }
-
-/* Reset button */
-.reset-area {
-  text-align: center;
-  padding: 10px 0 20px;
-}
-
+.reset-area { text-align: center; padding: 8px 0 20px; }
 .reset-btn {
-  background: none;
-  border: 1px dashed #c0a080;
-  color: #b08060;
-  padding: 8px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
+  background: none; border: 1px dashed #c0a080; color: #b08060;
+  padding: 6px 18px; border-radius: 10px; cursor: pointer; font-size: 12px;
 }
-
 .reset-btn:hover { background: rgba(255,255,255,0.4); }
 
-/* No food message */
-.no-food-msg {
-  font-size: 12px;
-  color: #e17055;
-  text-align: center;
-  margin-top: -8px;
-  margin-bottom: 12px;
-  display: none;
-}
-
+.no-food-msg { font-size: 12px; color: #e17055; text-align: center; margin-bottom: 8px; display: none; }
 .no-food-msg.show { display: block; }
 
 /* Responsive */
-@media (max-width: 767px) {
-  h1 { font-size: 24px; }
-
-  .actions {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .action-btn {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .chickens-display {
-    gap: 8px;
-  }
-
-  .chicken-emoji { font-size: 40px; }
-
-  .stats { font-size: 13px; }
+@media (max-width: 600px) {
+  h1 { font-size: 22px; }
+  .coop { width: 62px; }
+  .coop-building { width: 56px; height: 48px; }
+  .coop-roof { top: -12px; left: -4px; right: -4px; height: 16px; }
+  .coop-door { width: 16px; height: 22px; }
+  .coop-name { font-size: 9px; }
+  .chick.big { transform: scale(1.4); margin: 20px 12px 8px; }
+  .room-actions { gap: 6px; }
+  .action-btn { padding: 10px 12px; font-size: 13px; }
 }
 </style>
 </head>
 <body>
-
 <div class="container">
   <h1>🐥 期期的小鸡养成系统 💕</h1>
 
-  <div class="nest">
-    <div class="chickens-display" id="chickensDisplay"></div>
+  <div class="yard-view" id="yardView">
+    <div class="yard">
+      <div class="yard-clouds">
+        <span class="cloud">☁️</span><span class="cloud">☁️</span><span class="cloud">☁️</span>
+      </div>
+      <div class="coops-row" id="coopsRow"></div>
+      <div class="yard-ground" id="yardGround"></div>
+    </div>
   </div>
 
-  <div class="status-panel" id="statusPanel"></div>
-
-  <div class="actions">
-    <button class="action-btn btn-feed" id="btnFeed" onclick="doFeed()">🌾 喂食</button>
-    <button class="action-btn btn-play" id="btnPlay" onclick="doPlay()">🎮 玩耍</button>
-    <button class="action-btn btn-rest" id="btnRest" onclick="doRest()">💤 休息</button>
+  <div class="room-view" id="roomView">
+    <div class="room" id="roomScene"></div>
+    <div class="room-bars" id="roomBars"></div>
+    <div class="room-actions" id="roomActions"></div>
+    <div class="no-food-msg" id="noFoodMsg">没有食物了🥺</div>
   </div>
-  <div class="no-food-msg" id="noFoodMsg">没有食物了🥺</div>
 
-  <div class="stats" id="statsBar"></div>
+  <div class="stats-bar" id="statsBar"></div>
+  <div class="reset-area"><button class="reset-btn" onclick="resetGame()">🔄 重置游戏</button></div>
+</div>
 
-  <div class="reset-area">
-    <button class="reset-btn" onclick="resetGame()">🔄 重置游戏</button>
+<div class="selection-popup" id="selectionPopup">
+  <div class="selection-box">
+    <div class="selection-title" id="selTitle"></div>
+    <div class="selection-grid" id="selGrid"></div>
+    <button class="selection-cancel" onclick="closeSelection()">取消</button>
   </div>
 </div>
 
+<div class="chicken-menu" id="chickenMenu" style="display:none">
+  <button onclick="menuGoHome()">🏠 回去</button>
+  <button onclick="menuEnterRoom()">🚪 进房间</button>
+</div>
+
 <script>
-const CHICKEN_NAMES = ["玖宝", "期期小一", "毛毛", "咕咕", "叽叽"];
-const COOLDOWNS = { feed: 30000, play: 30000, rest: 300000 };
-const STORAGE_KEY = "chickie_save";
+// ===== CONFIG =====
+const STORAGE_KEY = "chickie_v4b";
+const FOOD_POOL = [
+  { id: "grain", icon: "🌾", name: "谷物" },
+  { id: "worm", icon: "🐛", name: "虫子" },
+  { id: "veggie", icon: "🥬", name: "青菜" },
+  { id: "fruit", icon: "🍓", name: "水果" },
+  { id: "candy", icon: "🍬", name: "甜食" },
+  { id: "chili", icon: "🌶️", name: "辣椒" }
+];
+const GAME_POOL = [
+  { id: "chase", icon: "🏃", name: "追逐游戏", anim: "anim-chase" },
+  { id: "jump", icon: "🦘", name: "跳跃游戏", anim: "anim-jump" },
+  { id: "roll", icon: "🎪", name: "打滚游戏", anim: "anim-roll" }
+];
+const CHICKEN_DEFS = [
+  { name: "玖宝", color: ["#FFB6C1", "#FF69B4"] },
+  { name: "期期小一", color: ["#87CEEB", "#4682B4"] },
+  { name: "毛毛", color: ["#FFD700", "#FFA500"] },
+  { name: "咕咕", color: ["#90EE90", "#32CD32"] },
+  { name: "叽叽", color: ["#DDA0DD", "#9370DB"] }
+];
+const COOLDOWNS_MS = { feed: 30000, play: 30000, sleep: 300000 };
 
 let state = null;
-let cooldowns = { feed: 0, play: 0, rest: 0 };
-let decayTimer = null;
-let uiTimer = null;
+let currentView = "yard";
+let currentRoomId = -1;
+let cooldowns = {};
+let menuTarget = -1;
+let walkTimers = {};
+let roomWalkTimer = null;
+let sleepTimers = {};
+
+// ===== HELPERS =====
+function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+function pickN(a, n) {
+  const c = [...a], r = [];
+  for (let i = 0; i < n && c.length; i++) { const j = Math.floor(Math.random() * c.length); r.push(c.splice(j, 1)[0]); }
+  return r;
+}
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function getDays() { return Math.max(1, Math.floor((Date.now() - new Date(state.startDate).getTime()) / 86400000) + 1); }
+function growthPct(c) {
+  if (c.stage === "adult") return 100;
+  const t = c.stage === "baby" ? 500 : 1000, p = c.stage === "baby" ? 0 : 500;
+  return Math.floor(((Math.min(c.totalHunger, t) - p + Math.min(c.totalHappiness, t) - p) / ((t - p) * 2)) * 100);
+}
+function stageName(s) { return s === "adult" ? "成年" : s === "teen" ? "少年" : "幼年"; }
+
+// ===== CHICKEN HTML BUILDER =====
+// Generates a CSS-drawn chicken with the given expression
+function chickenHTML(id, expr, size, extraClass) {
+  const c = state.chickens[id];
+  const stgClass = "stage-" + c.stage;
+  const sizeClass = size === "big" ? "big" : size === "medium" ? "medium" : "";
+  const allClass = ["chick", stgClass, "expr-" + expr, sizeClass, extraClass || ""].join(" ").trim();
+
+  // Body color based on stage - adult is white/grey, others are yellow
+  return `<div class="${allClass}" data-id="${id}">
+    <div class="chick-head">
+      <div class="chick-hair"></div>
+      <div class="chick-eyes"><span class="chick-eye"></span><span class="chick-eye"></span></div>
+      <div class="chick-beak"></div>
+      <div class="chick-blush left"></div>
+      <div class="chick-blush right"></div>
+      <div class="chick-tear left"></div>
+      <div class="chick-tear right"></div>
+      <div class="chick-sweat"></div>
+      <div class="chick-hearts">💕</div>
+      <div class="chick-zzz">Zzz</div>
+    </div>
+    <div class="chick-body">
+      <div class="chick-wing left"></div>
+      <div class="chick-wing right"></div>
+    </div>
+    <div class="chick-feet"><div class="chick-foot"></div><div class="chick-foot"></div></div>
+  </div>`;
+}
+
+// ===== EXPRESSION SYSTEM =====
+function getExpression(c) {
+  if (c.sleeping) return "sleep";
+  if (c.hunger < 20 && c.happiness < 20) return "cry";
+  if (c.hunger < 20) return "sad";
+  if (c.happiness < 20) return "upset";
+  if (c.hunger >= 80 && c.happiness >= 80) return "satisfied";
+  if (c.happiness >= 60) return "happy";
+  return "normal";
+}
+
+function getStatusText(c) {
+  if (c.sleeping) return "睡觉中…";
+  if (c.hunger < 20 && c.happiness < 20) return "又饿又不开心";
+  if (c.hunger < 20) return "饿了";
+  if (c.happiness < 20) return "不开心";
+  if (c.hunger >= 80 && c.happiness >= 80) return "很满足~";
+  return "";
+}
+
+// ===== STATE =====
+function randomPrefs() {
+  const fids = FOOD_POOL.map(f => f.id), gids = GAME_POOL.map(g => g.id);
+  const fav = pickN(fids, 2), rem = fids.filter(f => !fav.includes(f)), hat = pickN(rem, 2);
+  const fg = pick(gids), hg = pick(gids.filter(g => g !== fg));
+  return { favoriteFood: fav, hatedFood: hat, favoriteGame: fg, hatedGame: hg };
+}
 
 function defaultState() {
   const now = new Date().toISOString();
   return {
-    chickens: CHICKEN_NAMES.map((name, i) => ({
-      id: i, name,
-      hunger: 50, happiness: 50,
-      stage: "baby",
-      totalHunger: 0, totalHappiness: 0
+    chickens: CHICKEN_DEFS.map((d, i) => ({
+      id: i, name: d.name, hunger: 50, happiness: 50,
+      stage: "baby", totalHunger: 0, totalHappiness: 0,
+      location: "inside", sleeping: false,
+      ...randomPrefs()
     })),
-    food: 20,
-    startDate: now,
-    totalInteractions: 0,
-    lastUpdateTime: now
+    food: 20, startDate: now, totalInteractions: 0, lastUpdateTime: now
   };
-}
-
-function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      state = JSON.parse(raw);
-      applyOfflineDecay();
-      return;
-    }
-  } catch(e) {}
-  state = defaultState();
-  save();
 }
 
 function save() {
@@ -402,39 +673,24 @@ function save() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function applyOfflineDecay() {
-  const last = new Date(state.lastUpdateTime).getTime();
-  const now = Date.now();
-  const minutes = Math.floor((now - last) / 60000);
-  if (minutes > 0) {
-    state.chickens.forEach(c => {
-      c.hunger = Math.max(0, c.hunger - minutes * 5);
-      c.happiness = Math.max(0, c.happiness - minutes * 3);
-    });
-    updateStages();
-    save();
-  }
-}
-
-function stageEmoji(stage) {
-  return stage === "adult" ? "🐔" : stage === "teen" ? "🐤" : "🐥";
-}
-
-function stageName(stage) {
-  return stage === "adult" ? "成年" : stage === "teen" ? "少年" : "幼年";
-}
-
-function moodEmoji(c) {
-  if (c.hunger < 20 && c.happiness < 20) return "😭";
-  if (c.hunger < 20 || c.happiness < 20) return "😢";
-  return stageEmoji(c.stage);
-}
-
-function statusText(c) {
-  if (c.hunger < 20 && c.happiness < 20) return "又饿又不开心";
-  if (c.hunger < 20) return "饿了";
-  if (c.happiness < 20) return "不开心";
-  return "";
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state = JSON.parse(raw);
+      const mins = Math.floor((Date.now() - new Date(state.lastUpdateTime).getTime()) / 60000);
+      if (mins > 0) {
+        state.chickens.forEach(c => {
+          if (!c.sleeping) {
+            c.hunger = clamp(c.hunger - mins * 5, 0, 100);
+            c.happiness = clamp(c.happiness - mins * 3, 0, 100);
+          }
+        });
+      }
+      updateStages(); save(); return;
+    }
+  } catch(e) {}
+  state = defaultState(); save();
 }
 
 function updateStages() {
@@ -445,188 +701,406 @@ function updateStages() {
   });
 }
 
-function growthPercent(c) {
-  if (c.stage === "adult") return 100;
-  const target = c.stage === "baby" ? 500 : 1000;
-  const prev = c.stage === "baby" ? 0 : 500;
-  const h = Math.min(c.totalHunger, target) - prev;
-  const p = Math.min(c.totalHappiness, target) - prev;
-  const range = target - prev;
-  return Math.floor(((h + p) / (range * 2)) * 100);
-}
+// ===== YARD RENDERING =====
+function renderYard() { renderCoops(); renderYardChickens(); renderStats(); }
 
-function getDays() {
-  const start = new Date(state.startDate).getTime();
-  return Math.max(1, Math.floor((Date.now() - start) / 86400000) + 1);
-}
-
-// Rendering
-function render() {
-  renderNest();
-  renderStatus();
-  renderStats();
-  renderButtons();
-}
-
-function renderNest() {
-  const el = document.getElementById("chickensDisplay");
-  el.innerHTML = state.chickens.map((c, i) => `
-    <div class="chicken-sprite">
-      <span class="chicken-emoji" id="sprite${i}">${moodEmoji(c)}</span>
-      <div class="name">${c.name}</div>
-      <div class="status-text">${statusText(c)}</div>
-    </div>
-  `).join("");
-}
-
-function renderStatus() {
-  const el = document.getElementById("statusPanel");
-  el.innerHTML = state.chickens.map(c => {
-    const gp = growthPercent(c);
-    return `
-    <div class="chicken-card">
-      <div class="card-emoji">${stageEmoji(c.stage)}</div>
-      <div class="card-info">
-        <div class="card-header">
-          <span class="name">${c.name}</span>
-          <span class="stage-badge">${stageName(c.stage)}</span>
-        </div>
-        <div class="bars">
-          <div class="bar-group">
-            <div class="bar-label">❤️ 饥饿 ${c.hunger}</div>
-            <div class="bar-track"><div class="bar-fill hunger" style="width:${c.hunger}%"></div></div>
-          </div>
-          <div class="bar-group">
-            <div class="bar-label">😊 快乐 ${c.happiness}</div>
-            <div class="bar-track"><div class="bar-fill happiness" style="width:${c.happiness}%"></div></div>
-          </div>
-        </div>
-        <div class="growth-bar-track" title="成长进度 ${gp}%">
-          <div class="growth-bar-fill" style="width:${gp}%"></div>
-        </div>
+function renderCoops() {
+  document.getElementById("coopsRow").innerHTML = state.chickens.map((c, i) => {
+    const col = CHICKEN_DEFS[i].color;
+    const inside = c.location === "inside";
+    return `<div class="coop">
+      <div class="coop-building" style="background:${col[0]}">
+        <div class="coop-roof" style="background:${col[1]}"></div>
+        <div class="coop-window"></div>
+        <div class="coop-door ${inside ? '' : 'open'}" id="door${i}"></div>
       </div>
+      <div class="coop-name">${c.name}</div>
+      ${inside ? `<button class="coop-btn" onclick="callOut(${i})">📣 叫出来</button>` : ''}
     </div>`;
   }).join("");
 }
 
-function renderStats() {
-  document.getElementById("statsBar").innerHTML =
-    `<span>🌾 食物: ${state.food}</span>
-     <span>📅 第${getDays()}天</span>
-     <span>⭐ ${state.totalInteractions}次</span>`;
+function renderYardChickens() {
+  const ground = document.getElementById("yardGround");
+  const old = {};
+  ground.querySelectorAll(".yard-chicken").forEach(el => {
+    old[el.dataset.id] = { left: el.style.left, top: el.style.top };
+  });
+
+  ground.innerHTML = state.chickens.filter(c => c.location === "outside").map(c => {
+    const pos = old[c.id] || { left: (10 + Math.random() * 65) + "%", top: (10 + Math.random() * 55) + "%" };
+    const expr = getExpression(c);
+    const st = getStatusText(c);
+    return `<div class="yard-chicken" data-id="${c.id}" id="yc${c.id}"
+                 style="left:${pos.left};top:${pos.top}" onclick="showChickenMenu(event,${c.id})">
+      ${chickenHTML(c.id, expr, "small")}
+      <span class="yc-name">${c.name}</span>
+      <span class="yc-status">${st}</span>
+      <div class="yard-bars">
+        <div class="yard-bar-track"><div class="yard-bar-fill h" style="width:${c.hunger}%"></div></div>
+        <div class="yard-bar-track"><div class="yard-bar-fill p" style="width:${c.happiness}%"></div></div>
+      </div>
+    </div>`;
+  }).join("");
+  startYardWalking();
 }
 
-function renderButtons() {
+function startYardWalking() {
+  Object.values(walkTimers).forEach(clearInterval);
+  walkTimers = {};
+  state.chickens.forEach(c => {
+    if (c.location === "outside") {
+      walkTimers[c.id] = setInterval(() => {
+        const el = document.getElementById("yc" + c.id);
+        if (el) { el.style.left = (5 + Math.random() * 70) + "%"; el.style.top = (5 + Math.random() * 60) + "%"; }
+      }, 3000 + Math.random() * 2000);
+    }
+  });
+}
+
+// ===== CHICKEN MENU =====
+function showChickenMenu(e, id) {
+  e.stopPropagation();
+  menuTarget = id;
+  const menu = document.getElementById("chickenMenu");
+  const yc = document.getElementById("yc" + id);
+  if (!yc) return;
+  yc.appendChild(menu);
+  menu.style.display = "flex";
+  menu.classList.add("show");
+}
+
+function hideMenu() {
+  const menu = document.getElementById("chickenMenu");
+  menu.classList.remove("show");
+  menu.style.display = "none";
+  document.body.appendChild(menu);
+  menuTarget = -1;
+}
+
+function menuGoHome() {
+  if (menuTarget < 0) return;
+  state.chickens[menuTarget].location = "inside";
+  hideMenu(); save(); renderYard();
+}
+
+function menuEnterRoom() {
+  if (menuTarget < 0) return;
+  const id = menuTarget; hideMenu(); enterRoom(id);
+}
+
+function callOut(id) {
+  const c = state.chickens[id];
+  if (c.location !== "inside") return;
+  const door = document.getElementById("door" + id);
+  if (door) door.classList.add("open");
+  setTimeout(() => { c.location = "outside"; save(); renderYard(); }, 400);
+}
+
+// ===== ROOM VIEW =====
+function enterRoom(id) {
+  currentView = "room"; currentRoomId = id;
+  document.getElementById("yardView").classList.add("hidden");
+  document.getElementById("roomView").classList.add("active");
+  renderRoom(); startRoomWalking();
+}
+
+function exitRoom() {
+  currentView = "yard"; currentRoomId = -1;
+  document.getElementById("yardView").classList.remove("hidden");
+  document.getElementById("roomView").classList.remove("active");
+  if (roomWalkTimer) { clearInterval(roomWalkTimer); roomWalkTimer = null; }
+  renderYard();
+}
+
+function renderRoom() {
+  const c = state.chickens[currentRoomId];
+  if (!c) return;
+  const col = CHICKEN_DEFS[currentRoomId].color;
+  const expr = getExpression(c);
+  const scene = document.getElementById("roomScene");
+  scene.style.background = `linear-gradient(180deg, ${col[0]}30 60%, ${col[0]}50 100%)`;
+  scene.style.borderColor = col[1];
+
+  const chickenLeft = c.sleeping ? "15%" : "45%";
+
+  scene.innerHTML = `
+    <div class="room-header">🏠 ${c.name}的房间</div>
+    <div class="room-scene">
+      <div class="room-item"><div class="item-icon">🛏️</div><div class="item-label" style="color:${col[1]}">窝窝</div></div>
+      <div class="room-item"><div class="item-icon">🍽️</div><div class="item-label" style="color:${col[1]}">喂食盆</div></div>
+      <div class="room-item"><div class="item-icon">🎮</div><div class="item-label" style="color:${col[1]}">玩耍区</div></div>
+      <div class="room-chicken-wrap" id="roomChicken" style="left:${chickenLeft}">
+        <div class="room-reaction" id="roomReaction"></div>
+        ${chickenHTML(currentRoomId, expr, "big", c.sleeping ? "anim-sleep" : "")}
+      </div>
+    </div>`;
+
+  // Bars
+  const gp = growthPct(c);
+  const favFoods = c.favoriteFood.map(id => { const f = FOOD_POOL.find(x => x.id === id); return f ? f.icon : ""; }).join("");
+  const hateFoods = c.hatedFood.map(id => { const f = FOOD_POOL.find(x => x.id === id); return f ? f.icon : ""; }).join("");
+  const favGame = (() => { const g = GAME_POOL.find(x => x.id === c.favoriteGame); return g ? g.icon : ""; })();
+  const hateGame = (() => { const g = GAME_POOL.find(x => x.id === c.hatedGame); return g ? g.icon : ""; })();
+
+  document.getElementById("roomBars").innerHTML = `
+    <div class="room-bar-row">
+      <span class="room-bar-label">❤️ 饥饿值</span>
+      <div class="room-bar-track"><div class="room-bar-fill hunger" style="width:${c.hunger}%"></div></div>
+      <span class="room-bar-val">${c.hunger}</span>
+    </div>
+    <div class="room-bar-row">
+      <span class="room-bar-label">😊 快乐值</span>
+      <div class="room-bar-track"><div class="room-bar-fill happiness" style="width:${c.happiness}%"></div></div>
+      <span class="room-bar-val">${c.happiness}</span>
+    </div>
+    <div class="room-growth">
+      <div class="room-growth-label">🌱 成长 ${gp}% · ${stageName(c.stage)}</div>
+      <div class="room-growth-track"><div class="room-growth-fill" style="width:${gp}%"></div></div>
+    </div>
+    <div style="margin-top:6px;font-size:11px;color:#888;line-height:1.6">
+      ❤️ 喜欢: ${favFoods} ${favGame} &nbsp; 💔 讨厌: ${hateFoods} ${hateGame}
+    </div>`;
+
+  renderRoomActions();
+}
+
+function renderRoomActions() {
+  const c = state.chickens[currentRoomId];
+  if (!c) return;
   const now = Date.now();
-  ["feed", "play", "rest"].forEach(action => {
-    const btn = document.getElementById("btn" + action.charAt(0).toUpperCase() + action.slice(1));
-    const remaining = Math.max(0, cooldowns[action] - now);
-    if (action === "feed" && state.food <= 0) {
-      btn.disabled = true;
-      btn.innerHTML = "🌾 喂食";
-      document.getElementById("noFoodMsg").classList.add("show");
-      return;
-    } else if (action === "feed") {
-      document.getElementById("noFoodMsg").classList.remove("show");
-    }
-    if (remaining > 0) {
-      btn.disabled = true;
-      const secs = Math.ceil(remaining / 1000);
-      const label = action === "feed" ? "🌾 喂食" : action === "play" ? "🎮 玩耍" : "💤 休息";
-      btn.innerHTML = `${label}<span class="cooldown-text">${secs}秒</span>`;
+  const fcd = getCooldown(currentRoomId, "feed");
+  const pcd = getCooldown(currentRoomId, "play");
+  const scd = getCooldown(currentRoomId, "sleep");
+  let h = "";
+
+  if (c.sleeping) {
+    h += `<button class="action-btn btn-wake" onclick="doWake()">⏰ 叫起床</button>`;
+  } else {
+    const fd = fcd > 0 || state.food <= 0;
+    h += `<button class="action-btn btn-feed" ${fd?'disabled':''} onclick="openFeedMenu()">${state.food<=0?'🌾 没食物了':'🌾 喂食'}${fcd>0?`<span class="cooldown-text">${Math.ceil(fcd/1000)}秒</span>`:''}</button>`;
+    h += `<button class="action-btn btn-play" ${pcd>0?'disabled':''} onclick="openPlayMenu()">🎮 玩耍${pcd>0?`<span class="cooldown-text">${Math.ceil(pcd/1000)}秒</span>`:''}</button>`;
+    h += `<button class="action-btn btn-sleep" ${scd>0?'disabled':''} onclick="doSleep()">💤 睡觉${scd>0?`<span class="cooldown-text">${Math.ceil(scd/1000)}秒</span>`:''}</button>`;
+  }
+  h += `<button class="action-btn btn-exit" onclick="exitRoom()">🚪 退出房间</button>`;
+  document.getElementById("roomActions").innerHTML = h;
+
+  const nfm = document.getElementById("noFoodMsg");
+  if (nfm) { state.food <= 0 && !c.sleeping ? nfm.classList.add("show") : nfm.classList.remove("show"); }
+}
+
+function startRoomWalking() {
+  if (roomWalkTimer) clearInterval(roomWalkTimer);
+  roomWalkTimer = setInterval(() => {
+    const c = state.chickens[currentRoomId];
+    if (!c || c.sleeping) return;
+    const el = document.getElementById("roomChicken");
+    if (el) el.style.left = (10 + Math.random() * 60) + "%";
+  }, 2500);
+}
+
+// ===== COOLDOWNS =====
+function getCooldown(cid, action) { return Math.max(0, (cooldowns[cid + "_" + action] || 0) - Date.now()); }
+function setCooldown(cid, action) { cooldowns[cid + "_" + action] = Date.now() + COOLDOWNS_MS[action]; }
+
+// ===== SELECTION POPUP =====
+let selCb = null;
+function openSelection(title, items, cb) {
+  selCb = cb;
+  document.getElementById("selTitle").textContent = title;
+  const c = state.chickens[currentRoomId];
+  document.getElementById("selGrid").innerHTML = items.map(item => {
+    let hint = "";
+    if (item.type === "food") {
+      if (c.favoriteFood.includes(item.id)) hint = `<div class="pref-hint pref-like">❤️ 喜欢</div>`;
+      else if (c.hatedFood.includes(item.id)) hint = `<div class="pref-hint pref-hate">💔 讨厌</div>`;
+      else hint = `<div class="pref-hint"></div>`;
     } else {
-      btn.disabled = false;
-      btn.innerHTML = action === "feed" ? "🌾 喂食" : action === "play" ? "🎮 玩耍" : "💤 休息";
+      if (c.favoriteGame === item.id) hint = `<div class="pref-hint pref-like">❤️ 喜欢</div>`;
+      else if (c.hatedGame === item.id) hint = `<div class="pref-hint pref-hate">💔 讨厌</div>`;
+      else hint = `<div class="pref-hint"></div>`;
     }
-  });
+    return `<div class="selection-item" onclick="selectItem('${item.id}')">
+      <span class="sel-icon">${item.icon}</span><span class="sel-name">${item.name}</span>${hint}
+    </div>`;
+  }).join("");
+  document.getElementById("selectionPopup").classList.add("show");
+}
+function closeSelection() { document.getElementById("selectionPopup").classList.remove("show"); selCb = null; }
+function selectItem(id) { const cb = selCb; closeSelection(); if (cb) cb(id); }
+
+// ===== FEED =====
+function openFeedMenu() {
+  const c = state.chickens[currentRoomId];
+  if (!c || c.sleeping || state.food <= 0 || getCooldown(currentRoomId, "feed") > 0) return;
+  openSelection("选择食物给 " + c.name, FOOD_POOL.map(f => ({ ...f, type: "food" })), doFeed);
 }
 
-function animateSprites(cls) {
-  document.querySelectorAll(".chicken-emoji").forEach(el => {
-    el.classList.remove("feed", "play", "rest");
-    void el.offsetWidth;
-    el.classList.add(cls);
-  });
-  setTimeout(() => {
-    document.querySelectorAll(".chicken-emoji").forEach(el => el.classList.remove(cls));
-  }, 2000);
+function doFeed(foodId) {
+  const c = state.chickens[currentRoomId];
+  if (!c || c.sleeping || state.food <= 0) return;
+
+  let hAdd, pAdd, expr;
+  if (c.favoriteFood.includes(foodId)) { hAdd = 30; pAdd = 10; expr = "love"; }
+  else if (c.hatedFood.includes(foodId)) { hAdd = 10; pAdd = -10; expr = "upset"; }
+  else { hAdd = 20; pAdd = 0; expr = "happy"; }
+
+  const actualH = Math.min(hAdd, 100 - c.hunger);
+  c.hunger = clamp(c.hunger + hAdd, 0, 100);
+  c.happiness = clamp(c.happiness + pAdd, 0, 100);
+  c.totalHunger += Math.max(0, actualH);
+  if (pAdd > 0) c.totalHappiness += Math.min(pAdd, 100 - c.happiness + pAdd);
+  state.food--; state.totalInteractions++;
+  setCooldown(currentRoomId, "feed"); updateStages(); save();
+
+  // Show reaction expression on the chicken
+  setRoomChickenExpr(expr, "anim-eat");
+  showRoomReaction(c.favoriteFood.includes(foodId) ? "好吃！😍" : c.hatedFood.includes(foodId) ? "不喜欢…😣" : "吃饱啦~😊");
+  // Move chicken to food bowl
+  const rc = document.getElementById("roomChicken");
+  if (rc) rc.style.left = "45%";
+
+  setTimeout(() => renderRoom(), 2500);
 }
 
-function startCooldown(action) {
-  cooldowns[action] = Date.now() + COOLDOWNS[action];
+// ===== PLAY =====
+function openPlayMenu() {
+  const c = state.chickens[currentRoomId];
+  if (!c || c.sleeping || getCooldown(currentRoomId, "play") > 0) return;
+  openSelection("选择游戏和 " + c.name + " 玩", GAME_POOL.map(g => ({ ...g, type: "game" })), doPlay);
 }
 
-function doFeed() {
-  if (state.food <= 0) return;
-  if (Date.now() < cooldowns.feed) return;
-  state.chickens.forEach(c => {
-    const added = Math.min(20, 100 - c.hunger);
-    c.hunger = Math.min(100, c.hunger + 20);
-    c.totalHunger += added;
-  });
-  state.food--;
+function doPlay(gameId) {
+  const c = state.chickens[currentRoomId];
+  if (!c || c.sleeping) return;
+  const game = GAME_POOL.find(g => g.id === gameId);
+
+  let pAdd, hCost, expr;
+  if (c.favoriteGame === gameId) { pAdd = 30; hCost = 5; expr = "adore"; }
+  else if (c.hatedGame === gameId) { pAdd = 10; hCost = 15; expr = "meh"; }
+  else { pAdd = 20; hCost = 10; expr = "happy"; }
+
+  const actualP = Math.min(pAdd, 100 - c.happiness);
+  c.happiness = clamp(c.happiness + pAdd, 0, 100);
+  c.hunger = clamp(c.hunger - hCost, 0, 100);
+  c.totalHappiness += Math.max(0, actualP);
   state.totalInteractions++;
-  updateStages();
-  startCooldown("feed");
-  animateSprites("feed");
-  save();
-  render();
+  setCooldown(currentRoomId, "play"); updateStages(); save();
+
+  setRoomChickenExpr(expr, game ? game.anim : "");
+  showRoomReaction(c.favoriteGame === gameId ? "超好玩！🥰" : c.hatedGame === gameId ? "不想玩…😕" : "好开心~😊");
+  const rc = document.getElementById("roomChicken");
+  if (rc) rc.style.left = "70%";
+
+  setTimeout(() => renderRoom(), 2500);
 }
 
-function doPlay() {
-  if (Date.now() < cooldowns.play) return;
-  state.chickens.forEach(c => {
-    const added = Math.min(20, 100 - c.happiness);
-    c.happiness = Math.min(100, c.happiness + 20);
-    c.hunger = Math.max(0, c.hunger - 10);
-    c.totalHappiness += added;
-  });
-  state.totalInteractions++;
-  updateStages();
-  startCooldown("play");
-  animateSprites("play");
-  save();
-  render();
+// ===== SLEEP =====
+function doSleep() {
+  const c = state.chickens[currentRoomId];
+  if (!c || c.sleeping || getCooldown(currentRoomId, "sleep") > 0) return;
+
+  if (c.hunger < 80) { c.totalHunger += 80 - c.hunger; c.hunger = 80; }
+  if (c.happiness < 80) { c.totalHappiness += 80 - c.happiness; c.happiness = 80; }
+  c.sleeping = true; state.totalInteractions++;
+  setCooldown(currentRoomId, "sleep"); updateStages(); save();
+
+  setRoomChickenExpr("sleep", "anim-sleep");
+  showRoomReaction("晚安~ 💤");
+  const rc = document.getElementById("roomChicken");
+  if (rc) rc.style.left = "15%";
+
+  const cid = currentRoomId;
+  sleepTimers[cid] = setTimeout(() => {
+    const ch = state.chickens[cid];
+    if (ch && ch.sleeping) {
+      ch.sleeping = false; save();
+      if (currentView === "room" && currentRoomId === cid) renderRoom();
+    }
+  }, 120000);
+
+  setTimeout(() => renderRoom(), 1500);
 }
 
-function doRest() {
-  if (Date.now() < cooldowns.rest) return;
-  state.chickens.forEach(c => {
-    if (c.hunger < 80) { c.totalHunger += 80 - c.hunger; c.hunger = 80; }
-    if (c.happiness < 80) { c.totalHappiness += 80 - c.happiness; c.happiness = 80; }
-  });
-  state.totalInteractions++;
-  updateStages();
-  startCooldown("rest");
-  animateSprites("rest");
-  save();
-  render();
+function doWake() {
+  const c = state.chickens[currentRoomId];
+  if (!c || !c.sleeping) return;
+  c.sleeping = false; save();
+  if (sleepTimers[currentRoomId]) { clearTimeout(sleepTimers[currentRoomId]); delete sleepTimers[currentRoomId]; }
+
+  setRoomChickenExpr("satisfied", "anim-wake");
+  showRoomReaction("伸个懒腰~ 😄");
+  setTimeout(() => renderRoom(), 1800);
 }
 
-function decay() {
-  state.chickens.forEach(c => {
-    c.hunger = Math.max(0, c.hunger - 5);
-    c.happiness = Math.max(0, c.happiness - 3);
-  });
-  save();
-  render();
-}
-
-function resetGame() {
-  if (confirm("确定要重置游戏吗？所有进度将丢失！")) {
-    localStorage.removeItem(STORAGE_KEY);
-    cooldowns = { feed: 0, play: 0, rest: 0 };
-    state = defaultState();
-    save();
-    render();
+// ===== ROOM HELPERS =====
+function setRoomChickenExpr(expr, animClass) {
+  const wrap = document.getElementById("roomChicken");
+  if (!wrap) return;
+  const chick = wrap.querySelector(".chick");
+  if (!chick) return;
+  // Remove old expression classes
+  chick.className = chick.className.replace(/expr-\w+/g, "").replace(/anim-\w+/g, "").trim();
+  chick.classList.add("expr-" + expr);
+  if (animClass) {
+    void chick.offsetWidth; // force reflow
+    chick.classList.add(animClass);
   }
 }
 
-// Init
-load();
-render();
-decayTimer = setInterval(decay, 60000);
-uiTimer = setInterval(renderButtons, 1000);
+function showRoomReaction(text) {
+  const el = document.getElementById("roomReaction");
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove("show");
+  void el.offsetWidth;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+// ===== STATS =====
+function renderStats() {
+  document.getElementById("statsBar").innerHTML =
+    `<span>🌾 食物: ${state.food}</span><span>📅 第${getDays()}天</span><span>⭐ ${state.totalInteractions}次互动</span>`;
+}
+
+// ===== AUTO DECAY =====
+function decay() {
+  state.chickens.forEach(c => {
+    if (!c.sleeping) {
+      c.hunger = clamp(c.hunger - 5, 0, 100);
+      c.happiness = clamp(c.happiness - 3, 0, 100);
+    }
+  });
+  save();
+  if (currentView === "yard") renderYard();
+  else if (currentView === "room") renderRoom();
+  renderStats();
+}
+
+// ===== RESET =====
+function resetGame() {
+  if (!confirm("确定要重置游戏吗？所有进度将丢失！")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  cooldowns = {};
+  Object.values(walkTimers).forEach(clearInterval); walkTimers = {};
+  Object.values(sleepTimers).forEach(clearTimeout); sleepTimers = {};
+  if (roomWalkTimer) { clearInterval(roomWalkTimer); roomWalkTimer = null; }
+  currentView = "yard"; currentRoomId = -1;
+  document.getElementById("yardView").classList.remove("hidden");
+  document.getElementById("roomView").classList.remove("active");
+  state = defaultState(); save(); renderYard(); renderStats();
+}
+
+// ===== EVENTS =====
+document.addEventListener("click", e => {
+  if (!e.target.closest(".yard-chicken") && !e.target.closest(".chicken-menu")) hideMenu();
+});
+
+// ===== INIT =====
+load(); renderYard(); renderStats();
+setInterval(decay, 60000);
+setInterval(() => { if (currentView === "room") renderRoomActions(); }, 1000);
 window.addEventListener("beforeunload", save);
 </script>
 </body>
