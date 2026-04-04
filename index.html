@@ -267,6 +267,46 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-reaction.show{opacity:1;animation:reactPop 2s ease forwards}
 @keyframes reactPop{0%{opacity:0;transform:translateX(-50%) scale(.5)}20%{opacity:1;transform:translateX(-50%) scale(1.1)}40%{transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}
 
+/* Room window */
+.room-window{position:absolute;top:12px;right:16px;width:70px;height:55px;z-index:2}
+.win-frame{width:70px;height:55px;border:4px solid #8B6914;border-radius:4px;position:relative;overflow:hidden;background:#87CEEB}
+.win-cross-h{position:absolute;top:50%;left:0;right:0;height:3px;background:#8B6914;transform:translateY(-50%);z-index:2}
+.win-cross-v{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#8B6914;transform:translateX(-50%);z-index:2}
+.win-sky{position:absolute;inset:0;transition:background .5s}
+.win-sky.sunny{background:linear-gradient(180deg,#5ba3d9,#87CEEB)}
+.win-sky.cloudy{background:linear-gradient(180deg,#8899aa,#a0b4c8)}
+.win-sky.rainy{background:linear-gradient(180deg,#607080,#8090a0)}
+.win-sky.snowy{background:linear-gradient(180deg,#b0b8c8,#c8d0e0)}
+.win-sun{position:absolute;top:6px;right:6px;width:12px;height:12px;background:#FFE033;border-radius:50%;box-shadow:0 0 6px rgba(255,224,51,.6);transition:opacity .5s}
+.win-sky.cloudy .win-sun{opacity:.3;box-shadow:none}
+.win-sky.rainy .win-sun,.win-sky.snowy .win-sun{opacity:0}
+.win-cloud{position:absolute;top:8px;left:6px;width:16px;height:6px;background:#fff;border-radius:10px}
+.win-cloud::before{content:"";position:absolute;top:-3px;left:4px;width:8px;height:5px;background:#fff;border-radius:50%}
+.win-sky.cloudy .win-cloud,.win-sky.rainy .win-cloud{background:#c0c8d0}
+.win-sky.cloudy .win-cloud::before,.win-sky.rainy .win-cloud::before{background:#c0c8d0}
+.win-rain-drop{position:absolute;width:1px;height:4px;background:rgba(160,192,255,.7);animation:winRain .6s linear infinite}
+@keyframes winRain{0%{transform:translateY(-4px)}100%{transform:translateY(55px)}}
+.win-snowflake{position:absolute;font-size:5px;color:#fff;animation:winSnow 2s linear infinite}
+@keyframes winSnow{0%{transform:translateY(-4px)}100%{transform:translateY(55px)}}
+/* Curtain */
+.win-curtain-l,.win-curtain-r{position:absolute;top:0;width:50%;height:100%;z-index:3;transition:width .5s ease}
+.win-curtain-l{left:0;border-radius:2px 0 0 2px}
+.win-curtain-r{right:0;border-radius:0 2px 2px 0}
+.win-curtain-l.open{width:12%}
+.win-curtain-r.open{width:12%}
+.win-curtain-l::after,.win-curtain-r::after{content:"";position:absolute;top:0;width:100%;height:100%;background:repeating-linear-gradient(180deg,transparent,transparent 4px,rgba(0,0,0,.04) 4px,rgba(0,0,0,.04) 5px)}
+.win-label{text-align:center;font-size:9px;color:#5a3e2b;font-weight:600;margin-top:2px}
+
+/* Ceiling light */
+.room-ceiling-light{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;text-align:center}
+.cl-wire{width:2px;height:14px;background:#888;margin:0 auto}
+.cl-shade{width:36px;height:16px;background:linear-gradient(180deg,#ddd,#bbb);border-radius:0 0 18px 18px;border:2px solid #aaa;position:relative;margin:0 auto}
+.cl-bulb{width:10px;height:8px;background:#eee;border-radius:50%;position:absolute;top:-4px;left:50%;transform:translateX(-50%)}
+.cl-glow{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:30px solid transparent;border-right:30px solid transparent;border-top:50px solid rgba(255,245,200,.08);pointer-events:none;opacity:0;transition:opacity .3s}
+.room-ceiling-light.on .cl-shade{background:linear-gradient(180deg,#ffd54f,#ffb300);border-color:#f9a825}
+.room-ceiling-light.on .cl-bulb{background:#fff9c4;box-shadow:0 0 8px rgba(255,235,59,.8)}
+.room-ceiling-light.on .cl-glow{opacity:1}
+
 /* Room floor */
 .room-floor{position:absolute;bottom:0;left:0;right:0;height:40px;border-radius:0 0 14px 14px}
 
@@ -300,6 +340,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 /* Room warm overlay */
 .room-warm{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;border-radius:16px;transition:opacity .5s;opacity:0;z-index:0}
 .room-warm.active{opacity:1;background:radial-gradient(ellipse at center bottom,rgba(255,150,50,.06),transparent 70%)}
+.room-dim{position:absolute;top:0;left:0;right:0;bottom:0;background:#1a1a2e;pointer-events:none;border-radius:16px;transition:opacity .5s;z-index:1}
 
 /* Room bars */
 .room-bars{background:rgba(255,255,255,.6);border-radius:10px;padding:8px 12px;margin-bottom:10px}
@@ -343,6 +384,9 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .rc-heater::-webkit-slider-thumb{background:#ef5350}
 .rc-lamp{background:linear-gradient(90deg,#e0e0e0,#ffd54f,#ffb300)}
 .rc-lamp::-webkit-slider-thumb{background:#ffb300}
+.rc-toggle{padding:6px 14px;border:2px solid #ddd;border-radius:8px;background:#f5f5f5;font-size:12px;font-weight:600;color:#5a3e2b;cursor:pointer;transition:all .2s;flex:1}
+.rc-toggle:hover{background:#eee}
+.rc-toggle.rc-on{background:#fff3e0;border-color:#ffb300;box-shadow:0 0 6px rgba(255,179,0,.3)}
 
 /* Selection popup */
 .sel-popup{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;justify-content:center;align-items:center}
@@ -693,7 +737,7 @@ function defState(){
   return{
     chickens:CDEFS.map((d,i)=>({
       id:i,name:d.name,hunger:50,happiness:50,thirst:50,clean:80,health:100,fatigue:0,
-      affManual:0,affNotion:0,heater:0,lamp:0,
+      affManual:0,affNotion:0,heater:0,lamp:0,light:false,curtain:true,
       stage:"baby",totalHunger:0,totalHappiness:0,
       location:"outside",sleeping:false,...randPrefs()
     })),
@@ -740,7 +784,7 @@ function load(){
     const r=localStorage.getItem(SK);
     if(r){S=JSON.parse(r);
       // migrate
-      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;});
+      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80;if(c.health===undefined)c.health=100;if(c.fatigue===undefined)c.fatigue=0;if(c.affManual===undefined)c.affManual=0;if(c.affNotion===undefined)c.affNotion=0;if(c.heater===undefined)c.heater=0;if(c.lamp===undefined)c.lamp=0;if(c.light===undefined)c.light=false;if(c.curtain===undefined)c.curtain=true;});
       if(!S.poops)S.poops=[];if(!S.buddyAff)S.buddyAff={};if(!S.milestones)S.milestones={};
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
       if(m>0){
@@ -1039,9 +1083,25 @@ function renderRoom(){
   sc.style.borderColor=col[1];
   const cLeft=c.sleeping?"8%":"42%";
 
+  const curtCls=c.curtain?"open":"";
+  const curtCol=col[0];
   sc.innerHTML=`
     <div class="room-header">🏠 ${c.name}的房间</div>
     <div class="room-scene">
+      <div class="room-ceiling-light ${c.light?"on":""}"><div class="cl-wire"></div><div class="cl-shade"><div class="cl-bulb"></div></div><div class="cl-glow"></div></div>
+      <div class="room-window">
+        <div class="win-frame">
+          <div class="win-sky ${weather}">
+            <div class="win-sun"></div>
+            <div class="win-cloud"></div>
+            ${winWeatherHTML()}
+          </div>
+          <div class="win-cross-h"></div><div class="win-cross-v"></div>
+          <div class="win-curtain-l ${curtCls}" style="background:${curtCol}"></div>
+          <div class="win-curtain-r ${curtCls}" style="background:${curtCol}"></div>
+        </div>
+        <div class="win-label">${weatherTemp!==null?weatherTemp+"°C":""} ${weather==="sunny"?"☀️":weather==="cloudy"?"⛅":weather==="snowy"?"🌨️":"🌧️"}</div>
+      </div>
       <div class="furniture" id="furBed">
         <div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div>
         <div class="fur-label">小床</div>
@@ -1071,6 +1131,7 @@ function renderRoom(){
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
       <div class="room-warm ${c.heater>0||c.lamp>0?"active":""}" id="roomWarm"></div>
+      <div class="room-dim" style="opacity:${!c.light&&!c.curtain?0.3:!c.light&&c.curtain?0.1:0}"></div>
       <div class="room-floor" style="background:${col[0]}30"></div>
     </div>
     <div class="toys-shelf">
@@ -1125,7 +1186,8 @@ function renderRoomBtns(){
   document.getElementById("roomActions").innerHTML=h;
   document.getElementById("roomControls").innerHTML=`
     <div class="rc-row"><span class="rc-label">🔥 暖气 ${c.heater>0?c.heater+"级":"关"}</span><input type="range" min="0" max="5" value="${c.heater}" class="rc-slider rc-heater" oninput="setHeater(+this.value)"></div>
-    <div class="rc-row"><span class="rc-label">💡 照灯 ${c.lamp>0?c.lamp+"级":"关"}</span><input type="range" min="0" max="5" value="${c.lamp}" class="rc-slider rc-lamp" oninput="setLamp(+this.value)"></div>`;
+    <div class="rc-row"><span class="rc-label">💡 照灯 ${c.lamp>0?c.lamp+"级":"关"}</span><input type="range" min="0" max="5" value="${c.lamp}" class="rc-slider rc-lamp" oninput="setLamp(+this.value)"></div>
+    <div class="rc-row"><button class="rc-toggle ${c.light?"rc-on":""}" onclick="toggleLight()">💡 灯 ${c.light?"开":"关"}</button><button class="rc-toggle ${c.curtain?"rc-on":""}" onclick="toggleCurtain()">🪟 窗帘 ${c.curtain?"开":"关"}</button></div>`;
   const nf=document.getElementById("noFoodMsg");
   if(nf){S.food<=0&&!c.sleeping?nf.classList.add("show"):nf.classList.remove("show")}
 }
@@ -1284,6 +1346,22 @@ function doRoomPet(pid){
   setTimeout(()=>renderRoom(),2200);
 }
 
+// ===== WINDOW, LIGHT, CURTAIN =====
+function toggleLight(){
+  const c=S.chickens[roomId];if(!c)return;
+  c.light=!c.light;save();renderRoom();
+}
+function toggleCurtain(){
+  const c=S.chickens[roomId];if(!c)return;
+  c.curtain=!c.curtain;save();renderRoom();
+}
+function winWeatherHTML(){
+  let h="";
+  if(weather==="rainy"){for(let i=0;i<8;i++){const l=Math.random()*90,d=.4+Math.random()*.4,del=Math.random()*.5;h+=`<div class="win-rain-drop" style="left:${l}%;animation-duration:${d}s;animation-delay:${del}s"></div>`}}
+  if(weather==="snowy"){const fl=["❄","*"];for(let i=0;i<6;i++){const l=Math.random()*90,d=1+Math.random()*1.5,del=Math.random()*1;h+=`<div class="win-snowflake" style="left:${l}%;animation-duration:${d}s;animation-delay:${del}s">${fl[i%2]}</div>`}}
+  return h;
+}
+
 // ===== HEATER & LAMP =====
 function setHeater(val){
   const c=S.chickens[roomId];if(!c)return;
@@ -1373,6 +1451,12 @@ async function flushNotion(){
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
   props["天气"]={select:{name:weather==="sunny"?"晴天":weather==="cloudy"?"多云":weather==="snowy"?"下雪":"下雨"}};
+  // Add expression emoji
+  if(item.stats){
+    const ex=getExpr(item.stats);
+    const exEmoji={sleep:"😴",cry:"😭",sad:"😢",upset:"😤",meh:"😑",satisfied:"😌",happy:"😊",love:"😍",adore:"🥰",normal:"🐥"};
+    props["表情"]={select:{name:(exEmoji[ex]||"🐥")+" "+(ex==="sleep"?"睡觉":ex==="cry"?"大哭":ex==="sad"?"难过":ex==="upset"?"生气":ex==="meh"?"无聊":ex==="satisfied"?"满足":ex==="happy"?"开心":ex==="love"?"喜欢":ex==="adore"?"超爱":"普通")}};
+  }
   if(weatherTemp!==null)props["温度"]={number:weatherTemp};
   if(item.stats){
     props["饱食"]={number:item.stats.hunger};
@@ -1385,6 +1469,8 @@ async function flushNotion(){
     if(item.stats.affNotion!==undefined)props["亲密指令"]={number:item.stats.affNotion};
     if(item.stats.heater!==undefined)props["暖气"]={number:item.stats.heater};
     if(item.stats.lamp!==undefined)props["照灯"]={number:item.stats.lamp};
+    if(item.stats.light!==undefined)props["房灯"]={checkbox:item.stats.light};
+    if(item.stats.curtain!==undefined)props["窗帘"]={checkbox:item.stats.curtain};
   }
   try{
     const r=await fetch(NOTION_PROXY+"v1/pages",{
@@ -1405,7 +1491,7 @@ function scheduleStateSync(){
 }
 async function syncStateToNotion(){
   if(!NOTION_TOKEN||!NOTION_DB)return;
-  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,heater:c.heater,lamp:c.lamp,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
+  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,heater:c.heater,lamp:c.lamp,light:c.light,curtain:c.curtain,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
   try{
     await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
       method:"PATCH",
@@ -1607,6 +1693,19 @@ function execInstruction(cmd,pageId){
   if(!matched&&(cmd.includes("全部关照灯")||cmd.includes("都关照灯"))){
     S.chickens.forEach(c=>c.lamp=0);addLog(`📋 [指令] 所有房间照灯关了`,"全部","状态");matched=true;
   }
+  // 开灯/关灯
+  if(!matched){m=cmd.match(/给(.+?)开灯/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].light=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了灯`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}}}
+  if(!matched){m=cmd.match(/给(.+?)关灯/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].light=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的灯`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}}}
+  if(!matched&&(cmd.includes("全部开灯")||cmd.includes("都开灯"))){S.chickens.forEach(c=>c.light=true);addLog(`📋 [指令] 所有房间都开灯了`,"全部","状态");matched=true}
+  if(!matched&&(cmd.includes("全部关灯")||cmd.includes("都关灯"))){S.chickens.forEach(c=>c.light=false);addLog(`📋 [指令] 所有房间都关灯了`,"全部","状态");matched=true}
+  // 开窗帘/关窗帘
+  if(!matched){m=cmd.match(/给(.+?)开窗帘/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了窗帘`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}}}
+  if(!matched){m=cmd.match(/给(.+?)关窗帘/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的窗帘`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}}}
+  if(!matched&&(cmd.includes("全部开窗帘")||cmd.includes("都开窗帘"))){S.chickens.forEach(c=>c.curtain=true);addLog(`📋 [指令] 所有房间窗帘都打开了`,"全部","状态");matched=true}
+  if(!matched&&(cmd.includes("全部关窗帘")||cmd.includes("都关窗帘"))){S.chickens.forEach(c=>c.curtain=false);addLog(`📋 [指令] 所有房间窗帘都关了`,"全部","状态");matched=true}
+  // 开窗/关窗 (aliases)
+  if(!matched){m=cmd.match(/给(.+?)开窗/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了窗`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}}}
+  if(!matched){m=cmd.match(/给(.+?)关窗/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的窗`,S.chickens[ci].name,"状态",S.chickens[ci]);matched=true}}}
   // 互动指令：给XX摸摸头/抱抱/亲亲/聊天/唱歌/挠痒痒/摸肚肚/梳毛毛/讲故事/跳舞
   if(!matched){
     const petMap={"摸摸头":"pat","摸头":"pat","抱抱":"hug","抱":"hug","亲亲":"kiss","亲":"kiss","聊天":"chat","说话":"chat","唱歌":"sing","挠痒痒":"tickle","挠痒":"tickle","摸肚肚":"belly","摸肚子":"belly","梳毛毛":"brush","梳毛":"brush","讲故事":"story","跳舞":"dance"};
