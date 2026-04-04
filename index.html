@@ -8,328 +8,436 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   background: linear-gradient(135deg, #ffecd2, #fcb69f);
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: 16px;
+  padding: 12px;
+  user-select: none;
 }
 
-.container {
-  width: 100%;
-  max-width: 800px;
-}
+.container { width: 100%; max-width: 800px; }
 
 h1 {
-  text-align: center;
-  font-size: 32px;
-  padding: 20px 0 12px;
-  color: #5a3e2b;
-  text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+  text-align: center; font-size: 28px; padding: 16px 0 10px;
+  color: #5a3e2b; text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
 }
 
-/* Nest area */
-.nest {
-  background: linear-gradient(180deg, #87CEEB 55%, #90EE90 55%);
-  border-radius: 20px;
-  border: 4px solid #8B4513;
-  padding: 30px 16px 24px;
-  margin-bottom: 16px;
-  position: relative;
-  overflow: hidden;
-  min-height: 160px;
+/* ========== YARD VIEW ========== */
+.yard {
+  background: linear-gradient(180deg, #87CEEB 50%, #90EE90 50%);
+  border-radius: 20px; border: 5px solid #8B4513;
+  padding: 16px; margin-bottom: 14px;
+  position: relative; overflow: hidden; min-height: 420px;
 }
 
-.nest::before {
-  content: "☁️";
-  position: absolute;
-  top: 10px; left: 20%;
-  font-size: 28px;
-  opacity: 0.7;
-  animation: cloudDrift 8s ease-in-out infinite;
+.yard-clouds {
+  position: absolute; top: 0; left: 0; right: 0; height: 50%;
+  pointer-events: none; overflow: hidden;
 }
-
-.nest::after {
-  content: "☁️";
-  position: absolute;
-  top: 24px; right: 15%;
-  font-size: 20px;
-  opacity: 0.5;
-  animation: cloudDrift 12s ease-in-out infinite reverse;
+.cloud {
+  position: absolute; font-size: 24px; opacity: 0.6;
+  animation: cloudDrift 10s ease-in-out infinite;
 }
+.cloud:nth-child(1) { top: 8px; left: 10%; animation-duration: 9s; }
+.cloud:nth-child(2) { top: 30px; left: 55%; animation-duration: 13s; font-size: 18px; }
+.cloud:nth-child(3) { top: 18px; left: 80%; animation-duration: 11s; font-size: 20px; }
 
 @keyframes cloudDrift {
   0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(20px); }
+  50% { transform: translateX(25px); }
 }
 
-.chickens-display {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 12px;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
+/* Coops row */
+.coops-row {
+  display: flex; justify-content: center; gap: 8px;
+  margin-bottom: 12px; flex-wrap: wrap;
+  position: relative; z-index: 2;
 }
 
-.chicken-sprite {
-  text-align: center;
-  cursor: default;
+.coop {
+  width: 90px; text-align: center; cursor: pointer;
+  transition: transform 0.2s;
+}
+.coop:hover { transform: scale(1.05); }
+
+.coop-building {
+  width: 80px; height: 70px; margin: 0 auto;
+  border-radius: 6px 6px 0 0; position: relative;
+  border: 2px solid rgba(0,0,0,0.15);
 }
 
-.chicken-emoji {
-  font-size: 48px;
-  display: block;
+.coop-roof {
+  position: absolute; top: -16px; left: -6px; right: -6px;
+  height: 20px; border-radius: 6px 6px 0 0;
+  border: 2px solid rgba(0,0,0,0.15);
+}
+
+.coop-door {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 24px; height: 32px; border-radius: 12px 12px 0 0;
+  background: rgba(0,0,0,0.25); transition: all 0.3s;
+}
+
+.coop-door.open { background: rgba(0,0,0,0.08); }
+
+.coop-window {
+  position: absolute; top: 10px; right: 10px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.1);
+}
+
+.coop-name {
+  font-size: 12px; font-weight: 700; margin-top: 4px;
+  color: #5a3e2b;
+}
+
+.coop-btn {
+  font-size: 11px; padding: 3px 8px; border: none;
+  border-radius: 8px; cursor: pointer; margin-top: 3px;
+  background: rgba(255,255,255,0.8); color: #5a3e2b;
+  font-weight: 600; transition: background 0.2s;
+}
+.coop-btn:hover { background: rgba(255,255,255,1); }
+
+/* Yard ground area - where chickens walk */
+.yard-ground {
+  position: relative; min-height: 180px;
+  margin-top: 8px; z-index: 1;
+}
+
+.yard-chicken {
+  position: absolute; text-align: center; cursor: pointer;
+  transition: left 2s ease-in-out, top 2s ease-in-out;
+  z-index: 3;
+}
+
+.yard-chicken .emoji {
+  font-size: 36px; display: block;
   animation: breathe 2s ease-in-out infinite;
 }
 
-.chicken-sprite .name {
-  font-size: 13px;
-  color: #5a3e2b;
-  font-weight: 600;
-  margin-top: 2px;
+.yard-chicken .yc-name {
+  font-size: 11px; font-weight: 700; color: #3e2b1a;
+  background: rgba(255,255,255,0.7); border-radius: 6px;
+  padding: 1px 5px; white-space: nowrap;
 }
 
-.chicken-sprite .status-text {
-  font-size: 11px;
-  color: #c0392b;
-  font-weight: 600;
-  min-height: 16px;
+.yard-chicken .yc-status {
+  font-size: 10px; color: #c0392b; font-weight: 600;
+  min-height: 14px;
 }
 
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
+.yard-chicken .reaction {
+  position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+  font-size: 20px; opacity: 0; transition: opacity 0.3s;
+  pointer-events: none;
+}
+.yard-chicken .reaction.show {
+  opacity: 1; animation: floatUp 1.5s ease forwards;
 }
 
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  25% { transform: translateY(-14px); }
-  50% { transform: translateY(0); }
-  75% { transform: translateY(-8px); }
+@keyframes floatUp {
+  0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-30px); }
 }
 
-@keyframes wobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-12deg); }
-  75% { transform: rotate(12deg); }
+/* Mini bars in yard */
+.yard-bars {
+  display: flex; gap: 3px; justify-content: center; margin-top: 2px;
+}
+.yard-bar-track {
+  width: 30px; height: 4px; background: rgba(0,0,0,0.15);
+  border-radius: 2px; overflow: hidden;
+}
+.yard-bar-fill {
+  height: 100%; border-radius: 2px; transition: width 0.3s;
+}
+.yard-bar-fill.h { background: #ff6b6b; }
+.yard-bar-fill.p { background: #ffd93d; }
+
+/* Chicken popup menu */
+.chicken-menu {
+  display: none; position: absolute; bottom: 100%; left: 50%;
+  transform: translateX(-50%); background: #fff;
+  border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  padding: 6px; z-index: 100; white-space: nowrap;
+}
+.chicken-menu.show { display: flex; gap: 4px; }
+
+.chicken-menu button {
+  padding: 6px 10px; border: none; border-radius: 8px;
+  cursor: pointer; font-size: 13px; font-weight: 600;
+  background: #f0f0f0; transition: background 0.2s;
+}
+.chicken-menu button:hover { background: #ddd; }
+
+/* ========== ROOM VIEW ========== */
+.room-view { display: none; }
+.room-view.active { display: block; }
+.yard-view.hidden { display: none; }
+
+.room {
+  border-radius: 20px; border: 4px solid rgba(0,0,0,0.1);
+  padding: 20px; margin-bottom: 14px;
+  position: relative; overflow: hidden; min-height: 320px;
 }
 
-@keyframes sleepAnim {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.92); opacity: 0.7; }
+.room-header {
+  text-align: center; font-size: 22px; font-weight: 700;
+  color: #5a3e2b; margin-bottom: 12px;
 }
 
-.chicken-emoji.feed { animation: bounce 0.5s ease 3; }
-.chicken-emoji.play { animation: wobble 0.4s ease 4; }
-.chicken-emoji.rest { animation: sleepAnim 1s ease 3; }
-
-/* Status cards */
-.status-panel {
-  background: rgba(255,255,255,0.85);
-  border-radius: 16px;
-  padding: 14px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+.room-scene {
+  display: flex; justify-content: space-around; align-items: flex-end;
+  min-height: 160px; position: relative; padding: 10px;
 }
 
-.chicken-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0e0d0;
+.room-item {
+  text-align: center; flex-shrink: 0;
+}
+.room-item .item-icon { font-size: 40px; }
+.room-item .item-label {
+  font-size: 11px; color: #5a3e2b; font-weight: 600; margin-top: 2px;
 }
 
-.chicken-card:last-child { border-bottom: none; }
-
-.card-emoji { font-size: 28px; flex-shrink: 0; }
-
-.card-info { flex: 1; min-width: 0; }
-
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 4px;
-  flex-wrap: wrap;
+/* Room chicken */
+.room-chicken {
+  position: absolute; text-align: center;
+  transition: left 1.5s ease-in-out, bottom 1.5s ease-in-out;
+  z-index: 5;
+}
+.room-chicken .emoji {
+  font-size: 52px; display: block;
+  animation: breathe 2s ease-in-out infinite;
+}
+.room-chicken .expression {
+  font-size: 28px; display: block; min-height: 34px;
+}
+.room-chicken .zzz {
+  position: absolute; top: -10px; right: -10px;
+  font-size: 14px; color: #9370DB; font-weight: 700;
+  animation: zzzFloat 2s ease-in-out infinite;
 }
 
-.card-header .name {
-  font-weight: 700;
-  color: #5a3e2b;
-  font-size: 15px;
+@keyframes zzzFloat {
+  0%, 100% { opacity: 0.4; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-8px); }
 }
 
-.card-header .stage-badge {
-  font-size: 13px;
-  background: #fff3e0;
-  border-radius: 8px;
-  padding: 1px 6px;
+/* Room reaction bubble */
+.room-reaction {
+  position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+  font-size: 32px; opacity: 0; pointer-events: none;
+}
+.room-reaction.show {
+  opacity: 1; animation: reactionPop 2s ease forwards;
+}
+@keyframes reactionPop {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.5) translateY(0); }
+  20% { opacity: 1; transform: translateX(-50%) scale(1.2) translateY(-10px); }
+  40% { transform: translateX(-50%) scale(1) translateY(-15px); }
+  100% { opacity: 0; transform: translateX(-50%) scale(0.8) translateY(-40px); }
 }
 
-.bars { display: flex; gap: 8px; flex-wrap: wrap; }
-
-.bar-group {
-  flex: 1;
-  min-width: 100px;
+/* Room status bars */
+.room-bars {
+  background: rgba(255,255,255,0.6); border-radius: 12px;
+  padding: 10px 14px; margin-bottom: 12px;
 }
-
-.bar-label {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 2px;
+.room-bar-row {
+  display: flex; align-items: center; gap: 8px; margin: 4px 0;
 }
-
-.bar-track {
-  height: 10px;
-  background: #eee;
-  border-radius: 5px;
-  overflow: hidden;
+.room-bar-label { font-size: 13px; width: 90px; color: #5a3e2b; font-weight: 600; }
+.room-bar-track {
+  flex: 1; height: 12px; background: rgba(0,0,0,0.1);
+  border-radius: 6px; overflow: hidden;
 }
-
-.bar-fill {
-  height: 100%;
-  border-radius: 5px;
-  transition: width 0.3s ease;
+.room-bar-fill {
+  height: 100%; border-radius: 6px; transition: width 0.3s;
 }
+.room-bar-fill.hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
+.room-bar-fill.happiness { background: linear-gradient(90deg, #ffd93d, #f0932b); }
+.room-bar-val { font-size: 13px; width: 30px; text-align: right; color: #5a3e2b; font-weight: 700; }
 
-.bar-fill.hunger { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
-.bar-fill.happiness { background: linear-gradient(90deg, #ffd93d, #f0932b); }
-
-/* Growth progress */
-.growth-bar-track {
-  height: 6px;
-  background: #eee;
-  border-radius: 3px;
-  overflow: hidden;
+/* Growth bar in room */
+.room-growth {
   margin-top: 4px;
 }
-
-.growth-bar-fill {
-  height: 100%;
-  border-radius: 3px;
+.room-growth-label { font-size: 11px; color: #888; margin-bottom: 2px; }
+.room-growth-track {
+  height: 6px; background: rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden;
+}
+.room-growth-fill {
+  height: 100%; border-radius: 3px;
   background: linear-gradient(90deg, #a29bfe, #6c5ce7);
-  transition: width 0.3s ease;
+  transition: width 0.3s;
 }
 
-/* Buttons */
-.actions {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-  justify-content: center;
+/* Room action buttons */
+.room-actions {
+  display: flex; gap: 8px; justify-content: center;
+  flex-wrap: wrap; margin-bottom: 10px;
 }
 
 .action-btn {
-  flex: 1;
-  max-width: 200px;
-  padding: 14px 10px;
-  border: none;
-  border-radius: 16px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  padding: 12px 18px; border: none; border-radius: 14px;
+  font-size: 16px; font-weight: 700; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
   box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-  position: relative;
-  overflow: hidden;
 }
-
 .action-btn:hover:not(:disabled) { transform: scale(1.05); }
 .action-btn:active:not(:disabled) { transform: scale(0.97); }
-
 .action-btn:disabled {
-  background: #ccc !important;
-  cursor: not-allowed;
-  transform: none;
-  color: #999;
+  background: #ccc !important; cursor: not-allowed; color: #999;
 }
 
 .btn-feed { background: linear-gradient(135deg, #FFD700, #f39c12); }
 .btn-play { background: linear-gradient(135deg, #FF69B4, #e84393); }
-.btn-rest { background: linear-gradient(135deg, #9370DB, #6c5ce7); }
+.btn-sleep { background: linear-gradient(135deg, #9370DB, #6c5ce7); }
+.btn-wake { background: linear-gradient(135deg, #FF8C00, #e67e22); }
+.btn-exit { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
 
 .cooldown-text {
-  display: block;
-  font-size: 12px;
-  font-weight: 400;
-  margin-top: 2px;
+  display: block; font-size: 11px; font-weight: 400; margin-top: 2px;
 }
+
+/* Selection popup (food / game) */
+.selection-popup {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4); z-index: 200;
+  justify-content: center; align-items: center;
+}
+.selection-popup.show { display: flex; }
+
+.selection-box {
+  background: #fff; border-radius: 20px; padding: 20px;
+  max-width: 360px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.selection-title {
+  text-align: center; font-size: 18px; font-weight: 700;
+  color: #5a3e2b; margin-bottom: 14px;
+}
+.selection-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.selection-item {
+  padding: 12px 6px; border: 2px solid #eee; border-radius: 12px;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+  background: #fafafa;
+}
+.selection-item:hover {
+  border-color: #f39c12; background: #fff8e7; transform: scale(1.05);
+}
+.selection-item .sel-icon { font-size: 28px; display: block; }
+.selection-item .sel-name { font-size: 12px; color: #5a3e2b; font-weight: 600; margin-top: 4px; }
+
+.selection-cancel {
+  display: block; margin: 12px auto 0; padding: 8px 24px;
+  border: none; border-radius: 10px; background: #eee;
+  cursor: pointer; font-size: 14px; color: #888;
+}
+
+/* Preference hints in selection */
+.selection-item .pref-hint {
+  font-size: 10px; margin-top: 2px; min-height: 14px;
+}
+.pref-like { color: #e74c3c; }
+.pref-hate { color: #7f8c8d; }
 
 /* Stats bar */
-.stats {
-  background: rgba(255,255,255,0.85);
-  border-radius: 16px;
-  padding: 14px 18px;
-  display: flex;
-  justify-content: space-around;
-  font-size: 15px;
-  color: #5a3e2b;
-  font-weight: 600;
+.stats-bar {
+  background: rgba(255,255,255,0.85); border-radius: 14px;
+  padding: 12px 16px; display: flex; justify-content: space-around;
+  font-size: 14px; color: #5a3e2b; font-weight: 600;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
 }
+.stats-bar span { white-space: nowrap; }
 
-.stats span { white-space: nowrap; }
-
-/* Reset button */
-.reset-area {
-  text-align: center;
-  padding: 10px 0 20px;
-}
-
+/* Reset */
+.reset-area { text-align: center; padding: 8px 0 20px; }
 .reset-btn {
-  background: none;
-  border: 1px dashed #c0a080;
-  color: #b08060;
-  padding: 8px 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
+  background: none; border: 1px dashed #c0a080; color: #b08060;
+  padding: 6px 18px; border-radius: 10px; cursor: pointer; font-size: 12px;
 }
-
 .reset-btn:hover { background: rgba(255,255,255,0.4); }
 
-/* No food message */
+/* No food */
 .no-food-msg {
-  font-size: 12px;
-  color: #e17055;
-  text-align: center;
-  margin-top: -8px;
-  margin-bottom: 12px;
-  display: none;
+  font-size: 12px; color: #e17055; text-align: center;
+  margin-top: -6px; margin-bottom: 10px; display: none;
 }
-
 .no-food-msg.show { display: block; }
 
+/* Animations */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-16px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-8px); }
+}
+@keyframes wobble {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-15deg); }
+  75% { transform: rotate(15deg); }
+}
+@keyframes sleepBob {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.93); opacity: 0.75; }
+}
+@keyframes runLeft {
+  0% { transform: translateX(0) scaleX(1); }
+  25% { transform: translateX(-40px) scaleX(1); }
+  50% { transform: translateX(0) scaleX(-1); }
+  75% { transform: translateX(40px) scaleX(-1); }
+  100% { transform: translateX(0) scaleX(1); }
+}
+@keyframes jumpUp {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-20px); }
+  60% { transform: translateY(0); }
+  80% { transform: translateY(-12px); }
+}
+@keyframes rollAnim {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes stretchWake {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(1.2); }
+}
+@keyframes doorOpen {
+  0% { height: 32px; }
+  100% { height: 8px; }
+}
+
+.anim-eat .emoji { animation: bounce 0.5s ease 4 !important; }
+.anim-chase .emoji { animation: runLeft 1s ease 2 !important; }
+.anim-jump .emoji { animation: jumpUp 0.6s ease 3 !important; }
+.anim-roll .emoji { animation: rollAnim 0.8s ease 2 !important; }
+.anim-sleep .emoji { animation: sleepBob 1.5s ease-in-out infinite !important; }
+.anim-wake .emoji { animation: stretchWake 0.8s ease 2 !important; }
+
 /* Responsive */
-@media (max-width: 767px) {
-  h1 { font-size: 24px; }
-
-  .actions {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .action-btn {
-    max-width: 100%;
-    width: 100%;
-  }
-
-  .chickens-display {
-    gap: 8px;
-  }
-
-  .chicken-emoji { font-size: 40px; }
-
-  .stats { font-size: 13px; }
+@media (max-width: 600px) {
+  h1 { font-size: 22px; }
+  .coop { width: 62px; }
+  .coop-building { width: 56px; height: 50px; }
+  .coop-roof { top: -12px; left: -4px; right: -4px; height: 16px; }
+  .coop-door { width: 18px; height: 24px; }
+  .coop-name { font-size: 10px; }
+  .coop-btn { font-size: 10px; padding: 2px 6px; }
+  .room-actions { gap: 6px; }
+  .action-btn { padding: 10px 12px; font-size: 14px; }
+  .yard-chicken .emoji { font-size: 28px; }
+  .room-chicken .emoji { font-size: 42px; }
 }
 </style>
 </head>
@@ -338,44 +446,164 @@ h1 {
 <div class="container">
   <h1>🐥 期期的小鸡养成系统 💕</h1>
 
-  <div class="nest">
-    <div class="chickens-display" id="chickensDisplay"></div>
+  <!-- ===== YARD VIEW ===== -->
+  <div class="yard-view" id="yardView">
+    <div class="yard">
+      <div class="yard-clouds">
+        <span class="cloud">☁️</span>
+        <span class="cloud">☁️</span>
+        <span class="cloud">☁️</span>
+      </div>
+      <div class="coops-row" id="coopsRow"></div>
+      <div class="yard-ground" id="yardGround"></div>
+    </div>
   </div>
 
-  <div class="status-panel" id="statusPanel"></div>
-
-  <div class="actions">
-    <button class="action-btn btn-feed" id="btnFeed" onclick="doFeed()">🌾 喂食</button>
-    <button class="action-btn btn-play" id="btnPlay" onclick="doPlay()">🎮 玩耍</button>
-    <button class="action-btn btn-rest" id="btnRest" onclick="doRest()">💤 休息</button>
+  <!-- ===== ROOM VIEW ===== -->
+  <div class="room-view" id="roomView">
+    <div class="room" id="roomScene"></div>
+    <div class="room-bars" id="roomBars"></div>
+    <div class="room-actions" id="roomActions"></div>
+    <div class="no-food-msg" id="noFoodMsg">没有食物了🥺</div>
   </div>
-  <div class="no-food-msg" id="noFoodMsg">没有食物了🥺</div>
 
-  <div class="stats" id="statsBar"></div>
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar"></div>
 
   <div class="reset-area">
     <button class="reset-btn" onclick="resetGame()">🔄 重置游戏</button>
   </div>
 </div>
 
-<script>
-const CHICKEN_NAMES = ["玖宝", "期期小一", "毛毛", "咕咕", "叽叽"];
-const COOLDOWNS = { feed: 30000, play: 30000, rest: 300000 };
-const STORAGE_KEY = "chickie_save";
+<!-- Selection popup -->
+<div class="selection-popup" id="selectionPopup">
+  <div class="selection-box">
+    <div class="selection-title" id="selTitle"></div>
+    <div class="selection-grid" id="selGrid"></div>
+    <button class="selection-cancel" onclick="closeSelection()">取消</button>
+  </div>
+</div>
 
+<!-- Chicken popup menu (yard) -->
+<div class="chicken-menu" id="chickenMenu">
+  <button onclick="menuGoHome()">🏠 回去</button>
+  <button onclick="menuEnterRoom()">🚪 进房间</button>
+</div>
+
+<script>
+// ==================== CONFIG ====================
+const STORAGE_KEY = "chickie_v4";
+const FOOD_POOL = [
+  { id: "grain", icon: "🌾", name: "谷物" },
+  { id: "worm", icon: "🐛", name: "虫子" },
+  { id: "veggie", icon: "🥬", name: "青菜" },
+  { id: "fruit", icon: "🍓", name: "水果" },
+  { id: "candy", icon: "🍬", name: "甜食" },
+  { id: "chili", icon: "🌶️", name: "辣椒" }
+];
+const GAME_POOL = [
+  { id: "chase", icon: "🏃", name: "追逐游戏", anim: "anim-chase" },
+  { id: "jump", icon: "🦘", name: "跳跃游戏", anim: "anim-jump" },
+  { id: "roll", icon: "🎪", name: "打滚游戏", anim: "anim-roll" }
+];
+const CHICKEN_DEFS = [
+  { name: "玖宝", color: ["#FFB6C1", "#FF69B4"] },
+  { name: "期期小一", color: ["#87CEEB", "#4682B4"] },
+  { name: "毛毛", color: ["#FFD700", "#FFA500"] },
+  { name: "咕咕", color: ["#90EE90", "#32CD32"] },
+  { name: "叽叽", color: ["#DDA0DD", "#9370DB"] }
+];
+const COOLDOWNS_MS = { feed: 30000, play: 30000, sleep: 300000 };
+
+// ==================== STATE ====================
 let state = null;
-let cooldowns = { feed: 0, play: 0, rest: 0 };
-let decayTimer = null;
-let uiTimer = null;
+let currentView = "yard"; // "yard" or "room"
+let currentRoomId = -1;
+let cooldowns = {}; // per-chicken: { "0_feed": timestamp, ... }
+let menuTarget = -1;
+let walkTimers = {};
+let roomWalkTimer = null;
+let sleepTimers = {};
+
+// ==================== HELPERS ====================
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function pickN(arr, n) {
+  const copy = [...arr]; const res = [];
+  for (let i = 0; i < n && copy.length; i++) {
+    const idx = Math.floor(Math.random() * copy.length);
+    res.push(copy.splice(idx, 1)[0]);
+  }
+  return res;
+}
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function stageEmoji(s) { return s === "adult" ? "🐔" : s === "teen" ? "🐤" : "🐥"; }
+function stageName(s) { return s === "adult" ? "成年" : s === "teen" ? "少年" : "幼年"; }
+function getDays() {
+  return Math.max(1, Math.floor((Date.now() - new Date(state.startDate).getTime()) / 86400000) + 1);
+}
+function growthPct(c) {
+  if (c.stage === "adult") return 100;
+  const tgt = c.stage === "baby" ? 500 : 1000;
+  const prev = c.stage === "baby" ? 0 : 500;
+  const h = Math.min(c.totalHunger, tgt) - prev;
+  const p = Math.min(c.totalHappiness, tgt) - prev;
+  return Math.floor(((h + p) / ((tgt - prev) * 2)) * 100);
+}
+
+// ==================== EXPRESSION SYSTEM ====================
+// Returns the current mood expression for a chicken
+function getMoodExpression(c) {
+  if (c.sleeping) return "😴";
+  if (c.hunger < 20 && c.happiness < 20) return "😭";
+  if (c.hunger < 20) return "😢";
+  if (c.happiness < 20) return "😔";
+  if (c.hunger >= 80 && c.happiness >= 80) return "😄";
+  if (c.happiness >= 70) return "😊";
+  return "";
+}
+
+function getStatusText(c) {
+  if (c.sleeping) return "睡觉中…";
+  if (c.hunger < 20 && c.happiness < 20) return "又饿又不开心";
+  if (c.hunger < 20) return "饿了";
+  if (c.happiness < 20) return "不开心";
+  if (c.hunger >= 80 && c.happiness >= 80) return "很满足";
+  return "";
+}
+
+// Reaction expressions for interactions
+function getFeedReaction(c, foodId) {
+  if (c.favoriteFood.includes(foodId)) return "😍";
+  if (c.hatedFood.includes(foodId)) return "😣";
+  return "😊";
+}
+function getPlayReaction(c, gameId) {
+  if (c.favoriteGame === gameId) return "🥰";
+  if (c.hatedGame === gameId) return "😕";
+  return "😊";
+}
+
+// ==================== INIT / SAVE / LOAD ====================
+function randomPrefs() {
+  const foodIds = FOOD_POOL.map(f => f.id);
+  const gameIds = GAME_POOL.map(g => g.id);
+  const fav = pickN(foodIds, 2);
+  const remaining = foodIds.filter(f => !fav.includes(f));
+  const hated = pickN(remaining, 2);
+  const favGame = pick(gameIds);
+  const hatedGame = pick(gameIds.filter(g => g !== favGame));
+  return { favoriteFood: fav, hatedFood: hated, favoriteGame: favGame, hatedGame: hatedGame };
+}
 
 function defaultState() {
   const now = new Date().toISOString();
   return {
-    chickens: CHICKEN_NAMES.map((name, i) => ({
-      id: i, name,
+    chickens: CHICKEN_DEFS.map((def, i) => ({
+      id: i, name: def.name,
       hunger: 50, happiness: 50,
-      stage: "baby",
-      totalHunger: 0, totalHappiness: 0
+      stage: "baby", totalHunger: 0, totalHappiness: 0,
+      location: "inside", sleeping: false,
+      ...randomPrefs()
     })),
     food: 20,
     startDate: now,
@@ -384,57 +612,33 @@ function defaultState() {
   };
 }
 
-function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      state = JSON.parse(raw);
-      applyOfflineDecay();
-      return;
-    }
-  } catch(e) {}
-  state = defaultState();
-  save();
-}
-
 function save() {
   state.lastUpdateTime = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function applyOfflineDecay() {
-  const last = new Date(state.lastUpdateTime).getTime();
-  const now = Date.now();
-  const minutes = Math.floor((now - last) / 60000);
-  if (minutes > 0) {
-    state.chickens.forEach(c => {
-      c.hunger = Math.max(0, c.hunger - minutes * 5);
-      c.happiness = Math.max(0, c.happiness - minutes * 3);
-    });
-    updateStages();
-    save();
-  }
-}
-
-function stageEmoji(stage) {
-  return stage === "adult" ? "🐔" : stage === "teen" ? "🐤" : "🐥";
-}
-
-function stageName(stage) {
-  return stage === "adult" ? "成年" : stage === "teen" ? "少年" : "幼年";
-}
-
-function moodEmoji(c) {
-  if (c.hunger < 20 && c.happiness < 20) return "😭";
-  if (c.hunger < 20 || c.happiness < 20) return "😢";
-  return stageEmoji(c.stage);
-}
-
-function statusText(c) {
-  if (c.hunger < 20 && c.happiness < 20) return "又饿又不开心";
-  if (c.hunger < 20) return "饿了";
-  if (c.happiness < 20) return "不开心";
-  return "";
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      state = JSON.parse(raw);
+      // Apply offline decay
+      const mins = Math.floor((Date.now() - new Date(state.lastUpdateTime).getTime()) / 60000);
+      if (mins > 0) {
+        state.chickens.forEach(c => {
+          if (!c.sleeping) {
+            c.hunger = clamp(c.hunger - mins * 5, 0, 100);
+            c.happiness = clamp(c.happiness - mins * 3, 0, 100);
+          }
+        });
+      }
+      updateStages();
+      save();
+      return;
+    }
+  } catch(e) {}
+  state = defaultState();
+  save();
 }
 
 function updateStages() {
@@ -445,188 +649,577 @@ function updateStages() {
   });
 }
 
-function growthPercent(c) {
-  if (c.stage === "adult") return 100;
-  const target = c.stage === "baby" ? 500 : 1000;
-  const prev = c.stage === "baby" ? 0 : 500;
-  const h = Math.min(c.totalHunger, target) - prev;
-  const p = Math.min(c.totalHappiness, target) - prev;
-  const range = target - prev;
-  return Math.floor(((h + p) / (range * 2)) * 100);
-}
-
-function getDays() {
-  const start = new Date(state.startDate).getTime();
-  return Math.max(1, Math.floor((Date.now() - start) / 86400000) + 1);
-}
-
-// Rendering
-function render() {
-  renderNest();
-  renderStatus();
+// ==================== YARD RENDERING ====================
+function renderYard() {
+  renderCoops();
+  renderYardChickens();
   renderStats();
-  renderButtons();
 }
 
-function renderNest() {
-  const el = document.getElementById("chickensDisplay");
-  el.innerHTML = state.chickens.map((c, i) => `
-    <div class="chicken-sprite">
-      <span class="chicken-emoji" id="sprite${i}">${moodEmoji(c)}</span>
-      <div class="name">${c.name}</div>
-      <div class="status-text">${statusText(c)}</div>
-    </div>
-  `).join("");
-}
-
-function renderStatus() {
-  const el = document.getElementById("statusPanel");
-  el.innerHTML = state.chickens.map(c => {
-    const gp = growthPercent(c);
+function renderCoops() {
+  const el = document.getElementById("coopsRow");
+  el.innerHTML = state.chickens.map((c, i) => {
+    const col = CHICKEN_DEFS[i].color;
+    const isInside = c.location === "inside";
+    const doorCls = isInside ? "" : "open";
+    const btn = isInside
+      ? `<button class="coop-btn" onclick="callOut(${i})">📣 叫出来</button>`
+      : "";
     return `
-    <div class="chicken-card">
-      <div class="card-emoji">${stageEmoji(c.stage)}</div>
-      <div class="card-info">
-        <div class="card-header">
-          <span class="name">${c.name}</span>
-          <span class="stage-badge">${stageName(c.stage)}</span>
-        </div>
-        <div class="bars">
-          <div class="bar-group">
-            <div class="bar-label">❤️ 饥饿 ${c.hunger}</div>
-            <div class="bar-track"><div class="bar-fill hunger" style="width:${c.hunger}%"></div></div>
-          </div>
-          <div class="bar-group">
-            <div class="bar-label">😊 快乐 ${c.happiness}</div>
-            <div class="bar-track"><div class="bar-fill happiness" style="width:${c.happiness}%"></div></div>
-          </div>
-        </div>
-        <div class="growth-bar-track" title="成长进度 ${gp}%">
-          <div class="growth-bar-fill" style="width:${gp}%"></div>
-        </div>
+    <div class="coop" onclick="event.stopPropagation()">
+      <div class="coop-building" style="background:${col[0]}">
+        <div class="coop-roof" style="background:${col[1]}"></div>
+        <div class="coop-window"></div>
+        <div class="coop-door ${doorCls}" id="door${i}"></div>
       </div>
+      <div class="coop-name">${c.name}</div>
+      ${btn}
     </div>`;
   }).join("");
 }
 
+function renderYardChickens() {
+  const ground = document.getElementById("yardGround");
+  // Keep existing positions if possible
+  const existing = {};
+  ground.querySelectorAll(".yard-chicken").forEach(el => {
+    existing[el.dataset.id] = { left: el.style.left, top: el.style.top };
+  });
+
+  ground.innerHTML = state.chickens
+    .filter(c => c.location === "outside")
+    .map(c => {
+      const pos = existing[c.id] || {
+        left: (10 + Math.random() * 70) + "%",
+        top: (10 + Math.random() * 60) + "%"
+      };
+      const mood = getMoodExpression(c);
+      const st = getStatusText(c);
+      return `
+      <div class="yard-chicken" data-id="${c.id}" id="yc${c.id}"
+           style="left:${pos.left};top:${pos.top}"
+           onclick="showChickenMenu(event, ${c.id})">
+        <div class="reaction" id="ycReact${c.id}"></div>
+        <span class="emoji">${stageEmoji(c.stage)}</span>
+        ${mood ? `<span style="font-size:16px;display:block;text-align:center">${mood}</span>` : '<span style="min-height:20px;display:block"></span>'}
+        <span class="yc-name">${c.name}</span>
+        <span class="yc-status">${st}</span>
+        <div class="yard-bars">
+          <div class="yard-bar-track"><div class="yard-bar-fill h" style="width:${c.hunger}%"></div></div>
+          <div class="yard-bar-track"><div class="yard-bar-fill p" style="width:${c.happiness}%"></div></div>
+        </div>
+      </div>`;
+    }).join("");
+
+  // Start random walking for outside chickens
+  startYardWalking();
+}
+
+function startYardWalking() {
+  Object.values(walkTimers).forEach(clearInterval);
+  walkTimers = {};
+  state.chickens.forEach(c => {
+    if (c.location === "outside") {
+      walkTimers[c.id] = setInterval(() => {
+        const el = document.getElementById("yc" + c.id);
+        if (el) {
+          el.style.left = (5 + Math.random() * 75) + "%";
+          el.style.top = (5 + Math.random() * 65) + "%";
+        }
+      }, 3000 + Math.random() * 2000);
+    }
+  });
+}
+
+// ==================== CHICKEN MENU (YARD) ====================
+function showChickenMenu(e, id) {
+  e.stopPropagation();
+  menuTarget = id;
+  const menu = document.getElementById("chickenMenu");
+  const yc = document.getElementById("yc" + id);
+  if (!yc) return;
+  // Attach menu to the chicken
+  yc.appendChild(menu);
+  menu.classList.add("show");
+}
+
+function hideMenu() {
+  const menu = document.getElementById("chickenMenu");
+  menu.classList.remove("show");
+  document.body.appendChild(menu);
+  menuTarget = -1;
+}
+
+function menuGoHome() {
+  if (menuTarget < 0) return;
+  const c = state.chickens[menuTarget];
+  c.location = "inside";
+  hideMenu();
+  save();
+  renderYard();
+}
+
+function menuEnterRoom() {
+  if (menuTarget < 0) return;
+  const id = menuTarget;
+  hideMenu();
+  enterRoom(id);
+}
+
+// ==================== CALL OUT / GO HOME ====================
+function callOut(id) {
+  const c = state.chickens[id];
+  if (c.location !== "inside") return;
+  // Door open animation
+  const door = document.getElementById("door" + id);
+  if (door) door.classList.add("open");
+  setTimeout(() => {
+    c.location = "outside";
+    save();
+    renderYard();
+  }, 400);
+}
+
+// ==================== ROOM VIEW ====================
+function enterRoom(id) {
+  currentView = "room";
+  currentRoomId = id;
+  document.getElementById("yardView").classList.add("hidden");
+  const rv = document.getElementById("roomView");
+  rv.classList.add("active");
+  renderRoom();
+  startRoomWalking();
+}
+
+function exitRoom() {
+  currentView = "yard";
+  currentRoomId = -1;
+  document.getElementById("yardView").classList.remove("hidden");
+  document.getElementById("roomView").classList.remove("active");
+  if (roomWalkTimer) { clearInterval(roomWalkTimer); roomWalkTimer = null; }
+  renderYard();
+}
+
+function renderRoom() {
+  const c = state.chickens[currentRoomId];
+  if (!c) return;
+  const col = CHICKEN_DEFS[currentRoomId].color;
+  const lightCol = col[0] + "40"; // with alpha
+
+  // Scene
+  const scene = document.getElementById("roomScene");
+  scene.style.background = `linear-gradient(180deg, ${col[0]}30 60%, ${col[0]}50 100%)`;
+  scene.style.borderColor = col[1];
+
+  const mood = getMoodExpression(c);
+  const sleeping = c.sleeping;
+
+  scene.innerHTML = `
+    <div class="room-header">🐥 ${c.name}的房间</div>
+    <div class="room-scene">
+      <div class="room-item" style="opacity:${sleeping ? '0.5' : '1'}">
+        <div class="item-icon">🏠</div>
+        <div class="item-label" style="color:${col[1]}">窝窝</div>
+      </div>
+      <div class="room-item">
+        <div class="item-icon">🍽️</div>
+        <div class="item-label" style="color:${col[1]}">喂食盆</div>
+      </div>
+      <div class="room-item">
+        <div class="item-icon">🎮</div>
+        <div class="item-label" style="color:${col[1]}">玩耍区</div>
+      </div>
+      <div class="room-chicken ${sleeping ? 'anim-sleep' : ''}" id="roomChicken"
+           style="left:${sleeping ? '15%' : '45%'};bottom:30px">
+        <div class="room-reaction" id="roomReaction"></div>
+        <span class="emoji">${stageEmoji(c.stage)}</span>
+        <span class="expression">${mood}</span>
+        ${sleeping ? '<span class="zzz">Zzz…</span>' : ''}
+      </div>
+    </div>`;
+
+  // Bars
+  const bars = document.getElementById("roomBars");
+  const gp = growthPct(c);
+  bars.innerHTML = `
+    <div class="room-bar-row">
+      <span class="room-bar-label">❤️ 饥饿值</span>
+      <div class="room-bar-track"><div class="room-bar-fill hunger" style="width:${c.hunger}%"></div></div>
+      <span class="room-bar-val">${c.hunger}</span>
+    </div>
+    <div class="room-bar-row">
+      <span class="room-bar-label">😊 快乐值</span>
+      <div class="room-bar-track"><div class="room-bar-fill happiness" style="width:${c.happiness}%"></div></div>
+      <span class="room-bar-val">${c.happiness}</span>
+    </div>
+    <div class="room-growth">
+      <div class="room-growth-label">🌱 成长进度 ${gp}% (${stageName(c.stage)})</div>
+      <div class="room-growth-track"><div class="room-growth-fill" style="width:${gp}%"></div></div>
+    </div>`;
+
+  // Preferences display
+  const favFoodNames = c.favoriteFood.map(id => {
+    const f = FOOD_POOL.find(x => x.id === id);
+    return f ? f.icon + f.name : id;
+  }).join(" ");
+  const hateFoodNames = c.hatedFood.map(id => {
+    const f = FOOD_POOL.find(x => x.id === id);
+    return f ? f.icon + f.name : id;
+  }).join(" ");
+  const favGameName = (() => { const g = GAME_POOL.find(x => x.id === c.favoriteGame); return g ? g.icon + g.name : ""; })();
+  const hateGameName = (() => { const g = GAME_POOL.find(x => x.id === c.hatedGame); return g ? g.icon + g.name : ""; })();
+
+  bars.innerHTML += `
+    <div style="margin-top:8px;font-size:11px;color:#888;line-height:1.6">
+      ❤️ 喜欢: ${favFoodNames} ${favGameName} &nbsp;
+      💔 讨厌: ${hateFoodNames} ${hateGameName}
+    </div>`;
+
+  renderRoomActions();
+}
+
+function renderRoomActions() {
+  const c = state.chickens[currentRoomId];
+  if (!c) return;
+  const acts = document.getElementById("roomActions");
+  const now = Date.now();
+
+  const feedCD = getCooldown(currentRoomId, "feed");
+  const playCD = getCooldown(currentRoomId, "play");
+  const sleepCD = getCooldown(currentRoomId, "sleep");
+
+  let html = "";
+
+  if (c.sleeping) {
+    html += `<button class="action-btn btn-wake" onclick="doWake()">⏰ 叫起床</button>`;
+  } else {
+    // Feed
+    const feedDisabled = feedCD > 0 || state.food <= 0;
+    const feedLabel = state.food <= 0 ? "🌾 没食物了" : "🌾 喂食";
+    html += `<button class="action-btn btn-feed" ${feedDisabled ? 'disabled' : ''} onclick="openFeedMenu()">
+      ${feedLabel}${feedCD > 0 ? `<span class="cooldown-text">${Math.ceil(feedCD / 1000)}秒</span>` : ''}
+    </button>`;
+
+    // Play
+    html += `<button class="action-btn btn-play" ${playCD > 0 ? 'disabled' : ''} onclick="openPlayMenu()">
+      🎮 玩耍${playCD > 0 ? `<span class="cooldown-text">${Math.ceil(playCD / 1000)}秒</span>` : ''}
+    </button>`;
+
+    // Sleep
+    html += `<button class="action-btn btn-sleep" ${sleepCD > 0 ? 'disabled' : ''} onclick="doSleep()">
+      💤 睡觉${sleepCD > 0 ? `<span class="cooldown-text">${Math.ceil(sleepCD / 1000)}秒</span>` : ''}
+    </button>`;
+  }
+
+  html += `<button class="action-btn btn-exit" onclick="exitRoom()">🚪 退出房间</button>`;
+
+  acts.innerHTML = html;
+
+  // No food msg
+  const nfm = document.getElementById("noFoodMsg");
+  if (nfm) {
+    if (state.food <= 0 && !c.sleeping) nfm.classList.add("show");
+    else nfm.classList.remove("show");
+  }
+}
+
+function startRoomWalking() {
+  if (roomWalkTimer) clearInterval(roomWalkTimer);
+  roomWalkTimer = setInterval(() => {
+    const c = state.chickens[currentRoomId];
+    if (!c || c.sleeping) return;
+    const el = document.getElementById("roomChicken");
+    if (el) {
+      el.style.left = (10 + Math.random() * 65) + "%";
+    }
+  }, 2500);
+}
+
+// ==================== COOLDOWN SYSTEM ====================
+function getCooldown(chickenId, action) {
+  const key = chickenId + "_" + action;
+  const end = cooldowns[key] || 0;
+  return Math.max(0, end - Date.now());
+}
+
+function setCooldown(chickenId, action) {
+  const key = chickenId + "_" + action;
+  cooldowns[key] = Date.now() + COOLDOWNS_MS[action];
+}
+
+// ==================== SELECTION POPUP ====================
+let selectionCallback = null;
+
+function openSelection(title, items, callback) {
+  selectionCallback = callback;
+  document.getElementById("selTitle").textContent = title;
+  const grid = document.getElementById("selGrid");
+  const c = state.chickens[currentRoomId];
+  grid.innerHTML = items.map(item => {
+    let hint = "";
+    if (item.type === "food") {
+      if (c.favoriteFood.includes(item.id)) hint = `<div class="pref-hint pref-like">❤️ 喜欢</div>`;
+      else if (c.hatedFood.includes(item.id)) hint = `<div class="pref-hint pref-hate">💔 讨厌</div>`;
+      else hint = `<div class="pref-hint"></div>`;
+    } else if (item.type === "game") {
+      if (c.favoriteGame === item.id) hint = `<div class="pref-hint pref-like">❤️ 喜欢</div>`;
+      else if (c.hatedGame === item.id) hint = `<div class="pref-hint pref-hate">💔 讨厌</div>`;
+      else hint = `<div class="pref-hint"></div>`;
+    }
+    return `
+    <div class="selection-item" onclick="selectItem('${item.id}')">
+      <span class="sel-icon">${item.icon}</span>
+      <span class="sel-name">${item.name}</span>
+      ${hint}
+    </div>`;
+  }).join("");
+  document.getElementById("selectionPopup").classList.add("show");
+}
+
+function closeSelection() {
+  document.getElementById("selectionPopup").classList.remove("show");
+  selectionCallback = null;
+}
+
+function selectItem(id) {
+  closeSelection();
+  if (selectionCallback) selectionCallback(id);
+}
+
+// ==================== FEED SYSTEM ====================
+function openFeedMenu() {
+  if (currentRoomId < 0) return;
+  const c = state.chickens[currentRoomId];
+  if (c.sleeping || state.food <= 0 || getCooldown(currentRoomId, "feed") > 0) return;
+  const items = FOOD_POOL.map(f => ({ ...f, type: "food" }));
+  openSelection("选择食物给 " + c.name, items, doFeed);
+}
+
+function doFeed(foodId) {
+  const c = state.chickens[currentRoomId];
+  if (!c || c.sleeping || state.food <= 0) return;
+
+  let hungerAdd, happyAdd;
+  let reaction;
+  if (c.favoriteFood.includes(foodId)) {
+    hungerAdd = 30; happyAdd = 10;
+    reaction = "😍";
+  } else if (c.hatedFood.includes(foodId)) {
+    hungerAdd = 10; happyAdd = -10;
+    reaction = "😣";
+  } else {
+    hungerAdd = 20; happyAdd = 0;
+    reaction = "😊";
+  }
+
+  const actualHunger = Math.min(hungerAdd, 100 - c.hunger);
+  c.hunger = clamp(c.hunger + hungerAdd, 0, 100);
+  c.happiness = clamp(c.happiness + happyAdd, 0, 100);
+  c.totalHunger += Math.max(0, actualHunger);
+  if (happyAdd > 0) c.totalHappiness += Math.min(happyAdd, 100 - c.happiness + happyAdd);
+  state.food--;
+  state.totalInteractions++;
+  setCooldown(currentRoomId, "feed");
+  updateStages();
+  save();
+
+  // Animation: chicken walks to food bowl, eats
+  const rc = document.getElementById("roomChicken");
+  if (rc) {
+    rc.style.left = "45%"; // move to food bowl area
+    rc.classList.add("anim-eat");
+    setTimeout(() => rc.classList.remove("anim-eat"), 2500);
+  }
+
+  showRoomReaction(reaction);
+  setTimeout(() => renderRoom(), 2200);
+}
+
+// ==================== PLAY SYSTEM ====================
+function openPlayMenu() {
+  if (currentRoomId < 0) return;
+  const c = state.chickens[currentRoomId];
+  if (c.sleeping || getCooldown(currentRoomId, "play") > 0) return;
+  const items = GAME_POOL.map(g => ({ ...g, type: "game" }));
+  openSelection("选择游戏和 " + c.name + " 玩", items, doPlay);
+}
+
+function doPlay(gameId) {
+  const c = state.chickens[currentRoomId];
+  if (!c || c.sleeping) return;
+
+  let happyAdd, hungerCost;
+  let reaction;
+  const game = GAME_POOL.find(g => g.id === gameId);
+
+  if (c.favoriteGame === gameId) {
+    happyAdd = 30; hungerCost = 5;
+    reaction = "🥰";
+  } else if (c.hatedGame === gameId) {
+    happyAdd = 10; hungerCost = 15;
+    reaction = "😕";
+  } else {
+    happyAdd = 20; hungerCost = 10;
+    reaction = "😊";
+  }
+
+  const actualHappy = Math.min(happyAdd, 100 - c.happiness);
+  c.happiness = clamp(c.happiness + happyAdd, 0, 100);
+  c.hunger = clamp(c.hunger - hungerCost, 0, 100);
+  c.totalHappiness += Math.max(0, actualHappy);
+  state.totalInteractions++;
+  setCooldown(currentRoomId, "play");
+  updateStages();
+  save();
+
+  // Play animation
+  const rc = document.getElementById("roomChicken");
+  if (rc && game) {
+    rc.style.left = "70%"; // move to play area
+    rc.classList.add(game.anim);
+    setTimeout(() => rc.classList.remove(game.anim), 2500);
+  }
+
+  showRoomReaction(reaction);
+  setTimeout(() => renderRoom(), 2200);
+}
+
+// ==================== SLEEP SYSTEM ====================
+function doSleep() {
+  if (currentRoomId < 0) return;
+  const c = state.chickens[currentRoomId];
+  if (c.sleeping || getCooldown(currentRoomId, "sleep") > 0) return;
+
+  // Restore stats
+  if (c.hunger < 80) { c.totalHunger += 80 - c.hunger; c.hunger = 80; }
+  if (c.happiness < 80) { c.totalHappiness += 80 - c.happiness; c.happiness = 80; }
+  c.sleeping = true;
+  state.totalInteractions++;
+  setCooldown(currentRoomId, "sleep");
+  updateStages();
+  save();
+
+  // Move to nest
+  const rc = document.getElementById("roomChicken");
+  if (rc) {
+    rc.style.left = "15%";
+    rc.classList.add("anim-sleep");
+  }
+
+  showRoomReaction("😴");
+
+  // Auto wake after 2 minutes
+  const cid = currentRoomId;
+  sleepTimers[cid] = setTimeout(() => {
+    const ch = state.chickens[cid];
+    if (ch && ch.sleeping) {
+      ch.sleeping = false;
+      save();
+      if (currentView === "room" && currentRoomId === cid) {
+        renderRoom();
+      }
+    }
+  }, 120000);
+
+  setTimeout(() => renderRoom(), 1500);
+}
+
+function doWake() {
+  if (currentRoomId < 0) return;
+  const c = state.chickens[currentRoomId];
+  if (!c.sleeping) return;
+
+  c.sleeping = false;
+  save();
+
+  // Clear auto-wake timer
+  if (sleepTimers[currentRoomId]) {
+    clearTimeout(sleepTimers[currentRoomId]);
+    delete sleepTimers[currentRoomId];
+  }
+
+  // Stretch animation
+  const rc = document.getElementById("roomChicken");
+  if (rc) {
+    rc.classList.remove("anim-sleep");
+    rc.classList.add("anim-wake");
+    setTimeout(() => rc.classList.remove("anim-wake"), 1800);
+  }
+
+  showRoomReaction("😄");
+  setTimeout(() => renderRoom(), 1500);
+}
+
+// ==================== ROOM REACTION ====================
+function showRoomReaction(emoji) {
+  const el = document.getElementById("roomReaction");
+  if (!el) return;
+  el.textContent = emoji;
+  el.classList.remove("show");
+  void el.offsetWidth;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+// ==================== STATS ====================
 function renderStats() {
   document.getElementById("statsBar").innerHTML =
     `<span>🌾 食物: ${state.food}</span>
      <span>📅 第${getDays()}天</span>
-     <span>⭐ ${state.totalInteractions}次</span>`;
+     <span>⭐ ${state.totalInteractions}次互动</span>`;
 }
 
-function renderButtons() {
-  const now = Date.now();
-  ["feed", "play", "rest"].forEach(action => {
-    const btn = document.getElementById("btn" + action.charAt(0).toUpperCase() + action.slice(1));
-    const remaining = Math.max(0, cooldowns[action] - now);
-    if (action === "feed" && state.food <= 0) {
-      btn.disabled = true;
-      btn.innerHTML = "🌾 喂食";
-      document.getElementById("noFoodMsg").classList.add("show");
-      return;
-    } else if (action === "feed") {
-      document.getElementById("noFoodMsg").classList.remove("show");
-    }
-    if (remaining > 0) {
-      btn.disabled = true;
-      const secs = Math.ceil(remaining / 1000);
-      const label = action === "feed" ? "🌾 喂食" : action === "play" ? "🎮 玩耍" : "💤 休息";
-      btn.innerHTML = `${label}<span class="cooldown-text">${secs}秒</span>`;
-    } else {
-      btn.disabled = false;
-      btn.innerHTML = action === "feed" ? "🌾 喂食" : action === "play" ? "🎮 玩耍" : "💤 休息";
-    }
-  });
-}
-
-function animateSprites(cls) {
-  document.querySelectorAll(".chicken-emoji").forEach(el => {
-    el.classList.remove("feed", "play", "rest");
-    void el.offsetWidth;
-    el.classList.add(cls);
-  });
-  setTimeout(() => {
-    document.querySelectorAll(".chicken-emoji").forEach(el => el.classList.remove(cls));
-  }, 2000);
-}
-
-function startCooldown(action) {
-  cooldowns[action] = Date.now() + COOLDOWNS[action];
-}
-
-function doFeed() {
-  if (state.food <= 0) return;
-  if (Date.now() < cooldowns.feed) return;
-  state.chickens.forEach(c => {
-    const added = Math.min(20, 100 - c.hunger);
-    c.hunger = Math.min(100, c.hunger + 20);
-    c.totalHunger += added;
-  });
-  state.food--;
-  state.totalInteractions++;
-  updateStages();
-  startCooldown("feed");
-  animateSprites("feed");
-  save();
-  render();
-}
-
-function doPlay() {
-  if (Date.now() < cooldowns.play) return;
-  state.chickens.forEach(c => {
-    const added = Math.min(20, 100 - c.happiness);
-    c.happiness = Math.min(100, c.happiness + 20);
-    c.hunger = Math.max(0, c.hunger - 10);
-    c.totalHappiness += added;
-  });
-  state.totalInteractions++;
-  updateStages();
-  startCooldown("play");
-  animateSprites("play");
-  save();
-  render();
-}
-
-function doRest() {
-  if (Date.now() < cooldowns.rest) return;
-  state.chickens.forEach(c => {
-    if (c.hunger < 80) { c.totalHunger += 80 - c.hunger; c.hunger = 80; }
-    if (c.happiness < 80) { c.totalHappiness += 80 - c.happiness; c.happiness = 80; }
-  });
-  state.totalInteractions++;
-  updateStages();
-  startCooldown("rest");
-  animateSprites("rest");
-  save();
-  render();
-}
-
+// ==================== AUTO DECAY ====================
 function decay() {
   state.chickens.forEach(c => {
-    c.hunger = Math.max(0, c.hunger - 5);
-    c.happiness = Math.max(0, c.happiness - 3);
+    if (!c.sleeping) {
+      c.hunger = clamp(c.hunger - 5, 0, 100);
+      c.happiness = clamp(c.happiness - 3, 0, 100);
+    }
   });
   save();
-  render();
+  if (currentView === "yard") renderYard();
+  else if (currentView === "room") renderRoom();
+  renderStats();
 }
 
+// ==================== RESET ====================
 function resetGame() {
   if (confirm("确定要重置游戏吗？所有进度将丢失！")) {
     localStorage.removeItem(STORAGE_KEY);
-    cooldowns = { feed: 0, play: 0, rest: 0 };
+    cooldowns = {};
+    Object.values(walkTimers).forEach(clearInterval);
+    walkTimers = {};
+    Object.values(sleepTimers).forEach(clearTimeout);
+    sleepTimers = {};
+    if (roomWalkTimer) { clearInterval(roomWalkTimer); roomWalkTimer = null; }
+    currentView = "yard";
+    currentRoomId = -1;
+    document.getElementById("yardView").classList.remove("hidden");
+    document.getElementById("roomView").classList.remove("active");
     state = defaultState();
     save();
-    render();
+    renderYard();
+    renderStats();
   }
 }
 
-// Init
+// ==================== GLOBAL EVENTS ====================
+document.addEventListener("click", (e) => {
+  // Close chicken menu when clicking outside
+  if (!e.target.closest(".yard-chicken") && !e.target.closest(".chicken-menu")) {
+    hideMenu();
+  }
+});
+
+// ==================== INIT ====================
 load();
-render();
-decayTimer = setInterval(decay, 60000);
-uiTimer = setInterval(renderButtons, 1000);
+renderYard();
+renderStats();
+setInterval(decay, 60000);
+setInterval(() => {
+  if (currentView === "room") renderRoomActions();
+}, 1000);
 window.addEventListener("beforeunload", save);
 </script>
 </body>
