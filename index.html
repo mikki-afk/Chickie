@@ -17,6 +17,11 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .chick-body{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:34px;height:28px;border-radius:50%;background:#FFD700;box-shadow:inset -2px -2px 5px rgba(0,0,0,.1),inset 2px 2px 5px rgba(255,255,255,.3)}
 .chick-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:26px;border-radius:50%;background:#FFD700;box-shadow:inset -2px -2px 4px rgba(0,0,0,.08),inset 2px 2px 4px rgba(255,255,255,.3);z-index:2}
 .chick-hair{position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:7px solid #FFA500;z-index:3}
+/* Sleep cap */
+.chick-cap{position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(15deg);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid #9370DB;border-radius:2px;z-index:7;opacity:0;transform-origin:bottom center}
+.chick-cap::after{content:"";position:absolute;top:-3px;left:-2px;width:4px;height:4px;background:#fff;border-radius:50%}
+.chick-cap::before{content:"";position:absolute;bottom:-1px;left:-10px;width:20px;height:4px;background:#7c5cbf;border-radius:2px}
+.expr-sleep .chick-cap{opacity:1}
 .chick-eyes{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:16px;display:flex;justify-content:space-between;z-index:4}
 .chick-eye{width:4px;height:4px;border-radius:50%;background:#2c1810}
 .chick-beak{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:4px solid #FF8C00;z-index:4}
@@ -257,6 +262,36 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .tub-feet-l,.tub-feet-r{position:absolute;bottom:-2px;width:4px;height:3px;background:#bbb;border-radius:0 0 2px 2px}
 .tub-feet-l{left:6px}.tub-feet-r{right:6px}
 
+/* Room toys */
+.toys-shelf{display:flex;gap:8px;justify-content:center;margin-top:6px;padding:4px 8px;background:rgba(255,255,255,.25);border-radius:8px}
+.toy{position:relative;display:inline-block}
+/* Ball */
+.toy-ball{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#ff6b6b,#ee5a24);box-shadow:inset -2px -2px 3px rgba(0,0,0,.15),inset 1px 1px 2px rgba(255,255,255,.3)}
+.toy-ball::after{content:"";position:absolute;top:2px;left:3px;width:4px;height:3px;background:rgba(255,255,255,.4);border-radius:50%}
+/* Yarn ball */
+.toy-yarn{width:14px;height:14px;border-radius:50%;background:#DDA0DD;position:relative;overflow:hidden}
+.toy-yarn::before{content:"";position:absolute;top:2px;left:1px;width:12px;height:10px;border:1px solid #9370DB;border-radius:50%}
+.toy-yarn::after{content:"";position:absolute;bottom:-1px;right:-2px;width:6px;height:2px;background:#DDA0DD;border-radius:1px;transform:rotate(-30deg)}
+/* Blocks */
+.toy-blocks{width:16px;height:14px;position:relative}
+.toy-block{position:absolute;border-radius:1px}
+.toy-block.b1{width:8px;height:8px;background:#FFD700;bottom:0;left:0;border:1px solid #e6b800}
+.toy-block.b2{width:8px;height:8px;background:#87CEEB;bottom:0;right:0;border:1px solid #5ba3d9}
+.toy-block.b3{width:7px;height:7px;background:#FF69B4;bottom:8px;left:2px;border:1px solid #e84393}
+/* Teddy */
+.toy-teddy{width:14px;height:16px;position:relative}
+.teddy-body{width:10px;height:10px;background:#D2691E;border-radius:50%;position:absolute;bottom:0;left:2px}
+.teddy-head{width:8px;height:8px;background:#D2691E;border-radius:50%;position:absolute;top:0;left:3px}
+.teddy-ear{width:4px;height:4px;background:#A0522D;border-radius:50%;position:absolute;top:-1px}
+.teddy-ear.L{left:1px}.teddy-ear.R{right:1px}
+.teddy-face{width:3px;height:2px;background:#2c1810;border-radius:50%;position:absolute;top:3px;left:50%;transform:translateX(-50%)}
+/* Rubber duck */
+.toy-duck{width:14px;height:12px;position:relative}
+.duck-body{width:12px;height:8px;background:#FFD700;border-radius:50%;position:absolute;bottom:0;left:1px}
+.duck-head{width:7px;height:7px;background:#FFD700;border-radius:50%;position:absolute;top:0;right:1px}
+.duck-beak{width:4px;height:2px;background:#FF8C00;border-radius:0 2px 2px 0;position:absolute;top:3px;right:-2px}
+.duck-eye{width:2px;height:2px;background:#2c1810;border-radius:50%;position:absolute;top:2px;right:3px}
+
 /* Poop */
 .poop{position:absolute;font-size:14px;z-index:2;pointer-events:none;animation:poopDrop .3s ease-out}
 @keyframes poopDrop{0%{transform:scale(0) translateY(-10px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
@@ -377,6 +412,7 @@ function chickHTML(id,expr,sz,ex){
   const cls=["chick","stage-"+c.stage,"expr-"+expr,sz||"",ex||""].join(" ").trim();
   return `<div class="${cls}" data-id="${id}">
     <div class="chick-head">
+      <div class="chick-cap"></div>
       <div class="chick-hair"></div>
       <div class="chick-eyes"><span class="chick-eye"></span><span class="chick-eye"></span></div>
       <div class="chick-beak"></div>
@@ -706,6 +742,13 @@ function renderRoom(){
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
       <div class="room-floor" style="background:${col[0]}30"></div>
+    </div>
+    <div class="toys-shelf">
+      <div class="toy"><div class="toy-ball"></div></div>
+      <div class="toy"><div class="toy-yarn"></div></div>
+      <div class="toy"><div class="toy-blocks"><div class="toy-block b1"></div><div class="toy-block b2"></div><div class="toy-block b3"></div></div></div>
+      <div class="toy"><div class="toy-teddy"><div class="teddy-ear L"></div><div class="teddy-ear R"></div><div class="teddy-head"><div class="teddy-face"></div></div><div class="teddy-body"></div></div></div>
+      <div class="toy"><div class="toy-duck"><div class="duck-body"></div><div class="duck-head"><div class="duck-eye"></div></div><div class="duck-beak"></div></div></div>
     </div>`;
 
   // Bars
