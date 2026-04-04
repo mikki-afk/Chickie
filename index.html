@@ -60,6 +60,59 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .expr-satisfied .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px}
 .expr-normal .chick-blush{opacity:.3}
 
+/* New expressions */
+/* Hungry - droopy eyes, open beak */
+.expr-hungry .chick-eye{height:3px;border-radius:0 0 3px 3px;margin-top:2px}
+.expr-hungry .chick-beak{border-top:3px solid #FF8C00;border-bottom:0;top:16px;animation:beakOpen .8s ease infinite}
+@keyframes beakOpen{0%,100%{transform:translateX(-50%) scaleY(1)}50%{transform:translateX(-50%) scaleY(1.4)}}
+.expr-hungry .chick-sweat{opacity:.6}
+
+/* Thirsty - squinting, panting */
+.expr-thirsty .chick-eye{height:2px;border-radius:1px;margin-top:2px;width:5px}
+.expr-thirsty .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+.expr-thirsty .chick-sweat{opacity:1;animation:sweatDrip 1.2s ease infinite}
+@keyframes sweatDrip{0%{opacity:1;transform:rotate(45deg) translateY(0)}100%{opacity:0;transform:rotate(45deg) translateY(5px)}}
+
+/* Dirty - squished face, visible discomfort */
+.expr-dirty .chick-eye{width:5px;height:3px;border-radius:0 0 3px 3px}
+.expr-dirty .chick-blush{opacity:.5;background:rgba(150,120,80,.4)}
+.expr-dirty .chick-sweat{opacity:.7}
+
+/* Excited - big eyes, bouncing */
+.expr-excited .chick-eye{width:5px;height:6px;border-radius:50%}
+.expr-excited .chick-blush{opacity:.8;background:rgba(255,100,100,.5)}
+.expr-excited .chick-beak{border-top:0;border-bottom:4px solid #FF8C00;top:15px}
+.expr-excited .chick-hearts{opacity:1;animation:heartF 1s ease infinite}
+
+/* Scared - tiny pupils, shaking */
+.expr-scared .chick-eye{width:3px;height:3px;border-radius:50%;background:#2c1810}
+.expr-scared .chick-sweat{opacity:1}
+.expr-scared .chick-body{animation:shiver .15s ease infinite}
+@keyframes shiver{0%,100%{transform:translateX(-50%)}50%{transform:translateX(calc(-50% + 1px))}}
+
+/* Curious - tilted head look, one eye bigger */
+.expr-curious .chick-eye:first-child{width:5px;height:5px;border-radius:50%}
+.expr-curious .chick-eye:last-child{width:3px;height:3px;border-radius:50%;margin-top:1px}
+.expr-curious .chick-head{transform:translateX(-50%) rotate(8deg)}
+
+/* Proud - puffed up, smug smile */
+.expr-proud .chick-eye{height:2px;border-radius:3px 3px 0 0;margin-top:1px;width:5px}
+.expr-proud .chick-beak{border-top:0;border-bottom:3px solid #FF8C00;top:15px}
+.expr-proud .chick-body{transform:translateX(-50%) scale(1.05)}
+.expr-proud .chick-blush{opacity:.6}
+
+/* Sleepy - half closed eyes, drooping */
+.expr-sleepy .chick-eye{height:2px;border-radius:2px;margin-top:2px;width:4px}
+.expr-sleepy .chick-blush{opacity:.4}
+.expr-sleepy .chick-zzz{opacity:.5;animation:zzzF 3s ease-in-out infinite}
+
+/* Angry - V-shaped brows, red face */
+.expr-angry .chick-eye{width:5px;height:2px;border-radius:0;border-bottom:2px solid #2c1810;background:none;transform:rotate(-8deg)}
+.expr-angry .chick-eye:last-child{transform:rotate(8deg)}
+.expr-angry .chick-blush{opacity:1;background:rgba(255,50,50,.6)}
+.expr-angry .chick-body{animation:angryShake .3s ease infinite}
+@keyframes angryShake{0%,100%{transform:translateX(-50%)}33%{transform:translateX(calc(-50% + 2px))}66%{transform:translateX(calc(-50% - 2px))}}
+
 /* Stage extras (hidden by default) */
 .chick-comb{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:3;opacity:0;pointer-events:none}
 .chick-wattle{position:absolute;top:17px;left:50%;transform:translateX(-50%);width:4px;height:5px;background:#e74c3c;border-radius:0 0 50% 50%;z-index:5;opacity:0}
@@ -753,7 +806,7 @@ const PETS=[
   {id:"dance",icon:"💃",name:"跳舞",reacts:["跟着你一起跳！","扭着小屁股左右摇","踩着你的脚跳起来","跳了一个旋转！","蹦蹦跳跳停不下来"],expr:"adore",anim:"anim-chase"}
 ];
 const WEATHERS=["sunny","cloudy","rainy","snowy"];
-let weatherTemp=null;
+let weatherTemp=null,weatherThunder=false;
 
 let S=null,view="yard",roomId=-1,cds={},menuTgt=-1,wTimers={},rwTimer=null,sTimers={},weather="sunny",poopTimer=null;
 
@@ -801,15 +854,25 @@ function chickHTML(id,expr,sz,ex){
 // ===== EXPRESSIONS =====
 function getExpr(c){
   if(c.sleeping)return"sleep";
-  if(c.health<20)return"cry";
-  if(c.fatigue>80)return"meh";
-  if(c.hunger<20&&c.happiness<20)return"cry";
-  if(c.hunger<20)return"sad";
-  if(c.happiness<20)return"upset";
-  if(c.thirst<20)return"meh";
-  if(c.clean<20)return"meh";
-  if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"satisfied";
+  if(c.health<15)return"cry";
+  if(c.fatigue>90)return"sleepy";
+  if(c.fatigue>75)return"meh";
+  if(c.hunger<15&&c.happiness<15)return"cry";
+  if(c.hunger<15)return"hungry";
+  if(c.hunger<25)return"sad";
+  if(c.thirst<15)return"thirsty";
+  if(c.happiness<15)return"angry";
+  if(c.happiness<25)return"upset";
+  if(c.thirst<25)return"meh";
+  if(c.clean<15)return"dirty";
+  if(c.clean<25)return"meh";
+  if(c.health<35)return"scared";
+  if(c.hunger>=90&&c.happiness>=90&&c.thirst>=80&&c.clean>=80)return"proud";
+  if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"adore";
+  if(c.hunger>=70&&c.happiness>=70)return"satisfied";
+  if(c.happiness>=80)return"excited";
   if(c.happiness>=60)return"happy";
+  if(c.happiness>=40)return"curious";
   return"normal";
 }
 function getStatus(c){
@@ -924,6 +987,7 @@ async function fetchTorontoWeather(){
     const code=d.current.weather_code;
     weatherTemp=Math.round(d.current.temperature_2m);
     // WMO weather codes: 0-1 sunny, 2-3 cloudy, 51-67 rain/drizzle, 71-77 snow, 80-82 rain showers, 85-86 snow showers, 95-99 thunderstorm
+    weatherThunder=(code>=95&&code<=99);
     if(code<=1)weather="sunny";
     else if(code<=3)weather="cloudy";
     else if((code>=51&&code<=67)||(code>=80&&code<=82)||code>=95)weather="rainy";
@@ -944,6 +1008,7 @@ function applyWeather(){
   if(weather==="sunny")badge.textContent="☀️ 晴天"+tempStr;
   else if(weather==="cloudy")badge.textContent="⛅ 多云"+tempStr;
   else if(weather==="snowy")badge.textContent="🌨️ 下雪"+tempStr;
+  else if(weatherThunder)badge.textContent="⛈️ 雷暴"+tempStr;
   else badge.textContent="🌧️ 下雨"+tempStr;
   // Generate raindrops or snowflakes
   const rain=document.getElementById("rain");
@@ -1560,12 +1625,13 @@ async function flushNotion(){
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
-  props["天气"]={select:{name:weather==="sunny"?"☀️ 晴天":weather==="cloudy"?"☁️ 多云":weather==="snowy"?"❄️ 下雪":"🌧️ 下雨"}};
+  props["天气"]={select:{name:weather==="sunny"?"☀️ 晴天":weather==="cloudy"?"☁️ 多云":weather==="snowy"?"❄️ 下雪":weatherThunder?"⛈️ 雷暴":"🌧️ 下雨"}};
   // Add expression emoji
   if(item.stats){
     const ex=getExpr(item.stats);
-    const exEmoji={sleep:"😴",cry:"😭",sad:"😢",upset:"😤",meh:"😑",satisfied:"😌",happy:"😊",love:"😍",adore:"🥰",normal:"🐥"};
-    props["表情"]={select:{name:(exEmoji[ex]||"🐥")+" "+(ex==="sleep"?"睡觉":ex==="cry"?"大哭":ex==="sad"?"难过":ex==="upset"?"生气":ex==="meh"?"无聊":ex==="satisfied"?"满足":ex==="happy"?"开心":ex==="love"?"喜欢":ex==="adore"?"超爱":"普通")}};
+    const exEmoji={sleep:"😴",cry:"😭",sad:"😢",upset:"😤",meh:"😑",satisfied:"😌",happy:"😊",love:"😍",adore:"🥰",normal:"🐥",hungry:"🤤",thirsty:"🥵",dirty:"🫣",excited:"🤩",scared:"😨",curious:"🧐",proud:"😎",sleepy:"🥱",angry:"😡"};
+    const exName={sleep:"睡觉",cry:"大哭",sad:"难过",upset:"不爽",meh:"无聊",satisfied:"满足",happy:"开心",love:"喜欢",adore:"超爱",normal:"普通",hungry:"好饿",thirsty:"好渴",dirty:"脏脏",excited:"兴奋",scared:"害怕",curious:"好奇",proud:"得意",sleepy:"犯困",angry:"生气"};
+    props["表情"]={select:{name:(exEmoji[ex]||"🐥")+" "+(exName[ex]||"普通")}};
   }
   if(weatherTemp!==null)props["温度"]={number:weatherTemp};
   if(item.stats){
@@ -2049,12 +2115,12 @@ function triggerLightning(){
 }
 function startStopLightning(){
   if(lightningTimer){clearTimeout(lightningTimer);lightningTimer=null}
-  if(weather!=="rainy")return;
+  if(!weatherThunder)return; // Only lightning during real thunderstorms (WMO 95-99)
   function scheduleLightning(){
-    const delay=8000+Math.random()*7000; // 8-15 seconds
+    const delay=5000+Math.random()*10000; // 5-15 seconds
     lightningTimer=setTimeout(()=>{
       triggerLightning();
-      if(weather==="rainy")scheduleLightning();
+      if(weatherThunder)scheduleLightning();
     },delay);
   }
   scheduleLightning();
