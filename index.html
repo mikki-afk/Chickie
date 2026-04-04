@@ -155,6 +155,11 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .yard-bar-fill{height:100%;border-radius:2px;transition:width .3s}
 .yard-bar-fill.h{background:#ff6b6b}.yard-bar-fill.p{background:#ffd93d}.yard-bar-fill.w{background:#74b9ff}
 
+/* Yard items */
+.yard-items{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:space-around;padding:0 15%;z-index:1;pointer-events:none}
+.yard-item{text-align:center;transform:scale(.7);transform-origin:bottom center}
+.yard-item-label{font-size:8px;color:#fff;background:rgba(0,0,0,.2);border-radius:3px;padding:0 3px;margin-top:2px;display:block}
+
 /* Yard actions */
 .yard-actions{background:rgba(0,0,0,.15);padding:8px 10px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 
@@ -364,7 +369,13 @@ h1{font-size:20px}
       <!-- Coops at boundary -->
       <div class="coops-area"><div class="coops-row" id="coopsRow"></div></div>
       <!-- Ground -->
-      <div class="yard-ground" id="yardGround"></div>
+      <div class="yard-ground" id="yardGround">
+        <div class="yard-items">
+          <div class="yard-item"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
+          <div class="yard-item"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
+          <div class="yard-item"><div class="toy"><div class="toy-ball"></div></div><span class="yard-item-label">玩具</span></div>
+        </div>
+      </div>
       <!-- Yard action buttons -->
       <div class="yard-actions">
         <button class="action-btn btn-feed" id="yBtnFeed" onclick="yardFeed()">🌾 喂食</button>
