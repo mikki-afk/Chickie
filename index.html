@@ -17,6 +17,11 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .chick-body{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:34px;height:28px;border-radius:50%;background:#FFD700;box-shadow:inset -2px -2px 5px rgba(0,0,0,.1),inset 2px 2px 5px rgba(255,255,255,.3)}
 .chick-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:26px;border-radius:50%;background:#FFD700;box-shadow:inset -2px -2px 4px rgba(0,0,0,.08),inset 2px 2px 4px rgba(255,255,255,.3);z-index:2}
 .chick-hair{position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:7px solid #FFA500;z-index:3}
+/* Sleep cap */
+.chick-cap{position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(15deg);width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:14px solid #9370DB;border-radius:2px;z-index:7;opacity:0;transform-origin:bottom center}
+.chick-cap::after{content:"";position:absolute;top:-3px;left:-2px;width:4px;height:4px;background:#fff;border-radius:50%}
+.chick-cap::before{content:"";position:absolute;bottom:-1px;left:-10px;width:20px;height:4px;background:#7c5cbf;border-radius:2px}
+.expr-sleep .chick-cap{opacity:1}
 .chick-eyes{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:16px;display:flex;justify-content:space-between;z-index:4}
 .chick-eye{width:4px;height:4px;border-radius:50%;background:#2c1810}
 .chick-beak{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-top:4px solid #FF8C00;z-index:4}
@@ -249,6 +254,59 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .no-food-msg{font-size:11px;color:#e17055;text-align:center;margin-bottom:6px;display:none}
 .no-food-msg.show{display:block}
 
+/* Bathtub */
+.css-tub{width:40px;height:22px;position:relative}
+.tub-body{width:40px;height:16px;background:#ddd;border-radius:0 0 16px 16px;position:absolute;bottom:0;border:2px solid #bbb}
+.tub-water{width:32px;height:8px;background:linear-gradient(180deg,#a0d8ef,#74b9ff);border-radius:0 0 12px 12px;position:absolute;bottom:4px;left:4px;overflow:hidden}
+.tub-bubbles{position:absolute;top:-2px;left:4px;font-size:8px;opacity:.7}
+.tub-feet-l,.tub-feet-r{position:absolute;bottom:-2px;width:4px;height:3px;background:#bbb;border-radius:0 0 2px 2px}
+.tub-feet-l{left:6px}.tub-feet-r{right:6px}
+
+/* Room toys */
+.toys-shelf{display:flex;gap:8px;justify-content:center;margin-top:6px;padding:4px 8px;background:rgba(255,255,255,.25);border-radius:8px}
+.toy{position:relative;display:inline-block}
+/* Ball */
+.toy-ball{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#ff6b6b,#ee5a24);box-shadow:inset -2px -2px 3px rgba(0,0,0,.15),inset 1px 1px 2px rgba(255,255,255,.3)}
+.toy-ball::after{content:"";position:absolute;top:2px;left:3px;width:4px;height:3px;background:rgba(255,255,255,.4);border-radius:50%}
+/* Yarn ball */
+.toy-yarn{width:14px;height:14px;border-radius:50%;background:#DDA0DD;position:relative;overflow:hidden}
+.toy-yarn::before{content:"";position:absolute;top:2px;left:1px;width:12px;height:10px;border:1px solid #9370DB;border-radius:50%}
+.toy-yarn::after{content:"";position:absolute;bottom:-1px;right:-2px;width:6px;height:2px;background:#DDA0DD;border-radius:1px;transform:rotate(-30deg)}
+/* Blocks */
+.toy-blocks{width:16px;height:14px;position:relative}
+.toy-block{position:absolute;border-radius:1px}
+.toy-block.b1{width:8px;height:8px;background:#FFD700;bottom:0;left:0;border:1px solid #e6b800}
+.toy-block.b2{width:8px;height:8px;background:#87CEEB;bottom:0;right:0;border:1px solid #5ba3d9}
+.toy-block.b3{width:7px;height:7px;background:#FF69B4;bottom:8px;left:2px;border:1px solid #e84393}
+/* Teddy */
+.toy-teddy{width:14px;height:16px;position:relative}
+.teddy-body{width:10px;height:10px;background:#D2691E;border-radius:50%;position:absolute;bottom:0;left:2px}
+.teddy-head{width:8px;height:8px;background:#D2691E;border-radius:50%;position:absolute;top:0;left:3px}
+.teddy-ear{width:4px;height:4px;background:#A0522D;border-radius:50%;position:absolute;top:-1px}
+.teddy-ear.L{left:1px}.teddy-ear.R{right:1px}
+.teddy-face{width:3px;height:2px;background:#2c1810;border-radius:50%;position:absolute;top:3px;left:50%;transform:translateX(-50%)}
+/* Rubber duck */
+.toy-duck{width:14px;height:12px;position:relative}
+.duck-body{width:12px;height:8px;background:#FFD700;border-radius:50%;position:absolute;bottom:0;left:1px}
+.duck-head{width:7px;height:7px;background:#FFD700;border-radius:50%;position:absolute;top:0;right:1px}
+.duck-beak{width:4px;height:2px;background:#FF8C00;border-radius:0 2px 2px 0;position:absolute;top:3px;right:-2px}
+.duck-eye{width:2px;height:2px;background:#2c1810;border-radius:50%;position:absolute;top:2px;right:3px}
+
+/* Poop */
+.poop{position:absolute;font-size:14px;z-index:2;pointer-events:none;animation:poopDrop .3s ease-out}
+@keyframes poopDrop{0%{transform:scale(0) translateY(-10px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
+
+/* New button colors */
+.btn-bath{background:linear-gradient(135deg,#a0d8ef,#5ba3d9)}
+.btn-clean{background:linear-gradient(135deg,#8B6914,#6B4F10)}
+
+/* Cleanliness bar */
+.room-bar-fill.clean{background:linear-gradient(90deg,#a0d8ef,#5ba3d9)}
+.yard-bar-fill.c{background:#a0d8ef}
+
+/* Poop counter badge */
+.poop-badge{position:absolute;top:4px;right:8px;background:rgba(139,105,20,.8);color:#fff;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:700;z-index:10}
+
 /* Responsive */
 @media(max-width:600px){
 h1{font-size:20px}
@@ -284,6 +342,8 @@ h1{font-size:20px}
         <button class="action-btn btn-feed" id="yBtnFeed" onclick="yardFeed()">🌾 喂食</button>
         <button class="action-btn btn-play" id="yBtnPlay" onclick="yardPlay()">🎮 玩耍</button>
         <button class="action-btn btn-drink" id="yBtnDrink" onclick="yardDrink()">💧 喝水</button>
+        <button class="action-btn btn-bath" id="yBtnBath" onclick="yardBath()">🛁 洗澡</button>
+        <button class="action-btn btn-clean" id="yBtnClean" onclick="yardClean()">🧹 清粑粑</button>
         <button class="action-btn btn-sleep" id="yBtnSleep" onclick="yardSleep()">💤 休息</button>
       </div>
     </div>
@@ -333,10 +393,10 @@ const CDEFS=[
   {name:"咕咕",color:["#90EE90","#32CD32"]},
   {name:"叽叽",color:["#DDA0DD","#9370DB"]}
 ];
-const CD_MS={feed:30000,play:30000,drink:30000,sleep:300000};
+const CD_MS={feed:30000,play:30000,drink:30000,bath:60000,sleep:300000};
 const WEATHERS=["sunny","cloudy","rainy"];
 
-let S=null,view="yard",roomId=-1,cds={},menuTgt=-1,wTimers={},rwTimer=null,sTimers={},weather="sunny";
+let S=null,view="yard",roomId=-1,cds={},menuTgt=-1,wTimers={},rwTimer=null,sTimers={},weather="sunny",poopTimer=null;
 
 // ===== HELPERS =====
 function pick(a){return a[Math.floor(Math.random()*a.length)]}
@@ -352,6 +412,7 @@ function chickHTML(id,expr,sz,ex){
   const cls=["chick","stage-"+c.stage,"expr-"+expr,sz||"",ex||""].join(" ").trim();
   return `<div class="${cls}" data-id="${id}">
     <div class="chick-head">
+      <div class="chick-cap"></div>
       <div class="chick-hair"></div>
       <div class="chick-eyes"><span class="chick-eye"></span><span class="chick-eye"></span></div>
       <div class="chick-beak"></div>
@@ -373,7 +434,8 @@ function getExpr(c){
   if(c.hunger<20)return"sad";
   if(c.happiness<20)return"upset";
   if(c.thirst<20)return"meh";
-  if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60)return"satisfied";
+  if(c.clean<20)return"meh";
+  if(c.hunger>=80&&c.happiness>=80&&c.thirst>=60&&c.clean>=60)return"satisfied";
   if(c.happiness>=60)return"happy";
   return"normal";
 }
@@ -383,6 +445,7 @@ function getStatus(c){
   if(c.hunger<20)return"饿了";
   if(c.happiness<20)return"不开心";
   if(c.thirst<20)return"渴了";
+  if(c.clean<20)return"脏脏的…";
   if(c.hunger>=80&&c.happiness>=80)return"很满足~";
   return"";
 }
@@ -398,11 +461,11 @@ function defState(){
   const now=new Date().toISOString();
   return{
     chickens:CDEFS.map((d,i)=>({
-      id:i,name:d.name,hunger:50,happiness:50,thirst:50,
+      id:i,name:d.name,hunger:50,happiness:50,thirst:50,clean:80,
       stage:"baby",totalHunger:0,totalHappiness:0,
       location:"outside",sleeping:false,...randPrefs()
     })),
-    food:20,startDate:now,totalInteractions:0,lastUpdateTime:now
+    food:20,poops:[],startDate:now,totalInteractions:0,lastUpdateTime:now
   };
 }
 function save(){S.lastUpdateTime=new Date().toISOString();localStorage.setItem(SK,JSON.stringify(S))}
@@ -410,10 +473,11 @@ function load(){
   try{
     const r=localStorage.getItem(SK);
     if(r){S=JSON.parse(r);
-      // migrate: add thirst if missing
-      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50});
+      // migrate
+      S.chickens.forEach(c=>{if(c.thirst===undefined)c.thirst=50;if(c.clean===undefined)c.clean=80});
+      if(!S.poops)S.poops=[];
       const m=Math.floor((Date.now()-new Date(S.lastUpdateTime).getTime())/6e4);
-      if(m>0)S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*5,0,100);c.happiness=cl(c.happiness-m*3,0,100);c.thirst=cl(c.thirst-m*4,0,100)}});
+      if(m>0)S.chickens.forEach(c=>{if(!c.sleeping){c.hunger=cl(c.hunger-m*5,0,100);c.happiness=cl(c.happiness-m*3,0,100);c.thirst=cl(c.thirst-m*4,0,100);c.clean=cl(c.clean-m*2,0,100)}});
       updStages();save();return}
   }catch(e){}
   S=defState();save();
@@ -466,6 +530,38 @@ function genGrass(el){
   el.insertAdjacentHTML("beforeend",h);
 }
 
+// ===== POOP SYSTEM =====
+function startPoopTimer(){
+  if(poopTimer)clearInterval(poopTimer);
+  poopTimer=setInterval(()=>{
+    S.chickens.forEach(c=>{
+      if(c.location==="outside"&&!c.sleeping&&Math.random()<0.3){
+        S.poops.push({x:5+Math.random()*85,y:10+Math.random()*70,id:Date.now()+Math.random()});
+      }
+    });
+    // Poop reduces happiness
+    if(S.poops.length>5){
+      S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping)c.happiness=cl(c.happiness-2,0,100)});
+    }
+    save();
+    if(view==="yard")renderYard();
+  },45000); // every 45 seconds
+}
+function renderPoops(el){
+  el.querySelectorAll(".poop").forEach(p=>p.remove());
+  S.poops.forEach(p=>{
+    const d=document.createElement("div");d.className="poop";
+    d.style.left=p.x+"%";d.style.top=p.y+"%";d.textContent="💩";
+    el.appendChild(d);
+  });
+  // Poop counter badge
+  let badge=el.querySelector(".poop-badge");
+  if(S.poops.length>0){
+    if(!badge){badge=document.createElement("div");badge.className="poop-badge";el.appendChild(badge)}
+    badge.textContent="💩 ×"+S.poops.length;
+  }else if(badge){badge.remove()}
+}
+
 // ===== YARD RENDER =====
 function renderYard(){renderCoops();renderYardChickens();renderStats();renderYardBtns()}
 
@@ -506,9 +602,11 @@ function renderYardChickens(){
         <div class="yard-bar-track"><div class="yard-bar-fill h" style="width:${c.hunger}%"></div></div>
         <div class="yard-bar-track"><div class="yard-bar-fill p" style="width:${c.happiness}%"></div></div>
         <div class="yard-bar-track"><div class="yard-bar-fill w" style="width:${c.thirst}%"></div></div>
+        <div class="yard-bar-track"><div class="yard-bar-fill c" style="width:${c.clean}%"></div></div>
       </div>`;
     g.appendChild(div);
   });
+  renderPoops(g);
   startWalk();
 }
 
@@ -527,13 +625,15 @@ function startWalk(){
 // ===== YARD BUTTONS =====
 function renderYardBtns(){
   const now=Date.now();
-  ["feed","play","drink","sleep"].forEach(a=>{
+  const labels={feed:"🌾 喂食",play:"🎮 玩耍",drink:"💧 喝水",bath:"🛁 洗澡",clean:"🧹 清粑粑",sleep:"💤 休息"};
+  ["feed","play","drink","bath","clean","sleep"].forEach(a=>{
     const btn=document.getElementById("yBtn"+a.charAt(0).toUpperCase()+a.slice(1));
     if(!btn)return;
+    if(a==="clean"){btn.disabled=S.poops.length===0;btn.innerHTML=S.poops.length>0?"🧹 清粑粑("+S.poops.length+")":"🧹 清粑粑";return}
     const cd=Math.max(0,(cds["yard_"+a]||0)-now);
     if(a==="feed"&&S.food<=0){btn.disabled=true;btn.innerHTML="🌾 没食物了";return}
-    if(cd>0){btn.disabled=true;btn.innerHTML=({feed:"🌾 喂食",play:"🎮 玩耍",drink:"💧 喝水",sleep:"💤 休息"})[a]+`<span class="cooldown-text">${Math.ceil(cd/1000)}秒</span>`}
-    else{btn.disabled=false;btn.innerHTML=({feed:"🌾 喂食",play:"🎮 玩耍",drink:"💧 喝水",sleep:"💤 休息"})[a]}
+    if(cd>0){btn.disabled=true;btn.innerHTML=labels[a]+`<span class="cooldown-text">${Math.ceil(cd/1000)}秒</span>`}
+    else{btn.disabled=false;btn.innerHTML=labels[a]}
   });
 }
 
@@ -574,9 +674,18 @@ function yardSleep(){
     if(c.location!=="outside"||c.sleeping)return;
     if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}
     if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
-    if(c.thirst<80)c.thirst=80;
+    if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   });
   S.totalInteractions++;setCD("yard","sleep");updStages();save();renderYard();
+}
+function yardBath(){
+  if(getCD("yard","bath")>0)return;
+  S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100)}});
+  S.totalInteractions++;setCD("yard","bath");save();renderYard();
+}
+function yardClean(){
+  if(S.poops.length===0)return;
+  S.poops=[];S.totalInteractions++;save();renderYard();
 }
 
 // ===== CHICKEN MENU =====
@@ -624,11 +733,22 @@ function renderRoom(){
         <div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div>
         <div class="fur-label">水碗</div>
       </div>
+      <div class="furniture">
+        <div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div></div>
+        <div class="fur-label">浴盆</div>
+      </div>
       <div class="room-chicken-wrap" id="roomChicken" style="left:${cLeft}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
       <div class="room-floor" style="background:${col[0]}30"></div>
+    </div>
+    <div class="toys-shelf">
+      <div class="toy"><div class="toy-ball"></div></div>
+      <div class="toy"><div class="toy-yarn"></div></div>
+      <div class="toy"><div class="toy-blocks"><div class="toy-block b1"></div><div class="toy-block b2"></div><div class="toy-block b3"></div></div></div>
+      <div class="toy"><div class="toy-teddy"><div class="teddy-ear L"></div><div class="teddy-ear R"></div><div class="teddy-head"><div class="teddy-face"></div></div><div class="teddy-body"></div></div></div>
+      <div class="toy"><div class="toy-duck"><div class="duck-body"></div><div class="duck-head"><div class="duck-eye"></div></div><div class="duck-beak"></div></div></div>
     </div>`;
 
   // Bars
@@ -642,6 +762,7 @@ function renderRoom(){
     <div class="room-bar-row"><span class="room-bar-label">❤️ 饥饿值</span><div class="room-bar-track"><div class="room-bar-fill hunger" style="width:${c.hunger}%"></div></div><span class="room-bar-val">${c.hunger}</span></div>
     <div class="room-bar-row"><span class="room-bar-label">😊 快乐值</span><div class="room-bar-track"><div class="room-bar-fill happiness" style="width:${c.happiness}%"></div></div><span class="room-bar-val">${c.happiness}</span></div>
     <div class="room-bar-row"><span class="room-bar-label">💧 口渴值</span><div class="room-bar-track"><div class="room-bar-fill thirst" style="width:${c.thirst}%"></div></div><span class="room-bar-val">${c.thirst}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">🛁 清洁值</span><div class="room-bar-track"><div class="room-bar-fill clean" style="width:${c.clean}%"></div></div><span class="room-bar-val">${c.clean}</span></div>
     <div class="room-growth"><div class="room-growth-label">🌱 成长 ${gp}% · ${stgN(c.stage)}</div><div class="room-growth-track"><div class="room-growth-fill" style="width:${gp}%"></div></div></div>
     <div style="margin-top:4px;font-size:10px;color:#888">❤️喜欢:${ff}${fg} 💔讨厌:${hf}${hg}</div>`;
   renderRoomBtns();
@@ -649,7 +770,7 @@ function renderRoom(){
 
 function renderRoomBtns(){
   const c=S.chickens[roomId];if(!c)return;
-  const fcd=getCD(roomId,"feed"),pcd=getCD(roomId,"play"),dcd=getCD(roomId,"drink"),scd=getCD(roomId,"sleep");
+  const fcd=getCD(roomId,"feed"),pcd=getCD(roomId,"play"),dcd=getCD(roomId,"drink"),bcd=getCD(roomId,"bath"),scd=getCD(roomId,"sleep");
   let h="";
   if(c.sleeping){
     h+=`<button class="action-btn btn-wake" onclick="doWake()">⏰ 叫起床</button>`;
@@ -658,6 +779,7 @@ function renderRoomBtns(){
     h+=`<button class="action-btn btn-feed" ${fd?"disabled":""} onclick="openRoomFeed()">${S.food<=0?"🌾 没食物了":"🌾 喂食"}${fcd>0?`<span class="cooldown-text">${Math.ceil(fcd/1000)}秒</span>`:""}</button>`;
     h+=`<button class="action-btn btn-play" ${pcd>0?"disabled":""} onclick="openRoomPlay()">🎮 玩耍${pcd>0?`<span class="cooldown-text">${Math.ceil(pcd/1000)}秒</span>`:""}</button>`;
     h+=`<button class="action-btn btn-drink" ${dcd>0?"disabled":""} onclick="doRoomDrink()">💧 喝水${dcd>0?`<span class="cooldown-text">${Math.ceil(dcd/1000)}秒</span>`:""}</button>`;
+    h+=`<button class="action-btn btn-bath" ${bcd>0?"disabled":""} onclick="doRoomBath()">🛁 洗澡${bcd>0?`<span class="cooldown-text">${Math.ceil(bcd/1000)}秒</span>`:""}</button>`;
     h+=`<button class="action-btn btn-sleep" ${scd>0?"disabled":""} onclick="doSleep()">💤 睡觉${scd>0?`<span class="cooldown-text">${Math.ceil(scd/1000)}秒</span>`:""}</button>`;
   }
   h+=`<button class="action-btn btn-exit" onclick="exitRoom()">🚪 退出房间</button>`;
@@ -755,12 +877,24 @@ function doRoomDrink(){
   setTimeout(()=>renderRoom(),2200);
 }
 
+// ===== ROOM BATH =====
+function doRoomBath(){
+  const c=S.chickens[roomId];
+  if(!c||c.sleeping||getCD(roomId,"bath")>0)return;
+  c.clean=cl(c.clean+35,0,100);c.happiness=cl(c.happiness+10,0,100);
+  S.totalInteractions++;setCD(roomId,"bath");save();
+  setRoomExpr("love","anim-drink");
+  showReact("洗香香~ 🛁✨");
+  const rc=document.getElementById("roomChicken");if(rc)rc.style.left="75%";
+  setTimeout(()=>renderRoom(),2200);
+}
+
 // ===== ROOM SLEEP =====
 function doSleep(){
   const c=S.chickens[roomId];if(!c||c.sleeping||getCD(roomId,"sleep")>0)return;
   if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}
   if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}
-  if(c.thirst<80)c.thirst=80;
+  if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;
   c.sleeping=true;S.totalInteractions++;setCD(roomId,"sleep");updStages();save();
   setRoomExpr("sleep","anim-sleep");showReact("晚安~ 💤");
   const rc=document.getElementById("roomChicken");if(rc)rc.style.left="12%";
@@ -795,13 +929,13 @@ function showReact(t){
 // ===== STATS =====
 function renderStats(){
   document.getElementById("statsBar").innerHTML=
-    `<span>🌾 食物: ${S.food}</span><span>📅 第${days()}天</span><span>⭐ ${S.totalInteractions}次互动</span>`;
+    `<span>🌾 食物: ${S.food}</span><span>💩 ${S.poops.length}</span><span>📅 第${days()}天</span><span>⭐ ${S.totalInteractions}次互动</span>`;
 }
 
 // ===== AUTO DECAY =====
 function decay(){
   S.chickens.forEach(c=>{
-    if(!c.sleeping){c.hunger=cl(c.hunger-5,0,100);c.happiness=cl(c.happiness-3,0,100);c.thirst=cl(c.thirst-4,0,100)}
+    if(!c.sleeping){c.hunger=cl(c.hunger-5,0,100);c.happiness=cl(c.happiness-3,0,100);c.thirst=cl(c.thirst-4,0,100);c.clean=cl(c.clean-2,0,100)}
   });
   save();
   if(view==="yard")renderYard();
@@ -836,6 +970,7 @@ document.addEventListener("click",e=>{
 load();
 genGrass(document.getElementById("yardGround"));
 initWeather();
+startPoopTimer();
 renderYard();renderStats();
 setInterval(decay,60000);
 setInterval(()=>{
