@@ -1885,13 +1885,13 @@ function showReact(t){
 
 // ===== ACTIVITY LOG =====
 let actLog=[];
-function addLog(msg,nChick,nType,nStats){
+function addLog(msg,nChick,nType,nStats,instrReply){
   const d=new Date(),pad=n=>String(n).padStart(2,'0');
   const t=pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
   actLog.unshift({t,msg});
   if(actLog.length>50)actLog.length=50;
   renderLog();
-  if(nType)notionLog(nChick||null,nType,msg.trim(),nStats||null);
+  if(nType)notionLog(nChick||null,nType,msg.trim(),nStats||null,instrReply||false);
 }
 function renderLog(){
   const el=document.getElementById("logList");if(!el)return;
@@ -1918,9 +1918,9 @@ async function testNotion(){
     else st.textContent="❌ 连接失败: "+r.status;
   }catch(e){st.textContent="❌ 代理错误: "+e.message}
 }
-function notionLog(chicken,type,detail,stats){
+function notionLog(chicken,type,detail,stats,instrReply){
   if(!NOTION_TOKEN||!NOTION_DB)return;
-  notionQueue.push({chicken,type,detail,stats});
+  notionQueue.push({chicken,type,detail,stats,instrReply});
   if(!notionSending)flushNotion();
 }
 async function flushNotion(){
@@ -1934,6 +1934,7 @@ async function flushNotion(){
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
+  if(item.instrReply)props["指令返回"]={checkbox:true};
   const wNotionMap={"sunny":"☀️ 晴天","night-clear":"🌙 晴夜","partly-cloudy":"⛅ 少云","night-cloudy":"🌑 夜云","overcast":"☁️ 阴天","foggy":"🌫️ 大雾","drizzle":"🌦️ 小雨","freezing-rain":"🌧️ 冻雨","rainy":"🌧️ 下雨","snowy":"❄️ 下雪","hail":"🌨️ 冰雹","thunderstorm":"⛈️ 雷暴","cloudy":"☁️ 多云"};
   props["天气"]={select:{name:wNotionMap[weatherDetail]||"☀️ 晴天"}};
   // Add expression emoji
@@ -2022,7 +2023,7 @@ async function pollInstructions(){
     const r=await fetch(NOTION_PROXY+"v1/databases/"+NOTION_DB+"/query",{
       method:"POST",
       headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
-      body:JSON.stringify({filter:{and:[{property:"类型",select:{equals:"指令"}},{property:"已执行",checkbox:{equals:false}}]},sorts:[{timestamp:"created_time",direction:"ascending"}]})
+      body:JSON.stringify({filter:{and:[{property:"是指令",checkbox:{equals:true}},{property:"已执行",checkbox:{equals:false}}]},sorts:[{timestamp:"created_time",direction:"ascending"}]})
     });
     if(!r.ok)return;
     const data=await r.json();
@@ -2041,7 +2042,7 @@ function execInstruction(cmd,pageId){
   // 喂药
   let m=cmd.match(/给(.+?)喂药/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100);addLog(`📋 [指令] 给${c.name}喂了药 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100);addLog(`📋 [指令] 给${c.name}喂了药 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"喂药",c,true);matched=true}
   }
   // 给XX喂YY
   if(!matched){m=cmd.match(/给(.+?)喂(.+)/);if(m){
@@ -2053,110 +2054,110 @@ function execInstruction(cmd,pageId){
       if(c.favoriteFood.includes(food.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
       else if(c.hatedFood.includes(food.id)){h=15;c.happiness=cl(c.happiness-5,0,100)}
       c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.min(h,100);S.food--;
-      addLog(`📋 [指令] 给${c.name}喂了${food.icon}${food.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);
+      addLog(`📋 [指令] 给${c.name}喂了${food.icon}${food.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"吃饭",c,true);
       matched=true;
     }
   }}
   // 给XX喝水
   if(!matched){m=cmd.match(/给(.+?)喝水/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.thirst=cl(c.thirst+35,0,100);addLog(`📋 [指令] 给${c.name}喝水了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.thirst=cl(c.thirst+35,0,100);addLog(`📋 [指令] 给${c.name}喝水了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"喝水",c,true);matched=true}
   }}
   // 给XX洗澡
   if(!matched){m=cmd.match(/给(.+?)洗澡/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);addLog(`📋 [指令] 给${c.name}洗澡了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);addLog(`📋 [指令] 给${c.name}洗澡了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"洗澡",c,true);matched=true}
   }}
   // 让XX玩
   if(!matched){m=cmd.match(/让(.+?)玩/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];const g=pick(GAMES);c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);c.totalHappiness+=Math.min(20,100);addLog(`📋 [指令] 让${c.name}玩了${g.icon}${g.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];const g=pick(GAMES);c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);c.totalHappiness+=Math.min(20,100);addLog(`📋 [指令] 让${c.name}玩了${g.icon}${g.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"玩耍",c,true);matched=true}
   }}
   // 让XX睡觉
   if(!matched){m=cmd.match(/让(.+?)睡觉/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(!c.sleeping){c.sleeping=true;if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;addLog(`📋 [指令] 让${c.name}去睡觉了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(!c.sleeping){c.sleeping=true;if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;addLog(`📋 [指令] 让${c.name}去睡觉了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"睡觉",c,true);matched=true}}
   }}
   // 叫醒XX
   if(!matched){m=cmd.match(/叫醒(.+)/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(c.sleeping){c.sleeping=false;addLog(`📋 [指令] 叫醒了${c.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(c.sleeping){c.sleeping=false;addLog(`📋 [指令] 叫醒了${c.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"睡觉",c,true);matched=true}}
   }}
   // 清粑粑
   if(!matched&&cmd.includes("清粑粑")){
-    if(S.poops.length>0){const cnt=S.poops.length;S.poops=[];addLog(`📋 [指令] 清理了${cnt}坨粑粑`,"全部","指令");matched=true}
+    if(S.poops.length>0){const cnt=S.poops.length;S.poops=[];addLog(`📋 [指令] 清理了${cnt}坨粑粑`,"全部","清粑粑",null,true);matched=true}
   }
   // 加食物
   if(!matched){m=cmd.match(/加食物(\d*)/);if(m){
-    const amt=parseInt(m[1])||5;S.food=cl(S.food+amt,0,99);addLog(`📋 [指令] 加了${amt}份食物，现在${S.food}份`,"全部","指令");matched=true;
+    const amt=parseInt(m[1])||5;S.food=cl(S.food+amt,0,99);addLog(`📋 [指令] 加了${amt}份食物，现在${S.food}份`,"全部","食物",null,true);matched=true;
   }}
   // 加水
   if(!matched){m=cmd.match(/加水(\d*)/);if(m){
-    const amt=parseInt(m[1])||25;S.chickens.forEach(c=>{c.thirst=cl(c.thirst+amt,0,100)});addLog(`📋 [指令] 给所有小鸡补了水，水分+${amt}`,"全部","指令");matched=true;
+    const amt=parseInt(m[1])||25;S.chickens.forEach(c=>{c.thirst=cl(c.thirst+amt,0,100)});addLog(`📋 [指令] 给所有小鸡补了水，水分+${amt}`,"全部","喝水",null,true);matched=true;
   }}
   // 放水盆（院子里放水盆，户外小鸡喝水）
   if(!matched&&(cmd.includes("放水盆")||cmd.includes("摆水盆"))){
-    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","指令");matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水",null,true);matched=true;
   }
   // 放碗/放饭（院子里放食物碗，户外小鸡吃饭）
   if(!matched&&(cmd.includes("放碗")||cmd.includes("放饭")||cmd.includes("摆碗")||cmd.includes("放食物"))){
-    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});addLog(`📋 [指令] 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","指令");matched=true}
+    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});addLog(`📋 [指令] 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭",null,true);matched=true}
   }
   // 放玩具（院子里放玩具，户外小鸡玩耍）
   if(!matched&&(cmd.includes("放玩具")||cmd.includes("摆玩具"))){
-    const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-5,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了${g.icon}${g.name}，${cnt}只小鸡跑来玩~`,"全部","指令");matched=true;
+    const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-5,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了${g.icon}${g.name}，${cnt}只小鸡跑来玩~`,"全部","玩耍",null,true);matched=true;
   }
   // 叫出来（单个）
   if(!matched){m=cmd.match(/(?:叫|让)(.+?)出来/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(c.location==="inside"){c.location="outside";addLog(`📋 [指令] 把${c.name}叫出来了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(c.location==="inside"){c.location="outside";addLog(`📋 [指令] 把${c.name}叫出来了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"位置",c,true);matched=true}}
   }}
   // 喊回去（单个）
   if(!matched){m=cmd.match(/(?:喊|让)(.+?)回去/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(c.location==="outside"){c.location="inside";addLog(`📋 [指令] 把${c.name}喊回去了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"指令",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(c.location==="outside"){c.location="inside";addLog(`📋 [指令] 把${c.name}喊回去了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"位置",c,true);matched=true}}
   }}
   // 全部吃饭
   if(!matched&&(cmd.includes("全部吃饭")||cmd.includes("都吃饭")||cmd.includes("一起吃饭"))){
-    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起吃了${f.icon}${f.name}`,"全部","指令");matched=true}
+    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起吃了${f.icon}${f.name}`,"全部","吃饭",null,true);matched=true}
   }
   // 全部喝水
   if(!matched&&(cmd.includes("全部喝水")||cmd.includes("都喝水")||cmd.includes("一起喝水"))){
-    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起喝水了`,"全部","指令");matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起喝水了`,"全部","喝水",null,true);matched=true;
   }
   // 全部洗澡
   if(!matched&&(cmd.includes("全部洗澡")||cmd.includes("都洗澡")||cmd.includes("一起洗澡"))){
-    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起洗澡了`,"全部","指令");matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起洗澡了`,"全部","洗澡",null,true);matched=true;
   }
   // 全部玩 / 一起做游戏
   if(!matched&&(cmd.includes("全部玩")||cmd.includes("都玩")||cmd.includes("一起玩")||cmd.includes("一起做游戏"))){
-    const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起玩了${g.icon}${g.name}`,"全部","指令");matched=true;
+    const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡一起玩了${g.icon}${g.name}`,"全部","玩耍",null,true);matched=true;
   }
   // 全部睡觉
   if(!matched&&(cmd.includes("全部睡觉")||cmd.includes("都睡觉")||cmd.includes("一起睡觉"))){
-    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.sleeping=true;if(c.hunger<80)c.hunger=80;if(c.happiness<80)c.happiness=80;if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;c.fatigue=cl(c.fatigue-30,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡都去睡觉了`,"全部","指令");matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.sleeping=true;if(c.hunger<80)c.hunger=80;if(c.happiness<80)c.happiness=80;if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;c.fatigue=cl(c.fatigue-30,0,100);cnt++}});addLog(`📋 [指令] ${cnt}只小鸡都去睡觉了`,"全部","睡觉",null,true);matched=true;
   }
   // 全部叫醒
   if(!matched&&(cmd.includes("全部叫醒")||cmd.includes("都叫醒")||cmd.includes("都起床"))){
-    let cnt=0;S.chickens.forEach(c=>{if(c.sleeping){c.sleeping=false;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡都被叫醒了`,"全部","指令");matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(c.sleeping){c.sleeping=false;cnt++}});addLog(`📋 [指令] ${cnt}只小鸡都被叫醒了`,"全部","睡觉",null,true);matched=true;
   }
   // 打扫房间
   if(!matched&&(cmd.includes("打扫房间")||cmd.includes("打扫卫生")||cmd.includes("大扫除")||cmd.includes("收拾房间")||cmd.includes("搞卫生"))){
-    S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});addLog(`📋 [指令] 大扫除！粑粑清了，小鸡们都干净了`,"全部","指令");matched=true;
+    S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});addLog(`📋 [指令] 大扫除！粑粑清了，小鸡们都干净了`,"全部","打扫",null,true);matched=true;
   }
   // 全部喂药
   if(!matched&&(cmd.includes("全部喂药")||cmd.includes("都喂药")||cmd.includes("一起吃药"))){
-    S.chickens.forEach(c=>{c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100)});addLog(`📋 [指令] 所有小鸡都吃了药`,"全部","指令");matched=true;
+    S.chickens.forEach(c=>{c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100)});addLog(`📋 [指令] 所有小鸡都吃了药`,"全部","喂药",null,true);matched=true;
   }
   // 全部出来
   if(!matched&&(cmd.includes("全部出来")||cmd.includes("都出来")||cmd.includes("都叫出来"))){
     let cnt=0;S.chickens.forEach(c=>{if(c.location==="inside"){c.location="outside";cnt++}});
-    if(cnt>0){addLog(`📋 [指令] 把${cnt}只小鸡都叫出来了`,"全部","指令");matched=true}
+    if(cnt>0){addLog(`📋 [指令] 把${cnt}只小鸡都叫出来了`,"全部","位置",null,true);matched=true}
   }
   // 全部回去
   if(!matched&&(cmd.includes("全部回去")||cmd.includes("都回去")||cmd.includes("都回家")||cmd.includes("全部回家"))){
     let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"){c.location="inside";cnt++}});
-    if(cnt>0){addLog(`📋 [指令] 把${cnt}只小鸡都喊回家了`,"全部","指令");matched=true}
+    if(cnt>0){addLog(`📋 [指令] 把${cnt}只小鸡都喊回家了`,"全部","位置",null,true);matched=true}
   }
   // 串门：让XX去找YY
   if(!matched){m=cmd.match(/让(.+?)(?:去找|串门|去看)(.+)/);if(m){
@@ -2168,53 +2169,53 @@ function execInstruction(cmd,pageId){
       addBuddyAff(ci1,ci2,3);checkBuddyMilestone(ci1,ci2,getBuddyAff(ci1,ci2));
       const acts=["聊天","一起吃零食","互相梳毛","玩捉迷藏","晒太阳"];
       const act=acts[Math.floor(Math.random()*acts.length)];
-      addLog(`📋 [指令] ${c1.name}去找${c2.name}串门了，它们${act}~ | ${c1.name}快乐${c1.happiness} ${c2.name}快乐${c2.happiness}`,c1.name,"指令",c1);
+      addLog(`📋 [指令] ${c1.name}去找${c2.name}串门了，它们${act}~ | ${c1.name}快乐${c1.happiness} ${c2.name}快乐${c2.happiness}`,c1.name,"串门",c1,true);
       matched=true;
     }
   }}
   // 暖气/照灯指令
   if(!matched){m=cmd.match(/给(.+?)(?:开|调)暖气(\d*)/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.heater=cl(parseInt(m[2])||3,0,5);addLog(`📋 [指令] 给${c.name}的房间开了暖气 (${c.heater}级)`,c.name,"指令",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.heater=cl(parseInt(m[2])||3,0,5);addLog(`📋 [指令] 给${c.name}的房间开了暖气 (${c.heater}级)`,c.name,"状态",c,true);matched=true}
   }}
   if(!matched){m=cmd.match(/给(.+?)关暖气/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){S.chickens[ci].heater=0;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的暖气`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}
+    if(ci>=0){S.chickens[ci].heater=0;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的暖气`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}
   }}
   if(!matched){m=cmd.match(/给(.+?)(?:开|调)照灯(\d*)/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.lamp=cl(parseInt(m[2])||3,0,5);addLog(`📋 [指令] 给${c.name}的房间开了照灯 (${c.lamp}级)`,c.name,"指令",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.lamp=cl(parseInt(m[2])||3,0,5);addLog(`📋 [指令] 给${c.name}的房间开了照灯 (${c.lamp}级)`,c.name,"状态",c,true);matched=true}
   }}
   if(!matched){m=cmd.match(/给(.+?)关照灯/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){S.chickens[ci].lamp=0;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的照灯`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}
+    if(ci>=0){S.chickens[ci].lamp=0;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的照灯`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}
   }}
   // 全部开暖气/照灯
   if(!matched&&(cmd.includes("全部开暖气")||cmd.includes("都开暖气"))){
-    const lv=parseInt(cmd.match(/\d+/)?.[0])||3;S.chickens.forEach(c=>c.heater=cl(lv,0,5));addLog(`📋 [指令] 所有房间都开了暖气 (${lv}级)`,"全部","指令");matched=true;
+    const lv=parseInt(cmd.match(/\d+/)?.[0])||3;S.chickens.forEach(c=>c.heater=cl(lv,0,5));addLog(`📋 [指令] 所有房间都开了暖气 (${lv}级)`,"全部","状态",null,true);matched=true;
   }
   if(!matched&&(cmd.includes("全部关暖气")||cmd.includes("都关暖气"))){
-    S.chickens.forEach(c=>c.heater=0);addLog(`📋 [指令] 所有房间暖气关了`,"全部","指令");matched=true;
+    S.chickens.forEach(c=>c.heater=0);addLog(`📋 [指令] 所有房间暖气关了`,"全部","状态",null,true);matched=true;
   }
   if(!matched&&(cmd.includes("全部开照灯")||cmd.includes("都开照灯"))){
-    const lv=parseInt(cmd.match(/\d+/)?.[0])||3;S.chickens.forEach(c=>c.lamp=cl(lv,0,5));addLog(`📋 [指令] 所有房间都开了照灯 (${lv}级)`,"全部","指令");matched=true;
+    const lv=parseInt(cmd.match(/\d+/)?.[0])||3;S.chickens.forEach(c=>c.lamp=cl(lv,0,5));addLog(`📋 [指令] 所有房间都开了照灯 (${lv}级)`,"全部","状态",null,true);matched=true;
   }
   if(!matched&&(cmd.includes("全部关照灯")||cmd.includes("都关照灯"))){
-    S.chickens.forEach(c=>c.lamp=0);addLog(`📋 [指令] 所有房间照灯关了`,"全部","指令");matched=true;
+    S.chickens.forEach(c=>c.lamp=0);addLog(`📋 [指令] 所有房间照灯关了`,"全部","状态",null,true);matched=true;
   }
   // 开灯/关灯
-  if(!matched){m=cmd.match(/给(.+?)开灯/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].light=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了灯`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}}}
-  if(!matched){m=cmd.match(/给(.+?)关灯/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].light=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的灯`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}}}
-  if(!matched&&(cmd.includes("全部开灯")||cmd.includes("都开灯"))){S.chickens.forEach(c=>c.light=true);addLog(`📋 [指令] 所有房间都开灯了`,"全部","指令");matched=true}
-  if(!matched&&(cmd.includes("全部关灯")||cmd.includes("都关灯"))){S.chickens.forEach(c=>c.light=false);addLog(`📋 [指令] 所有房间都关灯了`,"全部","指令");matched=true}
+  if(!matched){m=cmd.match(/给(.+?)开灯/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].light=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了灯`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}}}
+  if(!matched){m=cmd.match(/给(.+?)关灯/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].light=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的灯`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}}}
+  if(!matched&&(cmd.includes("全部开灯")||cmd.includes("都开灯"))){S.chickens.forEach(c=>c.light=true);addLog(`📋 [指令] 所有房间都开灯了`,"全部","状态",null,true);matched=true}
+  if(!matched&&(cmd.includes("全部关灯")||cmd.includes("都关灯"))){S.chickens.forEach(c=>c.light=false);addLog(`📋 [指令] 所有房间都关灯了`,"全部","状态",null,true);matched=true}
   // 开窗帘/关窗帘
-  if(!matched){m=cmd.match(/给(.+?)开窗帘/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了窗帘`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}}}
-  if(!matched){m=cmd.match(/给(.+?)关窗帘/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的窗帘`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}}}
-  if(!matched&&(cmd.includes("全部开窗帘")||cmd.includes("都开窗帘"))){S.chickens.forEach(c=>c.curtain=true);addLog(`📋 [指令] 所有房间窗帘都打开了`,"全部","指令");matched=true}
-  if(!matched&&(cmd.includes("全部关窗帘")||cmd.includes("都关窗帘"))){S.chickens.forEach(c=>c.curtain=false);addLog(`📋 [指令] 所有房间窗帘都关了`,"全部","指令");matched=true}
+  if(!matched){m=cmd.match(/给(.+?)开窗帘/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了窗帘`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}}}
+  if(!matched){m=cmd.match(/给(.+?)关窗帘/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的窗帘`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}}}
+  if(!matched&&(cmd.includes("全部开窗帘")||cmd.includes("都开窗帘"))){S.chickens.forEach(c=>c.curtain=true);addLog(`📋 [指令] 所有房间窗帘都打开了`,"全部","状态",null,true);matched=true}
+  if(!matched&&(cmd.includes("全部关窗帘")||cmd.includes("都关窗帘"))){S.chickens.forEach(c=>c.curtain=false);addLog(`📋 [指令] 所有房间窗帘都关了`,"全部","状态",null,true);matched=true}
   // 开窗/关窗 (aliases)
-  if(!matched){m=cmd.match(/给(.+?)开窗/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了窗`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}}}
-  if(!matched){m=cmd.match(/给(.+?)关窗/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的窗`,S.chickens[ci].name,"指令",S.chickens[ci]);matched=true}}}
+  if(!matched){m=cmd.match(/给(.+?)开窗/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=true;addLog(`📋 [指令] 给${S.chickens[ci].name}房间开了窗`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}}}
+  if(!matched){m=cmd.match(/给(.+?)关窗/);if(m){const ci=names.indexOf(m[1]);if(ci>=0){S.chickens[ci].curtain=false;addLog(`📋 [指令] 关了${S.chickens[ci].name}房间的窗`,S.chickens[ci].name,"状态",S.chickens[ci],true);matched=true}}}
   // 互动指令：给XX摸摸头/抱抱/亲亲/聊天/唱歌/挠痒痒/摸肚肚/梳毛毛/讲故事/跳舞
   if(!matched){
     const petMap={"摸摸头":"pat","摸头":"pat","抱抱":"hug","抱":"hug","亲亲":"kiss","亲":"kiss","聊天":"chat","说话":"chat","唱歌":"sing","挠痒痒":"tickle","挠痒":"tickle","摸肚肚":"belly","摸肚子":"belly","梳毛毛":"brush","梳毛":"brush","讲故事":"story","跳舞":"dance"};
@@ -2223,13 +2224,13 @@ function execInstruction(cmd,pageId){
       m=cmd.match(new RegExp("(?:给|对|跟|和)(.+?)"+kw));
       if(m){
         const ci=names.indexOf(m[1]);
-        if(ci>=0){const c=S.chickens[ci];const pet=PETS.find(p=>p.id===pid);c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);addLog(`📋 [指令] ${pet?pet.icon:""} 对${c.name}${kw}了~ ${genPetReact(pid,c.name,c.sleeping)} | 快乐${Math.round(c.happiness)}`,c.name,"指令",c);matched=true;break}
+        if(ci>=0){const c=S.chickens[ci];const pet=PETS.find(p=>p.id===pid);c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);addLog(`📋 [指令] ${pet?pet.icon:""} 对${c.name}${kw}了~ ${genPetReact(pid,c.name,c.sleeping)} | 快乐${Math.round(c.happiness)}`,c.name,"状态",c,true);matched=true;break}
       }
       // 全部摸摸头 / 都摸摸头
       if(cmd.includes("全部"+kw)||cmd.includes("都"+kw)){
         const pet=PETS.find(p=>p.id===pid);let cnt=0;S.chickens.forEach(c=>{c.happiness=cl(c.happiness+8,0,100);c.fatigue=cl(c.fatigue-3,0,100);cnt++});
         let slp=S.chickens.filter(c=>c.sleeping).length;
-        addLog(`📋 [指令] ${pet?pet.icon:""} 对所有小鸡${kw}了~ ${cnt}只好开心${slp>0?"（"+slp+"只睡梦中也笑了）":""}`,"全部","指令");
+        addLog(`📋 [指令] ${pet?pet.icon:""} 对所有小鸡${kw}了~ ${cnt}只好开心${slp>0?"（"+slp+"只睡梦中也笑了）":""}`,"全部","状态",null,true);
         matched=true;break;
       }
     }
@@ -2268,19 +2269,19 @@ function execInstruction(cmd,pageId){
           const exE={sleep:"😴",injured:"🤕",fever:"🤒",sick:"🤧",happy:"😊",angry:"😡",hungry:"😣",content:"🙂"};
           report.push(`${c.name}(${c.gender==="male"?"♂":"♀"}${c.stage}): 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)} ${c.sleeping?"💤睡觉中":c.location==="inside"?"🏠室内":"☀️室外"} 表情:${exE[ex]||"🐥"}${ex}`);
         });
-        addLog(`📋 [状态报告]\n${report.join("\n")}\n🌾食物:${S.food} 💩粑粑:${S.poops.length}`,"全部","指令");matched=true;
+        addLog(`📋 [状态报告]\n${report.join("\n")}\n🌾食物:${S.food} 💩粑粑:${S.poops.length}`,"全部","状态",null,true);matched=true;
       }else{
         const ci=names.indexOf(who);
         if(ci>=0){
           const c=S.chickens[ci];const ex=getExpr(c);
           const bl=BUDDY_LEVELS.slice().reverse().find(l=>getBuddyAff(ci,0)>=l.threshold);
           let buddyInfo=[];S.chickens.forEach((c2,j)=>{if(j===ci)return;const v=getBuddyAff(ci,j);if(v>0)buddyInfo.push(`${c2.name}:${v}`)});
-          addLog(`📋 [${c.name}状态] ${c.gender==="male"?"♂公鸡":"♀母鸡"} ${c.stage}\n饱食:${Math.round(c.hunger)} 快乐:${Math.round(c.happiness)} 水分:${Math.round(c.thirst)} 清洁:${Math.round(c.clean)} 健康:${Math.round(c.health)} 疲惫:${Math.round(c.fatigue)}\n${c.sleeping?"💤睡觉中":c.location==="inside"?"🏠室内":"☀️室外"} 暖气:${c.heater} 照灯:${c.lamp}\n表情:${ex} 亲密(手动):${c.affManual} 亲密(指令):${c.affNotion}\n好友:${buddyInfo.join(" ")||"暂无"}`,c.name,"指令",c);matched=true;
+          addLog(`📋 [${c.name}状态] ${c.gender==="male"?"♂公鸡":"♀母鸡"} ${c.stage}\n饱食:${Math.round(c.hunger)} 快乐:${Math.round(c.happiness)} 水分:${Math.round(c.thirst)} 清洁:${Math.round(c.clean)} 健康:${Math.round(c.health)} 疲惫:${Math.round(c.fatigue)}\n${c.sleeping?"💤睡觉中":c.location==="inside"?"🏠室内":"☀️室外"} 暖气:${c.heater} 照灯:${c.lamp}\n表情:${ex} 亲密(手动):${c.affManual} 亲密(指令):${c.affNotion}\n好友:${buddyInfo.join(" ")||"暂无"}`,c.name,"状态",c,true);matched=true;
         }
       }
     }
   }
-  if(!matched)addLog(`📋 [指令] 无法理解: ${cmd}`);
+  if(!matched)addLog(`📋 [指令] 无法理解: ${cmd}`,null,null,null,true);
   // Increase Notion affinity for targeted chicken(s)
   if(matched){
     if(m&&m[1]){const ci=names.indexOf(m[1]);if(ci>=0){const ov=S.chickens[ci].affNotion;S.chickens[ci].affNotion+=2;checkAffMilestone(ci,"notion",ov,S.chickens[ci].affNotion)}}
