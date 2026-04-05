@@ -1999,7 +1999,7 @@ async function pollInstructions(){
     const r=await fetch(NOTION_PROXY+"v1/databases/"+NOTION_DB+"/query",{
       method:"POST",
       headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
-      body:JSON.stringify({filter:{and:[{property:"类型",select:{equals:"指令"}},{property:"已执行",checkbox:{equals:false}}]},sorts:[{timestamp:"created_time",direction:"ascending"}]})
+      body:JSON.stringify({filter:{and:[{property:"类型",select:{equals:"📋 指令"}},{property:"已执行",checkbox:{equals:false}}]},sorts:[{timestamp:"created_time",direction:"ascending"}]})
     });
     if(!r.ok)return;
     const data=await r.json();
