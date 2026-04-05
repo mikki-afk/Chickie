@@ -1958,9 +1958,8 @@ async function flushNotion(){
     if(item.stats.light!==undefined)props["房灯"]={checkbox:item.stats.light};
     if(item.stats.curtain!==undefined)props["窗帘"]={checkbox:item.stats.curtain};
     if(item.stats.stage!==undefined){const stgE={"baby":"🥚","teen":"🌱","mature":"🌿","adult":"🐔","elder":"👴"};props["阶段"]={select:{name:(stgE[item.stats.stage]||"🥚")+" "+stgN(item.stats.stage)}};}
-    if(item.stats.gender!==undefined)props["性别"]={select:{name:item.stats.gender==="male"?"♂ 公鸡":"♀ 母鸡"}};
     if(item.stats.totalHunger!==undefined&&item.stats.totalHappiness!==undefined)props["成长进度"]={number:gPct(item.stats)};
-    // Buddy affinity summary
+    // Buddy affinity summary (append to 详情 since DB has no 好友/性别 columns)
     if(item.stats.id!==undefined&&S.buddyAff){
       const parts=[];
       S.chickens.forEach(c2=>{
@@ -1975,7 +1974,10 @@ async function flushNotion(){
           parts.push(`${bl?bE[bl.level]||"":""}${c2.name}:${v}${bl?"("+bl.level+")":""}`);
         }
       });
-      if(parts.length)props["好友"]={rich_text:[{text:{content:parts.join(" | ")}}]};
+      if(parts.length){
+        const detail=props["详情"].rich_text[0].text.content;
+        props["详情"]={rich_text:[{text:{content:detail+"\n好友: "+parts.join(" | ")}}]};
+      }
     }
   }
   try{
