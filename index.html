@@ -921,17 +921,38 @@ const CDEFS=[
 ];
 const CD_MS={feed:30000,play:30000,drink:30000,bath:60000,sleep:300000,pet:15000};
 const PETS=[
-  {id:"pat",icon:"🤚",name:"摸摸头",reacts:["被摸了头，好舒服~","眯着眼睛享受~","开心地蹭了蹭你的手","咕咕叫着表示喜欢","歪着头让你多摸摸"],expr:"love",anim:"anim-pat"},
-  {id:"hug",icon:"🤗",name:"抱抱",reacts:["被抱起来了，暖暖的~","紧紧靠在你怀里","蹭了蹭你的脖子","发出满足的咕咕声","小爪子抓着你的衣服不想下来"],expr:"adore",anim:"anim-hug"},
-  {id:"kiss",icon:"😘",name:"亲亲",reacts:["脸红了！","害羞地把头埋进翅膀","啾了你一口作为回礼","高兴得原地转圈","羞答答地叫了一声"],expr:"love",anim:"anim-kiss"},
-  {id:"chat",icon:"💬",name:"聊天",reacts:["叽叽喳喳回应你~","认真地听着点头","好像在和你争论什么","叽里咕噜说了一大堆","歪头想了想，回了一句咯咯"],expr:"happy",anim:"anim-chat"},
-  {id:"sing",icon:"🎵",name:"唱歌",reacts:["跟着节拍摇头~","跟着你的歌声一起哼","翅膀打着拍子","听入迷了，站着不动","叫了两声，好像在合唱"],expr:"happy",anim:"anim-roll"},
-  {id:"tickle",icon:"🫳",name:"挠痒痒",reacts:["哈哈好痒！","笑得在地上打滚","一边躲一边偷偷凑过来","痒得直扑棱翅膀","咯咯咯地笑个不停"],expr:"adore",anim:"anim-jump"},
-  {id:"belly",icon:"🫄",name:"摸肚肚",reacts:["舒服得翻了个身~","四脚朝天享受中","满足地闭上了眼睛","肚子咕噜叫了一声","舒服到不想动了"],expr:"satisfied",anim:"anim-roll"},
-  {id:"brush",icon:"🪮",name:"梳毛毛",reacts:["羽毛变得好顺滑~","乖乖站着让你梳","羽毛被梳得闪闪发光","享受地伸展翅膀","变漂亮了，臭美地抖抖毛"],expr:"satisfied",anim:"anim-brush"},
-  {id:"story",icon:"📖",name:"讲故事",reacts:["听得入迷了~","眼睛越睁越大","紧张地缩成一团","听到精彩的地方叫了一声","困了，差点睡着"],expr:"happy",anim:"anim-story"},
-  {id:"dance",icon:"💃",name:"跳舞",reacts:["跟着你一起跳！","扭着小屁股左右摇","踩着你的脚跳起来","跳了一个旋转！","蹦蹦跳跳停不下来"],expr:"adore",anim:"anim-chase"}
+  {id:"pat",icon:"🤚",name:"摸摸头",expr:"love",anim:"anim-pat"},
+  {id:"hug",icon:"🤗",name:"抱抱",expr:"adore",anim:"anim-hug"},
+  {id:"kiss",icon:"😘",name:"亲亲",expr:"love",anim:"anim-kiss"},
+  {id:"chat",icon:"💬",name:"聊天",expr:"happy",anim:"anim-chat"},
+  {id:"sing",icon:"🎵",name:"唱歌",expr:"happy",anim:"anim-roll"},
+  {id:"tickle",icon:"🫳",name:"挠痒痒",expr:"adore",anim:"anim-jump"},
+  {id:"belly",icon:"🫄",name:"摸肚肚",expr:"satisfied",anim:"anim-roll"},
+  {id:"brush",icon:"🪮",name:"梳毛毛",expr:"satisfied",anim:"anim-brush"},
+  {id:"story",icon:"📖",name:"讲故事",expr:"happy",anim:"anim-story"},
+  {id:"dance",icon:"💃",name:"跳舞",expr:"adore",anim:"anim-chase"}
 ];
+function genPetReact(petId,name,sleeping){
+  const feel=()=>pick(["好舒服~","暖暖的~","幸福感满满","开心极了","满足地叹了口气","心情超好"]);
+  const sound=()=>pick(["咕咕叫着","叽叽喳喳地","咯咯笑着","发出满足的声音","小声哼着","开心地叫了两声"]);
+  const body=()=>pick(["蹭了蹭你的手","靠在你怀里","歪了歪头","扑棱了一下翅膀","抖了抖毛","伸了个懒腰","缩成一个小毛球","转了个圈","蹦了一下","把头埋进你手心"]);
+  const face=()=>pick(["眯着眼睛","闭上了眼睛","眼睛亮亮的","脸红了","露出满足的表情","害羞地低下头","嘴角上扬","一脸享受"]);
+  const sleepR=()=>pick(["在梦里笑了","睡梦中哼了一声","迷迷糊糊蹭了蹭你","翻了个身继续睡","嘴角翘起来了","做了个好梦吧"]);
+  if(sleeping)return name+pick(["被摸了","感受到了温暖","动了动"])+", "+sleepR();
+  const templates={
+    pat:[()=>name+face()+"享受~"+feel(),()=>"摸到头了！"+name+sound()+body(),()=>name+"歪着头让你多摸摸，"+feel(),()=>name+body()+"，"+sound()+"表示喜欢",()=>"手感好好！"+name+"的毛"+pick(["软软的","蓬蓬的","顺滑的","暖暖的"])],
+    hug:[()=>name+"被抱起来了，"+feel(),()=>name+pick(["紧紧靠在你怀里","蹭了蹭你的脖子","小爪子抓着你的衣服不想下来","把头埋进你怀里"]),()=>sound()+name+body(),()=>name+face()+"，"+pick(["好温暖","不想下来了","再抱一会儿嘛","抱紧点"])],
+    kiss:[()=>name+pick(["脸红了！","害羞地把头埋进翅膀","啾了你一口作为回礼","高兴得原地转圈","羞答答地叫了一声"]),()=>"啾~！"+name+face(),()=>name+body()+"，"+pick(["脸都红了","害羞死了","偷偷笑了","心跳加速了"])],
+    chat:[()=>name+pick(["叽叽喳喳回应你","认真地听着点头","好像在和你争论什么","叽里咕噜说了一大堆","歪头想了想回了一句咯咯"]),()=>name+sound()+pick(["好像在讲今天的事","似乎在抱怨什么","分享了一个秘密","说了个笑话","认真地发表了意见"]),()=>"聊得好开心！"+name+body()],
+    sing:[()=>name+pick(["跟着节拍摇头","跟着你的歌声一起哼","翅膀打着拍子","听入迷了站着不动","叫了两声好像在合唱"]),()=>name+sound()+pick(["跟着调子走","唱跑调了但很开心","闭着眼陶醉","即兴来了段solo"]),()=>"音乐响起！"+name+body()],
+    tickle:[()=>name+pick(["哈哈好痒！","笑得在地上打滚","一边躲一边偷偷凑过来","痒得直扑棱翅膀","咯咯咯地笑个不停"]),()=>"挠到了！"+name+pick(["笑疯了","缩成一团","蹦来蹦去躲","笑到翻过去","抓着你的手不让挠了"]),()=>name+body()+"，太痒了！"],
+    belly:[()=>name+pick(["舒服得翻了个身","四脚朝天享受中","满足地闭上了眼睛","肚子咕噜叫了一声","舒服到不想动了"]),()=>name+face()+"，"+pick(["肚肚暖暖的","再摸一下嘛","好舒服不要停","小肚子软软的"]),()=>"摸到肚肚了！"+name+sound()],
+    brush:[()=>name+pick(["羽毛变得好顺滑","乖乖站着让你梳","羽毛被梳得闪闪发光","享受地伸展翅膀","变漂亮了臭美地抖抖毛"]),()=>name+face()+"，"+pick(["毛变得好亮","梳得好舒服","像去了趟美容院","帅/美翻了"]),()=>"梳完了！"+name+body()],
+    story:[()=>name+pick(["听得入迷了","眼睛越睁越大","紧张地缩成一团","听到精彩的地方叫了一声","困了差点睡着"]),()=>name+pick(["追问后来呢","被吓到了缩了一下","感动得眼睛湿润了","笑得前仰后合","要求再讲一个"]),()=>"故事讲完了！"+name+body()],
+    dance:[()=>name+pick(["跟着你一起跳","扭着小屁股左右摇","踩着你的脚跳起来","跳了一个旋转","蹦蹦跳跳停不下来"]),()=>name+sound()+pick(["跳得好嗨","展示了新舞步","转了三圈","跳到摔了一跤又爬起来继续"]),()=>"舞会开始！"+name+body()]
+  };
+  return pick(templates[petId]||templates.pat)();
+}
 const WEATHERS=["sunny","cloudy","rainy","snowy"];
 let weatherTemp=null,weatherThunder=false,weatherDetail="sunny";
 
@@ -1805,7 +1826,7 @@ function doRoomPet(pid){
   setCD(roomId,"pet");updStages();save();
   addLog(`${pet.icon} 你对${c.name}${pet.name}了~`,c.name,"互动",c);
   setRoomExpr(pet.expr,pet.anim);
-  showReact(pick(pet.reacts));
+  showReact(genPetReact(pet.id,c.name,c.sleeping));
   setTimeout(()=>renderRoom(),2200);
 }
 
@@ -2200,7 +2221,7 @@ function execInstruction(cmd,pageId){
       m=cmd.match(new RegExp("(?:给|对|跟|和)(.+?)"+kw));
       if(m){
         const ci=names.indexOf(m[1]);
-        if(ci>=0){const c=S.chickens[ci];const pet=PETS.find(p=>p.id===pid);c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);addLog(`📋 [指令] ${pet?pet.icon:""} 对${c.name}${kw}了~ ${pick(pet.reacts)} | 快乐${Math.round(c.happiness)}`,c.name,"互动",c);matched=true;break}
+        if(ci>=0){const c=S.chickens[ci];const pet=PETS.find(p=>p.id===pid);c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);addLog(`📋 [指令] ${pet?pet.icon:""} 对${c.name}${kw}了~ ${genPetReact(pid,c.name,c.sleeping)} | 快乐${Math.round(c.happiness)}`,c.name,"互动",c);matched=true;break}
       }
       // 全部摸摸头 / 都摸摸头
       if(cmd.includes("全部"+kw)||cmd.includes("都"+kw)){
