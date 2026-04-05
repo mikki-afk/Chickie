@@ -804,13 +804,26 @@ h1{font-size:20px}
       </div>
       <!-- Yard action buttons -->
       <div class="yard-actions">
-        <button class="action-btn btn-feed" id="yBtnFeed" onclick="yardFeed()">🌾 喂食</button>
-        <button class="action-btn btn-play" id="yBtnPlay" onclick="yardPlay()">🎮 玩耍</button>
-        <button class="action-btn btn-drink" id="yBtnDrink" onclick="yardDrink()">💧 喝水</button>
-        <button class="action-btn btn-bath" id="yBtnBath" onclick="yardBath()">🛁 洗澡</button>
-        <button class="action-btn btn-clean" id="yBtnClean" onclick="yardClean()">🧹 清粑粑</button>
-        <button class="action-btn btn-pet" id="yBtnPet" onclick="yardPet()">💕 互动</button>
-        <button class="action-btn btn-sleep" id="yBtnSleep" onclick="yardSleep()">💤 休息</button>
+        <button class="action-btn btn-feed" onclick="yardFeed()">🌾 喂食</button>
+        <button class="action-btn btn-play" onclick="yardPlay()">🎮 玩耍</button>
+        <button class="action-btn btn-drink" onclick="yardDrink()">💧 喝水</button>
+        <button class="action-btn btn-bath" onclick="yardBath()">🛁 洗澡</button>
+        <button class="action-btn btn-med" onclick="yardMed()">💊 喂药</button>
+        <button class="action-btn btn-pet" onclick="yardPet()">💕 互动</button>
+        <button class="action-btn btn-sleep" onclick="yardSleep()">💤 休息</button>
+        <button class="action-btn btn-clean" onclick="yardClean()">🧹 清粑粑</button>
+        <button class="action-btn btn-sweep" onclick="yardSweep()">🧼 大扫除</button>
+        <button class="action-btn btn-bowl" onclick="yardBowl()">🍽️ 放碗</button>
+        <button class="action-btn btn-waterbowl" onclick="yardWaterBowl()">🫗 放水盆</button>
+        <button class="action-btn btn-toy" onclick="yardToy()">🧸 放玩具</button>
+        <button class="action-btn btn-allfeed" onclick="yardAllFeed()">🌾 全部吃饭</button>
+        <button class="action-btn btn-alldrink" onclick="yardAllDrink()">💧 全部喝水</button>
+        <button class="action-btn btn-allbath" onclick="yardAllBath()">🛁 全部洗澡</button>
+        <button class="action-btn btn-allmed" onclick="yardAllMed()">💊 全部喂药</button>
+        <button class="action-btn btn-allsleep" onclick="yardAllSleep()">💤 全部睡觉</button>
+        <button class="action-btn btn-allwake" onclick="yardAllWake()">⏰ 全部叫醒</button>
+        <button class="action-btn btn-allin" onclick="yardAllIn()">🏠 全部回家</button>
+        <button class="action-btn btn-allout" onclick="yardAllOut()">☀️ 全部出来</button>
       </div>
     </div>
   </div>
@@ -1405,6 +1418,61 @@ function yardBath(){
   S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100)}});
   S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","bath");save();addLog("🛁 你给院子里的小鸡们洗澡了","全部","洗澡");renderYard();
 }
+function yardMed(){
+  if(getCD("yard","med")>0)return;
+  S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100)}});
+  S.totalInteractions++;cds["yard_med"]=Date.now()+30000;save();addLog("💊 你给院子里的小鸡们喂药了","全部","喂药");renderYard();
+}
+function yardSweep(){
+  S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});
+  S.totalInteractions++;save();addLog("🧼 大扫除！粑粑清了，小鸡们都干净了","全部","打扫");renderYard();
+}
+function yardAllIn(){
+  let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"){c.location="inside";cnt++}});
+  if(cnt>0){save();addLog(`🏠 把${cnt}只小鸡都喊回家了`,"全部","位置");renderYard()}
+}
+function yardAllOut(){
+  let cnt=0;S.chickens.forEach(c=>{if(c.location==="inside"){c.location="outside";cnt++}});
+  if(cnt>0){save();addLog(`☀️ 把${cnt}只小鸡都叫出来了`,"全部","位置");renderYard()}
+}
+function yardBowl(){
+  if(S.food<=0){addLog("🍽️ 没有食物了！","全部","食物");renderYard();return}
+  const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});
+  S.totalInteractions++;save();addLog(`🍽️ 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭");renderYard();
+}
+function yardWaterBowl(){
+  let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});
+  S.totalInteractions++;save();addLog(`🫗 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水");renderYard();
+}
+function yardToy(){
+  const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-5,0,100);cnt++}});
+  S.totalInteractions++;save();addLog(`🧸 在院子里放了${g.icon}${g.name}，${cnt}只小鸡跑来玩~`,"全部","玩耍");renderYard();
+}
+function yardAllFeed(){
+  if(S.food<=0){addLog("🌾 没有食物了！","全部","食物");renderYard();return}
+  const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);S.food--;cnt++}});
+  S.totalInteractions++;save();addLog(`🌾 ${cnt}只小鸡一起吃了${f.icon}${f.name}`,"全部","吃饭");renderYard();
+}
+function yardAllDrink(){
+  let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});
+  S.totalInteractions++;save();addLog(`💧 ${cnt}只小鸡一起喝水了`,"全部","喝水");renderYard();
+}
+function yardAllBath(){
+  let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);cnt++}});
+  S.totalInteractions++;save();addLog(`🛁 ${cnt}只小鸡一起洗澡了`,"全部","洗澡");renderYard();
+}
+function yardAllMed(){
+  S.chickens.forEach(c=>{c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100)});
+  S.totalInteractions++;save();addLog("💊 所有小鸡都吃了药","全部","喂药");renderYard();
+}
+function yardAllSleep(){
+  let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.sleeping=true;if(c.hunger<80)c.hunger=80;if(c.happiness<80)c.happiness=80;if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;c.fatigue=cl(c.fatigue-30,0,100);cnt++}});
+  S.totalInteractions++;save();addLog(`💤 ${cnt}只小鸡都去睡觉了`,"全部","睡觉");renderYard();
+}
+function yardAllWake(){
+  let cnt=0;S.chickens.forEach(c=>{if(c.sleeping){c.sleeping=false;cnt++}});
+  if(cnt>0){S.totalInteractions++;save();addLog(`⏰ ${cnt}只小鸡都被叫醒了`,"全部","睡觉");renderYard()}
+}
 function yardClean(){
   if(S.poops.length===0)return;
   S.poops=[];S.totalInteractions++;save();addLog("🧹 你把粑粑都清理干净了","全部","清粑粑");renderYard();
@@ -1527,12 +1595,12 @@ function renderRoom(){
   const bb=bestBuddy(roomId);
 
   document.getElementById("roomBars").innerHTML=`
-    <div class="room-bar-row"><span class="room-bar-label">❤️ 饱食</span><div class="room-bar-track"><div class="room-bar-fill hunger" style="width:${c.hunger}%"></div></div><span class="room-bar-val">${c.hunger}</span></div>
-    <div class="room-bar-row"><span class="room-bar-label">😊 快乐值</span><div class="room-bar-track"><div class="room-bar-fill happiness" style="width:${c.happiness}%"></div></div><span class="room-bar-val">${c.happiness}</span></div>
-    <div class="room-bar-row"><span class="room-bar-label">💧 水分</span><div class="room-bar-track"><div class="room-bar-fill thirst" style="width:${c.thirst}%"></div></div><span class="room-bar-val">${c.thirst}</span></div>
-    <div class="room-bar-row"><span class="room-bar-label">🛁 清洁值</span><div class="room-bar-track"><div class="room-bar-fill clean" style="width:${c.clean}%"></div></div><span class="room-bar-val">${c.clean}</span></div>
-    <div class="room-bar-row"><span class="room-bar-label">💚 健康</span><div class="room-bar-track"><div class="room-bar-fill health" style="width:${c.health}%"></div></div><span class="room-bar-val">${c.health}</span></div>
-    <div class="room-bar-row"><span class="room-bar-label">😴 疲惫</span><div class="room-bar-track"><div class="room-bar-fill fatigue" style="width:${c.fatigue}%"></div></div><span class="room-bar-val">${c.fatigue}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">❤️ 饱食</span><div class="room-bar-track"><div class="room-bar-fill hunger" style="width:${c.hunger}%"></div></div><span class="room-bar-val">${Math.round(c.hunger)}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">😊 快乐值</span><div class="room-bar-track"><div class="room-bar-fill happiness" style="width:${c.happiness}%"></div></div><span class="room-bar-val">${Math.round(c.happiness)}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">💧 水分</span><div class="room-bar-track"><div class="room-bar-fill thirst" style="width:${c.thirst}%"></div></div><span class="room-bar-val">${Math.round(c.thirst)}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">🛁 清洁值</span><div class="room-bar-track"><div class="room-bar-fill clean" style="width:${c.clean}%"></div></div><span class="room-bar-val">${Math.round(c.clean)}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">💚 健康</span><div class="room-bar-track"><div class="room-bar-fill health" style="width:${c.health}%"></div></div><span class="room-bar-val">${Math.round(c.health)}</span></div>
+    <div class="room-bar-row"><span class="room-bar-label">😴 疲惫</span><div class="room-bar-track"><div class="room-bar-fill fatigue" style="width:${c.fatigue}%"></div></div><span class="room-bar-val">${Math.round(c.fatigue)}</span></div>
     <div class="room-bar-row"><span class="room-bar-label">🤝 亲密(手动)</span><div class="room-bar-track"><div class="room-bar-fill aff-manual" style="width:${Math.min(c.affManual/1.2,100)}%"></div></div><span class="room-bar-val">${c.affManual} ${(getAffLevel(c.affManual)||{icon:"",level:"陌生"}).icon}${(getAffLevel(c.affManual)||{level:"陌生"}).level}</span></div>
     <div class="room-bar-row"><span class="room-bar-label">📋 亲密(指令)</span><div class="room-bar-track"><div class="room-bar-fill aff-notion" style="width:${Math.min(c.affNotion/1.2,100)}%"></div></div><span class="room-bar-val">${c.affNotion} ${(getAffLevel(c.affNotion)||{icon:"",level:"陌生"}).icon}${(getAffLevel(c.affNotion)||{level:"陌生"}).level}</span></div>
     <div class="room-growth"><div class="room-growth-label">🌱 成长 ${gp}% · ${stgN(c.stage)}</div><div class="room-growth-track"><div class="room-growth-fill" style="width:${gp}%"></div></div></div>
@@ -1556,7 +1624,10 @@ function renderRoomBtns(){
     const petcd=getCD(roomId,"pet");
     h+=`<button class="action-btn btn-pet" ${petcd>0?"disabled":""} onclick="openRoomPet()">💕 互动${petcd>0?`<span class="cooldown-text">${Math.ceil(petcd/1000)}秒</span>`:""}</button>`;
     h+=`<button class="action-btn btn-sleep" ${scd>0?"disabled":""} onclick="doSleep()">💤 睡觉${scd>0?`<span class="cooldown-text">${Math.ceil(scd/1000)}秒</span>`:""}</button>`;
+    const mcd=getCD(roomId,"med");
+    h+=`<button class="action-btn btn-med" ${mcd>0?"disabled":""} onclick="doRoomMed()">💊 喂药${mcd>0?`<span class="cooldown-text">${Math.ceil(mcd/1000)}秒</span>`:""}</button>`;
   }
+  h+=`<button class="action-btn btn-out" onclick="doRoomOut()">☀️ 叫出去</button>`;
   h+=`<button class="action-btn btn-exit" onclick="exitRoom()">🚪 退出房间</button>`;
   document.getElementById("roomActions").innerHTML=h;
   document.getElementById("roomControls").innerHTML=`
@@ -1701,6 +1772,23 @@ function doWake(){
   setTimeout(()=>renderRoom(),1600);
 }
 
+// ===== ROOM MEDICINE =====
+function doRoomMed(){
+  const c=S.chickens[roomId];if(!c||c.sleeping||getCD(roomId,"med")>0)return;
+  c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100);
+  S.totalInteractions++;{const ov=c.affManual;c.affManual+=1;checkAffMilestone(c.id,"manual",ov,c.affManual)}
+  cds[roomId+"_med"]=Date.now()+30000;save();
+  addLog(`💊 你给${c.name}喂药了，健康+30`,c.name,"喂药",c);
+  setRoomExpr("sick","");showReact("吃药了~ 💊");
+  setTimeout(()=>renderRoom(),1500);
+}
+function doRoomOut(){
+  const c=S.chickens[roomId];if(!c)return;
+  c.location="outside";save();
+  addLog(`☀️ 你把${c.name}叫到院子里了`,c.name,"位置",c);
+  exitRoom();renderYard();
+}
+
 // ===== ROOM PET / INTERACT =====
 function openRoomPet(){
   const c=S.chickens[roomId];
@@ -1836,12 +1924,12 @@ async function flushNotion(){
   }
   if(weatherTemp!==null)props["温度"]={number:weatherTemp};
   if(item.stats){
-    props["饱食"]={number:item.stats.hunger};
-    props["快乐"]={number:item.stats.happiness};
-    props["水分"]={number:item.stats.thirst};
-    props["清洁"]={number:item.stats.clean};
-    props["健康"]={number:item.stats.health};
-    props["疲惫"]={number:item.stats.fatigue};
+    props["饱食"]={number:Math.round(item.stats.hunger)};
+    props["快乐"]={number:Math.round(item.stats.happiness)};
+    props["水分"]={number:Math.round(item.stats.thirst)};
+    props["清洁"]={number:Math.round(item.stats.clean)};
+    props["健康"]={number:Math.round(item.stats.health)};
+    props["疲惫"]={number:Math.round(item.stats.fatigue)};
     if(item.stats.affManual!==undefined)props["亲密手动"]={number:item.stats.affManual};
     if(item.stats.affNotion!==undefined)props["亲密指令"]={number:item.stats.affNotion};
     if(item.stats.heater!==undefined)props["暖气"]={number:item.stats.heater};
@@ -1930,7 +2018,7 @@ function execInstruction(cmd,pageId){
   // 喂药
   let m=cmd.match(/给(.+?)喂药/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100);addLog(`📋 [指令] 给${c.name}喂了药 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"喂药",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.health=cl(c.health+30,0,100);c.fatigue=cl(c.fatigue-10,0,100);addLog(`📋 [指令] 给${c.name}喂了药 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"喂药",c);matched=true}
   }
   // 给XX喂YY
   if(!matched){m=cmd.match(/给(.+?)喂(.+)/);if(m){
@@ -1942,34 +2030,34 @@ function execInstruction(cmd,pageId){
       if(c.favoriteFood.includes(food.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
       else if(c.hatedFood.includes(food.id)){h=15;c.happiness=cl(c.happiness-5,0,100)}
       c.hunger=cl(c.hunger+h,0,100);c.totalHunger+=Math.min(h,100);S.food--;
-      addLog(`📋 [指令] 给${c.name}喂了${food.icon}${food.name} | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"吃饭",c);
+      addLog(`📋 [指令] 给${c.name}喂了${food.icon}${food.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"吃饭",c);
       matched=true;
     }
   }}
   // 给XX喝水
   if(!matched){m=cmd.match(/给(.+?)喝水/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.thirst=cl(c.thirst+35,0,100);addLog(`📋 [指令] 给${c.name}喝水了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"喝水",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.thirst=cl(c.thirst+35,0,100);addLog(`📋 [指令] 给${c.name}喝水了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"喝水",c);matched=true}
   }}
   // 给XX洗澡
   if(!matched){m=cmd.match(/给(.+?)洗澡/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);addLog(`📋 [指令] 给${c.name}洗澡了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"洗澡",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);addLog(`📋 [指令] 给${c.name}洗澡了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"洗澡",c);matched=true}
   }}
   // 让XX玩
   if(!matched){m=cmd.match(/让(.+?)玩/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];const g=pick(GAMES);c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);c.totalHappiness+=Math.min(20,100);addLog(`📋 [指令] 让${c.name}玩了${g.icon}${g.name} | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"玩耍",c);matched=true}
+    if(ci>=0){const c=S.chickens[ci];const g=pick(GAMES);c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-10,0,100);c.totalHappiness+=Math.min(20,100);addLog(`📋 [指令] 让${c.name}玩了${g.icon}${g.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"玩耍",c);matched=true}
   }}
   // 让XX睡觉
   if(!matched){m=cmd.match(/让(.+?)睡觉/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(!c.sleeping){c.sleeping=true;if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;addLog(`📋 [指令] 让${c.name}去睡觉了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"睡觉",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(!c.sleeping){c.sleeping=true;if(c.hunger<80){c.totalHunger+=80-c.hunger;c.hunger=80}if(c.happiness<80){c.totalHappiness+=80-c.happiness;c.happiness=80}if(c.thirst<80)c.thirst=80;if(c.clean<80)c.clean=80;addLog(`📋 [指令] 让${c.name}去睡觉了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"睡觉",c);matched=true}}
   }}
   // 叫醒XX
   if(!matched){m=cmd.match(/叫醒(.+)/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(c.sleeping){c.sleeping=false;addLog(`📋 [指令] 叫醒了${c.name} | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"睡觉",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(c.sleeping){c.sleeping=false;addLog(`📋 [指令] 叫醒了${c.name} | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"睡觉",c);matched=true}}
   }}
   // 清粑粑
   if(!matched&&cmd.includes("清粑粑")){
@@ -1998,12 +2086,12 @@ function execInstruction(cmd,pageId){
   // 叫出来（单个）
   if(!matched){m=cmd.match(/(?:叫|让)(.+?)出来/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(c.location==="inside"){c.location="outside";addLog(`📋 [指令] 把${c.name}叫出来了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"位置",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(c.location==="inside"){c.location="outside";addLog(`📋 [指令] 把${c.name}叫出来了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"位置",c);matched=true}}
   }}
   // 喊回去（单个）
   if(!matched){m=cmd.match(/(?:喊|让)(.+?)回去/);if(m){
     const ci=names.indexOf(m[1]);
-    if(ci>=0){const c=S.chickens[ci];if(c.location==="outside"){c.location="inside";addLog(`📋 [指令] 把${c.name}喊回去了 | 饱食${c.hunger} 快乐${c.happiness} 水分${c.thirst} 清洁${c.clean} 健康${c.health} 疲惫${c.fatigue}`,c.name,"位置",c);matched=true}}
+    if(ci>=0){const c=S.chickens[ci];if(c.location==="outside"){c.location="inside";addLog(`📋 [指令] 把${c.name}喊回去了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"位置",c);matched=true}}
   }}
   // 全部吃饭
   if(!matched&&(cmd.includes("全部吃饭")||cmd.includes("都吃饭")||cmd.includes("一起吃饭"))){
@@ -2112,7 +2200,7 @@ function execInstruction(cmd,pageId){
       m=cmd.match(new RegExp("(?:给|对|跟|和)(.+?)"+kw));
       if(m){
         const ci=names.indexOf(m[1]);
-        if(ci>=0){const c=S.chickens[ci];const pet=PETS.find(p=>p.id===pid);c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);addLog(`📋 [指令] ${pet?pet.icon:""} 对${c.name}${kw}了~ ${pick(pet.reacts)} | 快乐${c.happiness}`,c.name,"互动",c);matched=true;break}
+        if(ci>=0){const c=S.chickens[ci];const pet=PETS.find(p=>p.id===pid);c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);addLog(`📋 [指令] ${pet?pet.icon:""} 对${c.name}${kw}了~ ${pick(pet.reacts)} | 快乐${Math.round(c.happiness)}`,c.name,"互动",c);matched=true;break}
       }
       // 全部摸摸头 / 都摸摸头
       if(cmd.includes("全部"+kw)||cmd.includes("都"+kw)){
