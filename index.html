@@ -2796,6 +2796,24 @@ function decay(){
     // Heater & lamp benefits (indoor only)
     if(c.location==="inside"&&c.heater>0){c.health=cl(c.health+c.heater*0.4,0,100);c.happiness=cl(c.happiness+c.heater*0.2,0,100)}
     if(c.location==="inside"&&c.lamp>0){c.health=cl(c.health+c.lamp*0.3,0,100);c.fatigue=cl(c.fatigue-c.lamp*0.3,0,100)}
+    // 危急状态预警（每5分钟最多提醒一次）
+    if(!c._lastWarn)c._lastWarn={};const now=Date.now();
+    if(c.health<=5&&(!c._lastWarn.dying||now-c._lastWarn.dying>300000)){
+      c._lastWarn.dying=now;addLog(`🚨💀 ${c.name}的健康值只剩${Math.round(c.health)}了！快喂药！！`,c.name,"状态",c);
+    }else if(c.health<=15&&(!c._lastWarn.critical||now-c._lastWarn.critical>300000)){
+      c._lastWarn.critical=now;addLog(`⚠️🤕 ${c.name}健康状况很差(${Math.round(c.health)})，需要喂药！`,c.name,"状态",c);
+    }else if(c.health<=30&&(!c._lastWarn.sick||now-c._lastWarn.sick>300000)){
+      c._lastWarn.sick=now;addLog(`💊 ${c.name}好像生病了(健康${Math.round(c.health)})，要不要喂药？`,c.name,"状态",c);
+    }
+    if(c.hunger<=5&&(!c._lastWarn.starve||now-c._lastWarn.starve>300000)){
+      c._lastWarn.starve=now;addLog(`🚨😫 ${c.name}快饿晕了！(饱食${Math.round(c.hunger)})`,c.name,"状态",c);
+    }
+    if(c.thirst<=5&&(!c._lastWarn.dehydrate||now-c._lastWarn.dehydrate>300000)){
+      c._lastWarn.dehydrate=now;addLog(`🚨🥵 ${c.name}快渴死了！(水分${Math.round(c.thirst)})`,c.name,"状态",c);
+    }
+    if(c.happiness<=5&&(!c._lastWarn.miserable||now-c._lastWarn.miserable>300000)){
+      c._lastWarn.miserable=now;addLog(`🚨😭 ${c.name}非常不开心！(快乐${Math.round(c.happiness)})`,c.name,"状态",c);
+    }
   });
   // Auto food regen: +1 food every 2 minutes, max 30
   if(S.food<30){S.food++;if(S.food%5===0)addLog(`🌱 院子里长出了新食物，现在有${S.food}份`)}
