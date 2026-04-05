@@ -1930,7 +1930,7 @@ async function flushNotion(){
   const props={
     "Name":{title:[{text:{content:item.detail}}]},
     "小鸡":{select:{name:item.chicken||"全部"}},
-    "类型":{select:{name:({"串门":"🚶 串门","指令":"📋 指令","洗澡":"🛁 洗澡","吃饭":"🍽️ 吃饭","喝水":"💧 喝水","玩耍":"🎮 玩耍","睡觉":"💤 睡觉","清粑粑":"🧹 清粑粑","闲逛":"🐥 闲逛","喂药":"💊 喂药","位置":"📍 位置","食物":"🌾 食物","状态":"📊 状态","打扫":"🧼 打扫","互动":"💕 互动","求偶":"💘 求偶"})[item.type]||(item.type||"🐥 闲逛")}},
+    "类型":{select:{name:item.type||"闲逛"}},
     "时间":{date:{start:torontoISO()}},
     "详情":{rich_text:[{text:{content:item.detail}}]}
   };
@@ -2020,7 +2020,7 @@ async function pollInstructions(){
     const r=await fetch(NOTION_PROXY+"v1/databases/"+NOTION_DB+"/query",{
       method:"POST",
       headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
-      body:JSON.stringify({filter:{and:[{property:"类型",select:{equals:"📋 指令"}},{property:"已执行",checkbox:{equals:false}}]},sorts:[{timestamp:"created_time",direction:"ascending"}]})
+      body:JSON.stringify({filter:{and:[{property:"类型",select:{equals:"指令"}},{property:"已执行",checkbox:{equals:false}}]},sorts:[{timestamp:"created_time",direction:"ascending"}]})
     });
     if(!r.ok)return;
     const data=await r.json();
