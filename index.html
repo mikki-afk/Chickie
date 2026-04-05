@@ -2204,9 +2204,9 @@ function execInstruction(cmd,pageId){
       }
       // 全部摸摸头 / 都摸摸头
       if(cmd.includes("全部"+kw)||cmd.includes("都"+kw)){
-        const pet=PETS.find(p=>p.id===pid);let cnt=0,slp=0;S.chickens.forEach(c=>{if(!c.sleeping){c.happiness=cl(c.happiness+8,0,100);c.fatigue=cl(c.fatigue-3,0,100);cnt++}else{slp++}});
-        if(cnt>0)addLog(`📋 [指令] ${pet?pet.icon:""} 对所有小鸡${kw}了~ ${cnt}只好开心${slp>0?"（"+slp+"只在睡觉）":""}`,"全部","互动");
-        else addLog(`📋 [指令] 小鸡们都在睡觉呢，${kw}不了~ 💤`,"全部","互动");
+        const pet=PETS.find(p=>p.id===pid);let cnt=0;S.chickens.forEach(c=>{c.happiness=cl(c.happiness+8,0,100);c.fatigue=cl(c.fatigue-3,0,100);cnt++});
+        let slp=S.chickens.filter(c=>c.sleeping).length;
+        addLog(`📋 [指令] ${pet?pet.icon:""} 对所有小鸡${kw}了~ ${cnt}只好开心${slp>0?"（"+slp+"只睡梦中也笑了）":""}`,"全部","互动");
         matched=true;break;
       }
     }
