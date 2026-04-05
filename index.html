@@ -2204,7 +2204,10 @@ function execInstruction(cmd,pageId){
       }
       // 全部摸摸头 / 都摸摸头
       if(cmd.includes("全部"+kw)||cmd.includes("都"+kw)){
-        const pet=PETS.find(p=>p.id===pid);let cnt=0;S.chickens.forEach(c=>{if(!c.sleeping){c.happiness=cl(c.happiness+8,0,100);c.fatigue=cl(c.fatigue-3,0,100);cnt++}});addLog(`📋 [指令] ${pet?pet.icon:""} 对所有小鸡${kw}了~ ${cnt}只好开心`,"全部","互动");matched=true;break;
+        const pet=PETS.find(p=>p.id===pid);let cnt=0,slp=0;S.chickens.forEach(c=>{if(!c.sleeping){c.happiness=cl(c.happiness+8,0,100);c.fatigue=cl(c.fatigue-3,0,100);cnt++}else{slp++}});
+        if(cnt>0)addLog(`📋 [指令] ${pet?pet.icon:""} 对所有小鸡${kw}了~ ${cnt}只好开心${slp>0?"（"+slp+"只在睡觉）":""}`,"全部","互动");
+        else addLog(`📋 [指令] 小鸡们都在睡觉呢，${kw}不了~ 💤`,"全部","互动");
+        matched=true;break;
       }
     }
   }
@@ -2228,6 +2231,30 @@ function execInstruction(cmd,pageId){
     if(m){
       const ci=names.indexOf(m[1]);const newName=m[2].trim();
       if(ci>=0&&newName){renameBaby(ci,newName);matched=true}
+    }
+  }
+  // 查看状态：看看XX / XX状态 / XX怎么样
+  if(!matched){
+    m=cmd.match(/(?:看看|查看)(.+)/)||cmd.match(/(.+?)(?:状态|怎么样|咋样|如何)/);
+    if(m){
+      const who=m[1].trim();
+      if(who==="全部"||who==="所有"||who==="大家"){
+        let report=[];
+        S.chickens.forEach(c=>{
+          const ex=getExpr(c);
+          const exE={sleep:"😴",injured:"🤕",fever:"🤒",sick:"🤧",happy:"😊",angry:"😡",hungry:"😣",content:"🙂"};
+          report.push(`${c.name}(${c.gender==="male"?"♂":"♀"}${c.stage}): 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)} ${c.sleeping?"💤睡觉中":c.location==="inside"?"🏠室内":"☀️室外"} 表情:${exE[ex]||"🐥"}${ex}`);
+        });
+        addLog(`📋 [状态报告]\n${report.join("\n")}\n🌾食物:${S.food} 💩粑粑:${S.poops.length}`,"全部","状态");matched=true;
+      }else{
+        const ci=names.indexOf(who);
+        if(ci>=0){
+          const c=S.chickens[ci];const ex=getExpr(c);
+          const bl=BUDDY_LEVELS.slice().reverse().find(l=>getBuddyAff(ci,0)>=l.threshold);
+          let buddyInfo=[];S.chickens.forEach((c2,j)=>{if(j===ci)return;const v=getBuddyAff(ci,j);if(v>0)buddyInfo.push(`${c2.name}:${v}`)});
+          addLog(`📋 [${c.name}状态] ${c.gender==="male"?"♂公鸡":"♀母鸡"} ${c.stage}\n饱食:${Math.round(c.hunger)} 快乐:${Math.round(c.happiness)} 水分:${Math.round(c.thirst)} 清洁:${Math.round(c.clean)} 健康:${Math.round(c.health)} 疲惫:${Math.round(c.fatigue)}\n${c.sleeping?"💤睡觉中":c.location==="inside"?"🏠室内":"☀️室外"} 暖气:${c.heater} 照灯:${c.lamp}\n表情:${ex} 亲密(手动):${c.affManual} 亲密(指令):${c.affNotion}\n好友:${buddyInfo.join(" ")||"暂无"}`,c.name,"状态",c);matched=true;
+        }
+      }
     }
   }
   if(!matched)addLog(`📋 [指令] 无法理解: ${cmd}`);
