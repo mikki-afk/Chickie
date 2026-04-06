@@ -388,12 +388,6 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .furniture{text-align:center;z-index:1;flex-shrink:0}
 .furniture .fur-label{font-size:9px;color:#5a3e2b;font-weight:600;margin-top:2px}
 .room-furniture-row{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px;position:relative;z-index:1}
-#furBed{margin-bottom:12px}
-#furBowl{margin-bottom:0}
-#furWater{margin-bottom:14px}
-#furHeater{margin-bottom:6px}
-#furLamp{margin-bottom:18px}
-#furTub{margin-bottom:0}
 
 /* Bed */
 .css-bed{width:100px;height:52px;position:relative}
@@ -431,6 +425,13 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-reaction{position:absolute;top:-28px;left:50%;transform:translateX(-50%);font-size:16px;opacity:0;pointer-events:none;white-space:nowrap}
 .room-reaction.show{opacity:1;animation:reactPop 2s ease forwards}
 @keyframes reactPop{0%{opacity:0;transform:translateX(-50%) scale(.5)}20%{opacity:1;transform:translateX(-50%) scale(1.1)}40%{transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}
+
+/* Room door */
+.room-door{position:absolute;top:25px;right:100px;z-index:1;text-align:center}
+.door-frame{width:32px;height:58px;background:linear-gradient(180deg,#b8860b,#8B6914);border-radius:4px 4px 0 0;border:3px solid #6B4F10;position:relative;overflow:hidden}
+.door-panel{position:absolute;inset:3px;background:linear-gradient(180deg,#d4a24e,#c49340);border-radius:2px 2px 0 0}
+.door-knob{position:absolute;right:4px;top:50%;width:5px;height:5px;border-radius:50%;background:#FFD700;border:1px solid #b8860b}
+.door-label{font-size:9px;color:#5a3e2b;font-weight:600;margin-top:2px}
 
 /* Room window */
 .room-window{position:absolute;top:12px;right:16px;width:70px;height:55px;z-index:2}
@@ -1782,6 +1783,27 @@ function exitRoom(){
   renderYard();
 }
 
+function roomFurniture(id,c,col){
+  // Seeded random per chicken so layout is consistent but unique
+  function srand(seed){let s=seed;return()=>{s=(s*16807+0)%2147483647;return(s-1)/2147483646}}
+  const rng=srand((id+1)*7919);
+  // Define furniture pieces
+  const pieces=[
+    {id:"furBed",mb:8+Math.floor(rng()*10),html:`<div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div><div class="fur-label">小床</div>`},
+    {id:"furBowl",mb:Math.floor(rng()*6),html:`<div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><div class="fur-label">饭盆</div>`},
+    {id:"furWater",mb:6+Math.floor(rng()*12),html:`<div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><div class="fur-label">水碗</div>`},
+    {id:"furHeater",mb:2+Math.floor(rng()*8),html:`<div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div><div class="fur-label">暖气</div>`},
+    {id:"furLamp",mb:10+Math.floor(rng()*10),html:`<div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div><div class="fur-label">照灯</div>`},
+    {id:"furTub",mb:Math.floor(rng()*4),html:`<div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div><div class="fur-label">浴盆</div>`}
+  ];
+  // Shuffle middle items (keep bed always first or second, tub always last or second-to-last)
+  const bed=pieces[0],tub=pieces[5];
+  const mid=[pieces[1],pieces[2],pieces[3],pieces[4]];
+  for(let i=mid.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mid[i],mid[j]]=[mid[j],mid[i]]}
+  const bedFirst=rng()>0.4;
+  const arr=bedFirst?[bed,...mid,tub]:[...mid.slice(0,2),bed,...mid.slice(2),tub];
+  return arr.map(p=>`<div class="furniture" id="${p.id}" style="margin-bottom:${p.mb}px">${p.html}</div>`).join("");
+}
 function renderRoom(){
   const c=S.chickens[roomId];if(!c)return;
   const col=CDEFS[roomId].color,expr=getExpr(c);
@@ -1809,6 +1831,7 @@ function renderRoom(){
         </div>
         <div class="win-label">${weatherTemp!==null?weatherTemp+"°C":""} ${weather==="sunny"?"☀️":weather==="cloudy"?"⛅":weather==="snowy"?"🌨️":"🌧️"}</div>
       </div>
+      <div class="room-door"><div class="door-frame"><div class="door-panel"></div><div class="door-knob"></div></div><div class="door-label">门</div></div>
       <div class="room-chicken-wrap" id="roomChicken" style="left:${cLeft}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
@@ -1816,32 +1839,7 @@ function renderRoom(){
       <div class="room-warm ${c.heater>0||c.lamp>0?"active":""}" id="roomWarm"></div>
       <div class="room-dim" style="opacity:${!c.light&&!c.curtain?0.3:!c.light&&c.curtain?0.1:0}"></div>
       <div class="room-floor" style="background:${col[0]}30"></div>
-      <div class="room-furniture-row">
-        <div class="furniture" id="furBed">
-          <div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div>
-          <div class="fur-label">小床</div>
-        </div>
-        <div class="furniture" id="furBowl">
-          <div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div>
-          <div class="fur-label">饭盆</div>
-        </div>
-        <div class="furniture" id="furWater">
-          <div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div>
-          <div class="fur-label">水碗</div>
-        </div>
-        <div class="furniture" id="furHeater">
-          <div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div>
-          <div class="fur-label">暖气</div>
-        </div>
-        <div class="furniture" id="furLamp">
-          <div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div>
-          <div class="fur-label">照灯</div>
-        </div>
-        <div class="furniture" id="furTub">
-          <div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div>
-          <div class="fur-label">浴盆</div>
-        </div>
-      </div>
+      <div class="room-furniture-row">${roomFurniture(roomId,c,col)}</div>
     </div>
     <div class="toys-shelf">
       <div class="toy"><div class="toy-ball"></div></div>
