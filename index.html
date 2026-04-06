@@ -385,14 +385,9 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-scene{position:relative;min-height:200px;padding:10px 10px 0}
 
 /* CSS Furniture */
-.furniture{text-align:center;position:absolute;z-index:1}
+.furniture{text-align:center;z-index:1;flex-shrink:0}
 .furniture .fur-label{font-size:9px;color:#5a3e2b;font-weight:600;margin-top:2px}
-#furBed{left:2%;bottom:40px}
-#furBowl{left:32%;bottom:40px}
-#furWater{left:48%;bottom:40px}
-#furTub{right:2%;bottom:40px}
-#furHeater{left:2%;top:30%}
-#furLamp{left:18%;top:28%}
+.room-furniture-row{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px;position:relative;z-index:1}
 
 /* Bed */
 .css-bed{width:100px;height:52px;position:relative}
@@ -1808,30 +1803,6 @@ function renderRoom(){
         </div>
         <div class="win-label">${weatherTemp!==null?weatherTemp+"°C":""} ${weather==="sunny"?"☀️":weather==="cloudy"?"⛅":weather==="snowy"?"🌨️":"🌧️"}</div>
       </div>
-      <div class="furniture" id="furBed">
-        <div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div>
-        <div class="fur-label">小床</div>
-      </div>
-      <div class="furniture" id="furBowl">
-        <div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div>
-        <div class="fur-label">饭盆</div>
-      </div>
-      <div class="furniture" id="furWater">
-        <div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div>
-        <div class="fur-label">水碗</div>
-      </div>
-      <div class="furniture" id="furTub">
-        <div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div>
-        <div class="fur-label">浴盆</div>
-      </div>
-      <div class="furniture" id="furHeater">
-        <div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div>
-        <div class="fur-label">暖气</div>
-      </div>
-      <div class="furniture" id="furLamp">
-        <div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div>
-        <div class="fur-label">照灯</div>
-      </div>
       <div class="room-chicken-wrap" id="roomChicken" style="left:${cLeft}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
@@ -1839,6 +1810,32 @@ function renderRoom(){
       <div class="room-warm ${c.heater>0||c.lamp>0?"active":""}" id="roomWarm"></div>
       <div class="room-dim" style="opacity:${!c.light&&!c.curtain?0.3:!c.light&&c.curtain?0.1:0}"></div>
       <div class="room-floor" style="background:${col[0]}30"></div>
+      <div class="room-furniture-row">
+        <div class="furniture" id="furBed">
+          <div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div>
+          <div class="fur-label">小床</div>
+        </div>
+        <div class="furniture" id="furBowl">
+          <div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div>
+          <div class="fur-label">饭盆</div>
+        </div>
+        <div class="furniture" id="furWater">
+          <div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div>
+          <div class="fur-label">水碗</div>
+        </div>
+        <div class="furniture" id="furHeater">
+          <div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div>
+          <div class="fur-label">暖气</div>
+        </div>
+        <div class="furniture" id="furLamp">
+          <div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div>
+          <div class="fur-label">照灯</div>
+        </div>
+        <div class="furniture" id="furTub">
+          <div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div>
+          <div class="fur-label">浴盆</div>
+        </div>
+      </div>
     </div>
     <div class="toys-shelf">
       <div class="toy"><div class="toy-ball"></div></div>
