@@ -265,8 +265,8 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 @keyframes chaseB{0%{transform:scale(1.7) translateX(0)}25%{transform:scale(1.7) translateX(-18px)}75%{transform:scale(1.7) translateX(18px)}100%{transform:scale(1.7) translateX(0)}}
 .big.anim-jump{animation:jumpB .5s ease 4!important}
 @keyframes jumpB{0%,100%{transform:scale(1.7) translateY(0)}40%{transform:scale(1.7) translateY(-16px)}}
-.big.anim-roll{animation:rollB .8s linear 3!important}
-@keyframes rollB{0%{transform:scale(1.7) rotate(0)}100%{transform:scale(1.7) rotate(360deg)}}
+.big.anim-roll{animation:rollB .8s ease 3!important}
+@keyframes rollB{0%{transform:scale(1.7) rotate(0)}25%{transform:scale(1.7) rotate(25deg) translateX(5px)}50%{transform:scale(1.7) rotate(-25deg) translateX(-5px)}75%{transform:scale(1.7) rotate(15deg) translateX(3px)}100%{transform:scale(1.7) rotate(0)}}
 .big.anim-sleep{animation:sleepB 2s ease-in-out infinite!important}
 @keyframes sleepB{0%,100%{transform:scale(1.7) translateY(0)}50%{transform:scale(1.7) translateY(2px)}}
 .big.anim-wake{animation:wakeB .6s ease 2!important}
@@ -766,18 +766,26 @@ h1{font-size:20px}
 @keyframes yardEffectPop{0%{opacity:0;transform:translateX(-50%) translateY(0)}15%{opacity:1}80%{opacity:1;transform:translateX(-50%) translateY(-15px)}100%{opacity:0;transform:translateX(-50%) translateY(-25px)}}
 
 /* ===== PET ROOM ANIMATIONS ===== */
-.big.anim-pat{animation:patB .6s ease 3!important}
-@keyframes patB{0%,100%{transform:scale(1.7) rotate(0)}50%{transform:scale(1.7) rotate(-8deg) translateY(-3px)}}
+.big.anim-pat{animation:patB .5s ease 3!important}
+@keyframes patB{0%,100%{transform:scale(1.7) translateY(0)}40%{transform:scale(1.7) scaleY(.9) translateY(3px)}70%{transform:scale(1.7) scaleY(1.05) translateY(-2px)}}
 .big.anim-hug{animation:hugB .8s ease 2!important}
-@keyframes hugB{0%,100%{transform:scale(1.7)}50%{transform:scale(1.85)}}
-.big.anim-kiss{animation:kissB .5s ease 3!important}
-@keyframes kissB{0%,100%{transform:scale(1.7) translateX(0)}50%{transform:scale(1.7) translateX(8px)}}
-.big.anim-chat{animation:chatB .4s ease 5!important}
-@keyframes chatB{0%,100%{transform:scale(1.7) translateY(0)}50%{transform:scale(1.7) translateY(-5px)}}
-.big.anim-brush{animation:brushB .6s ease 4!important}
-@keyframes brushB{0%,100%{transform:scale(1.7) translateX(0)}50%{transform:scale(1.7) translateX(5px)}}
-.big.anim-story{animation:storyB .8s ease 3!important}
-@keyframes storyB{0%,100%{transform:scale(1.7) rotate(0)}30%{transform:scale(1.7) rotate(5deg)}70%{transform:scale(1.7) rotate(-5deg)}}
+@keyframes hugB{0%,100%{transform:scale(1.7)}30%{transform:scale(1.7) scaleX(.85)}60%{transform:scale(1.7) scaleX(1.08)}}
+.big.anim-kiss{animation:kissB .6s ease 3!important}
+@keyframes kissB{0%,100%{transform:scale(1.7) translateX(0)}40%{transform:scale(1.7) translateX(6px) scaleX(.95)}70%{transform:scale(1.7) translateX(-3px)}}
+.big.anim-chat{animation:chatB .35s ease 5!important}
+@keyframes chatB{0%,100%{transform:scale(1.7) translateY(0)}30%{transform:scale(1.7) translateY(-4px)}60%{transform:scale(1.7) translateY(1px)}}
+.big.anim-brush{animation:brushB .5s ease 4!important}
+@keyframes brushB{0%,100%{transform:scale(1.7) rotate(0)}30%{transform:scale(1.7) rotate(3deg) translateX(3px)}70%{transform:scale(1.7) rotate(-3deg) translateX(-3px)}}
+.big.anim-story{animation:storyB .7s ease 3!important}
+@keyframes storyB{0%,100%{transform:scale(1.7) rotate(0)}20%{transform:scale(1.7) rotate(4deg)}50%{transform:scale(1.7) rotate(-4deg) translateY(-2px)}80%{transform:scale(1.7) rotate(2deg)}}
+.big.anim-sing{animation:singB .4s ease 5!important}
+@keyframes singB{0%,100%{transform:scale(1.7) translateY(0)}30%{transform:scale(1.7) translateY(-6px) rotate(3deg)}60%{transform:scale(1.7) translateY(-3px) rotate(-3deg)}}
+.big.anim-belly{animation:bellyB .7s ease 3!important}
+@keyframes bellyB{0%,100%{transform:scale(1.7) rotate(0)}30%{transform:scale(1.7) rotate(15deg)}60%{transform:scale(1.7) rotate(-10deg)}80%{transform:scale(1.7) scaleY(.92) translateY(2px)}}
+.big.anim-tickle{animation:tickleB .3s ease 6!important}
+@keyframes tickleB{0%,100%{transform:scale(1.7) translateX(0)}25%{transform:scale(1.7) translateX(-4px) rotate(-5deg)}75%{transform:scale(1.7) translateX(4px) rotate(5deg)}}
+.big.anim-dance{animation:danceB .5s ease 5!important}
+@keyframes danceB{0%,100%{transform:scale(1.7) translateY(0)}25%{transform:scale(1.7) translateY(-8px) rotate(8deg)}50%{transform:scale(1.7) translateY(0) rotate(-8deg)}75%{transform:scale(1.7) translateY(-6px) rotate(5deg)}}
 </style>
 </head>
 <body>
@@ -961,9 +969,9 @@ const GAMES=[
   {id:"roll",icon:"🎪",name:"打滚游戏",anim:"anim-roll"},
   {id:"hide",icon:"🙈",name:"捉迷藏",anim:"anim-chase"},
   {id:"swing",icon:"🪁",name:"荡秋千",anim:"anim-jump"},
-  {id:"slide",icon:"🛝",name:"滑滑梯",anim:"anim-roll"},
+  {id:"slide",icon:"🛝",name:"滑滑梯",anim:"anim-jump"},
   {id:"ball",icon:"⚽",name:"踢球",anim:"anim-chase"},
-  {id:"dig",icon:"⛏️",name:"挖宝藏",anim:"anim-roll"}
+  {id:"dig",icon:"⛏️",name:"挖宝藏",anim:"anim-belly"}
 ];
 const CDEFS=[
   {name:"玖宝",color:["#FFB6C1","#FF69B4"],plumage:"#fff0f3",feather:"#ffccd5",comb:"#ff4d6d",tailStyle:"fluffy"},
@@ -1012,12 +1020,12 @@ const PETS=[
   {id:"hug",icon:"🤗",name:"抱抱",expr:"adore",anim:"anim-hug"},
   {id:"kiss",icon:"😘",name:"亲亲",expr:"love",anim:"anim-kiss"},
   {id:"chat",icon:"💬",name:"聊天",expr:"happy",anim:"anim-chat"},
-  {id:"sing",icon:"🎵",name:"唱歌",expr:"happy",anim:"anim-roll"},
-  {id:"tickle",icon:"🫳",name:"挠痒痒",expr:"adore",anim:"anim-jump"},
-  {id:"belly",icon:"🫄",name:"摸肚肚",expr:"satisfied",anim:"anim-roll"},
+  {id:"sing",icon:"🎵",name:"唱歌",expr:"happy",anim:"anim-sing"},
+  {id:"tickle",icon:"🫳",name:"挠痒痒",expr:"adore",anim:"anim-tickle"},
+  {id:"belly",icon:"🫄",name:"摸肚肚",expr:"satisfied",anim:"anim-belly"},
   {id:"brush",icon:"🪮",name:"梳毛毛",expr:"satisfied",anim:"anim-brush"},
   {id:"story",icon:"📖",name:"讲故事",expr:"happy",anim:"anim-story"},
-  {id:"dance",icon:"💃",name:"跳舞",expr:"adore",anim:"anim-chase"}
+  {id:"dance",icon:"💃",name:"跳舞",expr:"adore",anim:"anim-dance"}
 ];
 function genPetReact(petId,name,sleeping){
   const feel=()=>pick(["好舒服~","暖暖的~","幸福感满满","开心极了","满足地叹了口气","心情超好"]);
