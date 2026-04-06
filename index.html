@@ -1564,11 +1564,11 @@ function yardAllOut(){
 function yardBowl(){
   if(S.food<=0){addLog("🍽️ 没有食物了！","全部","食物");renderYard();return}
   const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;cnt++}});
-  S.totalInteractions++;save();addLog(`🍽️ 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭");renderYard();
+  S.totalInteractions++;save();showBowls(f.icon);addLog(`🍽️ 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭");renderYard();
 }
 function yardWaterBowl(){
   let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});
-  S.totalInteractions++;save();addLog(`🫗 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水");renderYard();
+  S.totalInteractions++;save();showBasins("💧");addLog(`🫗 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水");renderYard();
 }
 function yardToy(){
   const g=pick(GAMES);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.happiness=cl(c.happiness+20,0,100);c.hunger=cl(c.hunger-5,0,100);cnt++}});
@@ -2341,11 +2341,11 @@ function execInstruction(cmd,pageId){
   }}
   // 放水盆（院子里放水盆，户外小鸡喝水）
   if(!matched&&(cmd.includes("放水盆")||cmd.includes("摆水盆"))){
-    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});addLog(`📋 [指令] 在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水",null,true);matched=true;
+    let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}});showBasins("💧");addLog(`📋 [指令] 🫗在院子里放了水盆，${cnt}只小鸡跑来喝水~`,"全部","喝水",null,true);matched=true;
   }
   // 放碗/放饭（院子里放食物碗，户外小鸡吃饭）
   if(!matched&&(cmd.includes("放碗")||cmd.includes("放饭")||cmd.includes("摆碗")||cmd.includes("放食物"))){
-    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;cnt++}});addLog(`📋 [指令] 在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭",null,true)}else{addLog(`📋 [指令] 没有食物了，先加点食物吧~`,"全部","吃饭",null,true)}matched=true;
+    if(S.food>0){const f=pick(FOODS);let cnt=0;S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;cnt++}});showBowls(f.icon);addLog(`📋 [指令] 🍽️在院子里放了饭碗，${cnt}只小鸡跑来吃${f.icon}${f.name}~`,"全部","吃饭",null,true)}else{addLog(`📋 [指令] 没有食物了，先加点食物吧~`,"全部","吃饭",null,true)}matched=true;
   }
   // 放玩具（院子里放玩具，户外小鸡玩耍）
   if(!matched&&(cmd.includes("放玩具")||cmd.includes("摆玩具"))){
