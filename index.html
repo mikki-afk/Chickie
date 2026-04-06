@@ -1820,13 +1820,24 @@ function roomRugHTML(id){
   ];
   return`<div class="room-rug" style="${styles[Math.floor(rnd()*styles.length)]}"></div>`;
 }
+function applyFurTransform(el,sc,rot){el.style.transform="scale("+sc+") rotate("+rot+"deg)"}
 function adjustFurScale(fid,delta){
   const layout=getRoomLayout(roomId)||{};
-  const cur=layout[fid]||ROOM_FUR_DEFAULTS[fid]||{scale:1};
+  const def=ROOM_FUR_DEFAULTS[fid]||{};
+  const cur=layout[fid]||def;
   const ns=Math.max(0.4,Math.min(2.5,(cur.scale||1)+delta));
-  layout[fid]={left:cur.left||ROOM_FUR_DEFAULTS[fid].left,bottom:cur.bottom||ROOM_FUR_DEFAULTS[fid].bottom,scale:ns};
+  layout[fid]={left:cur.left||def.left,bottom:cur.bottom||def.bottom,scale:ns,rotate:cur.rotate||0};
   saveRoomLayout(roomId,layout);
-  const el=document.getElementById(fid);if(el)el.style.transform="scale("+ns+")";
+  const el=document.getElementById(fid);if(el)applyFurTransform(el,ns,layout[fid].rotate);
+}
+function rotateFur(fid){
+  const layout=getRoomLayout(roomId)||{};
+  const def=ROOM_FUR_DEFAULTS[fid]||{};
+  const cur=layout[fid]||def;
+  const nr=((cur.rotate||0)+45)%360;
+  layout[fid]={left:cur.left||def.left,bottom:cur.bottom||def.bottom,scale:cur.scale||def.scale||1,rotate:nr};
+  saveRoomLayout(roomId,layout);
+  const el=document.getElementById(fid);if(el)applyFurTransform(el,layout[fid].scale,nr);
 }
 function getRoomLayout(id){try{const d=JSON.parse(localStorage.getItem("chickie_room_"+id));if(d)return d}catch(e){}return null}
 function saveRoomLayout(id,layout){localStorage.setItem("chickie_room_"+id,JSON.stringify(layout))}
@@ -1875,7 +1886,8 @@ function roomFurniture(id,c,col){
   return pieces.map(p=>{
     const pos=saved[p.id]||ROOM_FUR_DEFAULTS[p.id];
     const sc=pos.scale||ROOM_FUR_DEFAULTS[p.id].scale||1;
-    return`<div class="furniture" id="${p.id}" style="left:${pos.left};bottom:${pos.bottom};transform:scale(${sc})">${p.html}<div class="fur-scale-btns"><button onclick="event.stopPropagation();adjustFurScale('${p.id}',-0.15)" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">−</button><button onclick="event.stopPropagation();adjustFurScale('${p.id}',0.15)" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">+</button></div></div>`;
+    const rot=pos.rotate||0;
+    return`<div class="furniture" id="${p.id}" style="left:${pos.left};bottom:${pos.bottom};transform:scale(${sc}) rotate(${rot}deg)">${p.html}<div class="fur-scale-btns"><button onclick="event.stopPropagation();adjustFurScale('${p.id}',-0.15)" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">−</button><button onclick="event.stopPropagation();adjustFurScale('${p.id}',0.15)" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">+</button><button onclick="event.stopPropagation();rotateFur('${p.id}')" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">↻</button></div></div>`;
   }).join("")+'<div class="room-edit-hint">长按拖动 · ➕➖ 缩放</div>';
 }
 function initRoomDrag(){
@@ -1901,7 +1913,7 @@ function initRoomDrag(){
       if(timer){clearTimeout(timer);timer=null}
       if(!dragging)return;dragging=false;el.classList.remove("dragging");
       const layout=getRoomLayout(roomId)||{};
-      scene.querySelectorAll(".furniture").forEach(f=>{const old=layout[f.id]||ROOM_FUR_DEFAULTS[f.id]||{};layout[f.id]={left:f.style.left,bottom:f.style.bottom,scale:old.scale||1}});
+      scene.querySelectorAll(".furniture").forEach(f=>{const old=layout[f.id]||ROOM_FUR_DEFAULTS[f.id]||{};layout[f.id]={left:f.style.left,bottom:f.style.bottom,scale:old.scale||1,rotate:old.rotate||0}});
       saveRoomLayout(roomId,layout);
     }
     el.addEventListener("mousedown",start);el.addEventListener("touchstart",start,{passive:true});
