@@ -394,6 +394,27 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .fur-scale-btns button{font-size:10px;line-height:1;width:14px;height:14px;border-radius:50%;border:1px solid #8B6914;background:#FFE4B5;cursor:pointer;padding:0;color:#5a3e2b;font-weight:700}
 .fur-scale-btns button:active{background:#FFD700}
 .css-rug{width:140px;height:36px;border-radius:50%/40%;opacity:.9;border:2px solid rgba(0,0,0,.15);box-shadow:0 2px 4px rgba(0,0,0,.1)}
+/* Cabinet */
+.css-cabinet{width:54px;height:70px;position:relative;border:3px solid #5a3e1e;border-radius:4px}
+.cab-shelf{position:absolute;left:0;right:0;height:2px;background:#5a3e1e}
+.cab-handle{position:absolute;width:5px;height:5px;border-radius:50%;background:#FFD700;border:1px solid #b8860b}
+.cab-divider{position:absolute;top:0;bottom:0;width:2px;background:#5a3e1e;left:50%}
+/* Snow boots */
+.css-snowboots{width:44px;height:34px;position:relative;display:flex;gap:2px;align-items:flex-end}
+.snowboot{width:20px;height:32px;background:linear-gradient(180deg,#e8f0ff,#b8d0ee);border:2px solid #6a8bb5;border-radius:8px 8px 4px 4px;position:relative}
+.snowboot::before{content:"";position:absolute;bottom:-2px;left:-3px;width:24px;height:6px;background:#5a3e1e;border-radius:3px}
+.snowboot::after{content:"❄";position:absolute;top:8px;left:5px;font-size:8px;color:#6a8bb5}
+/* Rain boots */
+.css-rainboots{width:44px;height:34px;position:relative;display:flex;gap:2px;align-items:flex-end}
+.rainboot{width:20px;height:32px;background:linear-gradient(180deg,#ffd93d,#f4b400);border:2px solid #c08800;border-radius:8px 8px 4px 4px;position:relative}
+.rainboot::before{content:"";position:absolute;bottom:-2px;left:-3px;width:24px;height:6px;background:#3a2a0a;border-radius:3px}
+.rainboot::after{content:"";position:absolute;top:6px;left:4px;width:10px;height:3px;background:#fff;border-radius:2px;opacity:.6}
+/* Umbrella stand */
+.css-umbrella{width:32px;height:60px;position:relative}
+.um-stand{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:22px;background:linear-gradient(180deg,#9aa0a6,#5f6368);border-radius:4px;border:2px solid #3c4043}
+.um-handle{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:3px;height:34px;background:#8B4513;border-radius:2px}
+.um-canopy{position:absolute;top:0;left:50%;transform:translateX(-50%);width:30px;height:14px;background:radial-gradient(ellipse at top,#ff6b9d,#c2185b);border-radius:30px 30px 0 0;border:2px solid #880e4f;border-bottom:none}
+.um-tip{position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:3px;height:5px;background:#5a3e1e;border-radius:2px}
 #furRug{z-index:1}
 .room-furniture-row{position:absolute;inset:0;z-index:2;pointer-events:none}
 .room-furniture-row .furniture{pointer-events:auto}
@@ -508,7 +529,9 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .css-lamp{width:36px;height:56px;position:relative}
 .lamp-pole{width:4px;height:36px;background:#888;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
 .lamp-base{width:20px;height:4px;background:#777;border-radius:2px;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
-.lamp-head{width:28px;height:16px;background:linear-gradient(180deg,#aaa,#888);border-radius:14px 14px 2px 2px;position:absolute;top:0;left:50%;transform:translateX(-50%);border:2px solid #777}
+.lamp-head{width:28px;height:16px;background:linear-gradient(180deg,#aaa,#888);border-radius:14px 14px 2px 2px;position:absolute;top:0;left:50%;transform:translateX(-50%) rotate(0);transform-origin:50% 100%;border:2px solid #777;animation:lampSwing 3.5s ease-in-out infinite}
+@keyframes lampSwing{0%,100%{transform:translateX(-50%) rotate(-6deg)}50%{transform:translateX(-50%) rotate(6deg)}}
+.lamp-on .lamp-head{animation-duration:1.8s}
 .lamp-bulb{width:10px;height:6px;background:#ddd;border-radius:0 0 50% 50%;position:absolute;bottom:-2px;left:50%;transform:translateX(-50%)}
 /* Lamp on glow */
 .lamp-on .lamp-head{background:linear-gradient(180deg,#ffd54f,#ffb300);border-color:#f9a825}
@@ -1805,8 +1828,31 @@ const ROOM_FUR_DEFAULTS={
   furTub:{left:"82%",bottom:"14%",scale:1},
   furDoor:{left:"3%",bottom:"55%",scale:1},
   furWindow:{left:"75%",bottom:"60%",scale:1},
-  furRug:{left:"20%",bottom:"3%",scale:1}
+  furRug:{left:"20%",bottom:"3%",scale:1},
+  furCabinet:{left:"10%",bottom:"40%",scale:1},
+  furSnowBoots:{left:"60%",bottom:"5%",scale:1},
+  furRainBoots:{left:"72%",bottom:"5%",scale:1},
+  furUmbrella:{left:"86%",bottom:"35%",scale:1}
 };
+function cabinetHTML(id){
+  let s=0;const sid=String(id);for(let i=0;i<sid.length;i++)s=(s*31+sid.charCodeAt(i))>>>0;
+  const rnd=()=>{s=(s*1103515245+12345)>>>0;return(s>>>16)/65536};
+  const colors=["#d4a24e","#c08552","#b87333","#a0522d","#8B6914","#6f4e37","#deb887","#cd853f"];
+  const bg=colors[Math.floor(rnd()*colors.length)];
+  const dark=colors[Math.floor(rnd()*colors.length)];
+  const shelves=2+Math.floor(rnd()*2);// 2-3层
+  const hasDivider=rnd()>0.5;
+  let inner=`<div style="position:absolute;inset:0;background:linear-gradient(180deg,${bg},${dark})"></div>`;
+  for(let i=1;i<=shelves;i++)inner+=`<div class="cab-shelf" style="top:${(i*100/(shelves+1)).toFixed(0)}%"></div>`;
+  if(hasDivider)inner+=`<div class="cab-divider"></div>`;
+  // 把手
+  for(let i=0;i<=shelves;i++){
+    const top=(i*100/(shelves+1)+50/(shelves+1)).toFixed(0);
+    if(hasDivider){inner+=`<div class="cab-handle" style="top:${top}%;left:30%"></div><div class="cab-handle" style="top:${top}%;right:30%"></div>`}
+    else inner+=`<div class="cab-handle" style="top:${top}%;left:50%;transform:translateX(-50%)"></div>`;
+  }
+  return`<div class="css-cabinet">${inner}</div><div class="fur-label">柜子</div>`;
+}
 function rugStyleFor(id){
   let s=0;const sid=String(id);for(let i=0;i<sid.length;i++)s=(s*31+sid.charCodeAt(i))>>>0;
   const rnd=()=>{s=(s*1103515245+12345)>>>0;return(s>>>16)/65536};
@@ -1883,6 +1929,10 @@ function roomFurniture(id,c,col){
     {id:"furTub",html:`<div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div><div class="fur-label">浴盆</div>`},
     {id:"furDoor",html:`<div class="door-frame" style="width:32px;height:58px"><div class="door-panel"></div><div class="door-knob"></div></div><div class="fur-label">门</div>`},
     {id:"furRug",html:`<div class="css-rug" style="${rugStyleFor(id)}"></div><div class="fur-label">地毯</div>`},
+    {id:"furCabinet",html:cabinetHTML(id)},
+    {id:"furSnowBoots",html:`<div class="css-snowboots"><div class="snowboot"></div><div class="snowboot"></div></div><div class="fur-label">雪地靴</div>`},
+    {id:"furRainBoots",html:`<div class="css-rainboots"><div class="rainboot"></div><div class="rainboot"></div></div><div class="fur-label">雨鞋</div>`},
+    {id:"furUmbrella",html:`<div class="css-umbrella"><div class="um-stand"></div><div class="um-handle"></div><div class="um-canopy"></div><div class="um-tip"></div></div><div class="fur-label">伞架</div>`},
     {id:"furWindow",html:`<div class="win-frame" style="width:70px;height:55px"><div class="win-sky ${weather}"><div class="win-sun"></div><div class="win-cloud"></div>${winWeatherHTML()}</div><div class="win-cross-h"></div><div class="win-cross-v"></div><div class="win-curtain-l ${c.curtain?"open":""}" style="background:${col[0]}"></div><div class="win-curtain-r ${c.curtain?"open":""}" style="background:${col[0]}"></div></div><div class="fur-label">窗户</div>`}
   ];
   return pieces.map(p=>{
