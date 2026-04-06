@@ -457,8 +457,8 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 
 /* Room chicken */
 .room-chicken-wrap{position:absolute;text-align:center;transition:left 1.5s ease-in-out,bottom .5s ease;z-index:5;bottom:15px}
-.room-chicken-wrap.on-bed{bottom:36px;z-index:6}
-.room-chicken-wrap.on-bed .chick{transform:scale(.55) rotate(-80deg);transform-origin:center center}
+.room-chicken-wrap.on-bed{z-index:6}
+.room-chicken-wrap.on-bed .chick{transform:scale(.55) rotate(-80deg)!important;transform-origin:center center!important;animation:none!important}
 .room-chicken-wrap.on-bed::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:62px;height:24px;background:var(--blanket,#FFB6C1);border-radius:10px 10px 4px 4px;border:2px solid rgba(0,0,0,.12);box-shadow:inset 0 2px 0 rgba(255,255,255,.4);z-index:7}
 .room-reaction{position:absolute;top:-28px;left:50%;transform:translateX(-50%);font-size:16px;opacity:0;pointer-events:none;white-space:nowrap}
 .room-reaction.show{opacity:1;animation:reactPop 2s ease forwards}
@@ -2009,14 +2009,16 @@ function renderRoom(){
   const bedPos=(getRoomLayout(roomId)||{}).furBed||ROOM_FUR_DEFAULTS.furBed;
   // 睡觉时居中放在床上方（床宽约25%，往右偏一点对准枕头）
   const bedLeftPct=parseFloat(bedPos.left)||0;
-  const cLeft=c.sleeping?(bedLeftPct+10)+"%":"42%";
+  const bedScale=bedPos.scale||ROOM_FUR_DEFAULTS.furBed.scale||1.5;
+  const cLeft=c.sleeping?(bedLeftPct+12)+"%":"42%";
+  const cBottomStyle=c.sleeping?`;bottom:calc(${bedPos.bottom} + ${Math.round(30*bedScale)}px)`:"";
 
   const curtCls=c.curtain?"open":"";
   const curtCol=col[0];
   sc.innerHTML=`
     <div class="room-header">🏠 ${c.gender==="male"?"♂":"♀"}${c.name}的房间</div>
     <div class="room-scene">
-      <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" style="left:${cLeft};--blanket:${blanketColor(roomId)}">
+      <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" style="left:${cLeft};--blanket:${blanketColor(roomId)}${cBottomStyle}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
