@@ -399,14 +399,25 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .css-bowl{width:66px;height:42px;position:relative}
 .bowl-body{width:66px;height:30px;background:#D2691E;border-radius:0 0 26px 26px;position:absolute;bottom:0;border:3px solid #8B4513}
 .bowl-inner{width:52px;height:16px;background:#F5DEB3;border-radius:0 0 18px 18px;position:absolute;bottom:6px;left:7px}
-.bowl-food{width:38px;height:10px;background:#DAA520;border-radius:50%;position:absolute;top:-3px;left:50%;transform:translateX(-50%)}
+.bowl-food{width:38px;height:10px;background:#DAA520;border-radius:50%;position:absolute;top:-3px;left:50%;transform:translateX(-50%);opacity:0;transition:opacity .3s}
+.css-bowl.has-food .bowl-food{opacity:1}
 
 /* Water bowl */
 .css-water{width:62px;height:42px;position:relative}
 .water-body{width:62px;height:30px;background:#4682B4;border-radius:0 0 24px 24px;position:absolute;bottom:0;border:3px solid #2c5f8a}
-.water-inner{width:48px;height:16px;background:#87CEEB;border-radius:0 0 18px 18px;position:absolute;bottom:6px;left:7px;overflow:hidden}
+.water-inner{width:48px;height:16px;background:#87CEEB;border-radius:0 0 18px 18px;position:absolute;bottom:6px;left:7px;overflow:hidden;opacity:0;transition:opacity .3s}
+.css-water.has-water .water-inner{opacity:1}
 .water-surface{width:100%;height:6px;background:rgba(255,255,255,.4);border-radius:50%;position:absolute;top:0;animation:waterWave 2s ease-in-out infinite}
 @keyframes waterWave{0%,100%{transform:translateX(-3px)}50%{transform:translateX(3px)}}
+
+/* Yard bowl/water hidden by default */
+.yard-item.yard-bowl,.yard-item.yard-basin{opacity:0;transform:scale(.55) translateY(10px);transition:opacity .4s,transform .4s;pointer-events:none}
+.yard-item.yard-bowl.show,.yard-item.yard-basin.show{opacity:1;transform:scale(.55) translateY(0);pointer-events:auto}
+/* Pour animation */
+.pour-effect{position:absolute;z-index:12;pointer-events:none;font-size:16px;animation:pourAnim 1s ease-out forwards}
+@keyframes pourAnim{0%{transform:translateY(-20px) rotate(-30deg);opacity:1}50%{transform:translateY(5px) rotate(0deg);opacity:1}100%{transform:translateY(10px);opacity:0}}
+.fill-effect{position:absolute;z-index:12;pointer-events:none;font-size:11px;animation:fillPop .6s ease-out .4s both}
+@keyframes fillPop{0%{transform:scale(0);opacity:0}50%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:0}}
 
 /* Room chicken */
 .room-chicken-wrap{position:absolute;text-align:center;transition:left 1.5s ease-in-out;z-index:5;bottom:15px}
@@ -814,10 +825,10 @@ h1{font-size:20px}
           <div class="puddle" style="left:75%;top:45%"></div>
         </div>
         <div class="yard-items">
-          <div class="yard-item" style="left:5%;top:60%"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
-          <div class="yard-item" style="left:82%;top:55%"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
-          <div class="yard-item" style="left:15%;top:75%"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
-          <div class="yard-item" style="left:70%;top:72%"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
+          <div class="yard-item yard-bowl" id="yardBowl1" style="left:5%;top:60%"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
+          <div class="yard-item yard-bowl" id="yardBowl2" style="left:82%;top:55%"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
+          <div class="yard-item yard-basin" id="yardBasin1" style="left:15%;top:75%"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
+          <div class="yard-item yard-basin" id="yardBasin2" style="left:70%;top:72%"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
           <div class="yard-item" style="left:45%;top:80%"><div class="toy"><div class="toy-ball"></div></div><span class="yard-item-label">球</span></div>
           <div class="yard-item" style="left:60%;top:45%"><div class="toy"><div class="toy-straw"></div></div><span class="yard-item-label">草窝</span></div>
           <div class="yard-item" style="left:30%;top:50%"><div class="toy"><div class="toy-log"></div></div><span class="yard-item-label">木桩</span></div>
@@ -1486,7 +1497,7 @@ function yardFeed(){
       const fn=FOODS.find(x=>x.id===fid);if(fn&&fn.hp)c.health=cl(c.health+fn.hp,0,100);
     });
     S.food--;S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","feed");updStages();save();
-    const fn=FOODS.find(x=>x.id===fid);addLog(`🌾 你给院子里的小鸡们喂了${fn?fn.icon+fn.name:"食物"}`,"全部","吃饭");renderYard();
+    const fn=FOODS.find(x=>x.id===fid);showBowls(fn?fn.icon:"🌾");addLog(`🌾 你给院子里的小鸡们喂了${fn?fn.icon+fn.name:"食物"}`,"全部","吃饭");renderYard();
   });
 }
 function yardPlay(){
@@ -1507,7 +1518,7 @@ function yardDrink(){
   openSel("选择饮品",DRINKS.map(d=>({id:d.id,icon:d.icon,name:d.name,type:"drink"})),function(did){
     const dk=DRINKS.find(d=>d.id===did)||DRINKS[0];
     S.chickens.forEach(c=>{if(c.location==="outside"&&!c.sleeping){c.thirst=cl(c.thirst+dk.thirst,0,100);if(dk.health)c.health=cl(c.health+dk.health,0,100);if(dk.happiness)c.happiness=cl(c.happiness+dk.happiness,0,100)}});
-    S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","drink");save();addLog(`${dk.icon} 你给院子里的小鸡们喝了${dk.name}`,"全部","喝水");renderYard();
+    S.totalInteractions++;S.chickens.forEach(x=>{if(x.location==="outside"&&!x.sleeping){const ov=x.affManual;x.affManual+=1;checkAffMilestone(x.id,"manual",ov,x.affManual)}});setCD("yard","drink");save();showBasins(dk.icon);addLog(`${dk.icon} 你给院子里的小鸡们喝了${dk.name}`,"全部","喝水");renderYard();
   });
 }
 function yardSleep(){
@@ -1626,7 +1637,7 @@ function menuFeed(){
     if(food.hp)c.health=cl(c.health+food.hp,0,100);
     c.totalHunger+=Math.min(h,100);S.food--;S.totalInteractions++;
     {const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}
-    updStages();save();
+    updStages();save();showBowls(food.icon);
     addLog(`🌾 你给${c.name}喂了${food.icon}${food.name}${food.hp?" (营养+"+food.hp+")":""}`,c.name,"吃饭",c);
     renderYard();
   });
@@ -1638,7 +1649,7 @@ function menuDrink(){
     c.thirst=cl(c.thirst+dk.thirst,0,100);if(dk.health)c.health=cl(c.health+dk.health,0,100);
     c.happiness=cl(c.happiness+(dk.happiness||3),0,100);
     S.totalInteractions++;{const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}
-    save();addLog(`${dk.icon} 你给${c.name}喝了${dk.name}`,c.name,"喝水",c);renderYard();
+    save();showBasins(dk.icon);addLog(`${dk.icon} 你给${c.name}喝了${dk.name}`,c.name,"喝水",c);renderYard();
   });
 }
 // ===== FORCE BAR =====
@@ -2140,12 +2151,19 @@ function notionLog(chicken,type,detail,stats,instrReply){
   notionQueue.push({chicken,type,detail,stats,instrReply});
   if(!notionSending)flushNotion();
 }
+function timeEmoji(){
+  const h=new Date().getHours();
+  if(h>=6&&h<8)return"🌅";if(h>=8&&h<11)return"☀️";if(h>=11&&h<13)return"🌞";
+  if(h>=13&&h<15)return"🌤️";if(h>=15&&h<17)return"⛅";if(h>=17&&h<19)return"🌇";
+  if(h>=19&&h<21)return"🌆";if(h>=21&&h<23)return"🌙";return"🌑";
+}
 async function flushNotion(){
   if(notionQueue.length===0){notionSending=false;return}
   notionSending=true;
   const item=notionQueue.shift();
+  const tE=timeEmoji();
   const props={
-    "Name":{title:[{text:{content:item.detail}}]},
+    "Name":{title:[{text:{content:tE+" "+item.detail}}]},
     "小鸡":{select:{name:item.chicken||"全部"}},
     "类型":{select:{name:item.type||"闲逛"}},
     "时间":{date:{start:torontoISO()}},
@@ -2947,6 +2965,44 @@ function triggerBuddyEvent(){
   save();
 }
 
+// ===== BOWL/BASIN ANIMATIONS =====
+let bowlTimer=null,basinTimer=null;
+function showBowls(foodIcon){
+  if(view!=="yard")return;
+  const b1=document.getElementById("yardBowl1"),b2=document.getElementById("yardBowl2");
+  if(b1)b1.classList.add("show");if(b2)b2.classList.add("show");
+  // Pour animation
+  [b1,b2].forEach(el=>{
+    if(!el)return;
+    const bowl=el.querySelector(".css-bowl");if(bowl)bowl.classList.add("has-food");
+    const p=document.createElement("div");p.className="pour-effect";p.textContent=foodIcon||"🌾";p.style.left="50%";p.style.top="-5px";el.appendChild(p);
+    const f=document.createElement("div");f.className="fill-effect";f.textContent="✨";f.style.left="50%";f.style.top="5px";el.appendChild(f);
+    setTimeout(()=>{p.remove();f.remove()},1500);
+  });
+  if(bowlTimer)clearTimeout(bowlTimer);
+  bowlTimer=setTimeout(()=>{
+    if(b1){b1.classList.remove("show");const bw=b1.querySelector(".css-bowl");if(bw)bw.classList.remove("has-food")}
+    if(b2){b2.classList.remove("show");const bw=b2.querySelector(".css-bowl");if(bw)bw.classList.remove("has-food")}
+  },8000);
+}
+function showBasins(drinkIcon){
+  if(view!=="yard")return;
+  const b1=document.getElementById("yardBasin1"),b2=document.getElementById("yardBasin2");
+  if(b1)b1.classList.add("show");if(b2)b2.classList.add("show");
+  [b1,b2].forEach(el=>{
+    if(!el)return;
+    const water=el.querySelector(".css-water");if(water)water.classList.add("has-water");
+    const p=document.createElement("div");p.className="pour-effect";p.textContent=drinkIcon||"💧";p.style.left="50%";p.style.top="-5px";el.appendChild(p);
+    const f=document.createElement("div");f.className="fill-effect";f.textContent="💦";f.style.left="50%";f.style.top="5px";el.appendChild(f);
+    setTimeout(()=>{p.remove();f.remove()},1500);
+  });
+  if(basinTimer)clearTimeout(basinTimer);
+  basinTimer=setTimeout(()=>{
+    if(b1){b1.classList.remove("show");const w=b1.querySelector(".css-water");if(w)w.classList.remove("has-water")}
+    if(b2){b2.classList.remove("show");const w=b2.querySelector(".css-water");if(w)w.classList.remove("has-water")}
+  },8000);
+}
+
 // ===== YARD EFFECTS =====
 function showYardEffect(cid,type){
   if(view!=="yard")return;
@@ -3047,7 +3103,7 @@ function startAutoActivity(){
         if(c.favoriteFood.includes(f.id))addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name}，好吃！😍`,c.name,"吃饭",c);
         else if(c.hatedFood.includes(f.id))addLog(`🌾 ${c.name} 尝了口${f.icon}${f.name}，不喜欢…😣`,c.name,"吃饭",c);
         else addLog(`🌾 ${c.name} 自己吃了${f.icon}${f.name} 😊`,c.name,"吃饭",c);
-        showYardEffect(c.id,"eat");
+        showYardEffect(c.id,"eat");showBowls(f.icon);
       }else if(act==="play"){
         const g=pick(GAMES);
         let p=20,hc=10;
@@ -3060,7 +3116,7 @@ function startAutoActivity(){
       }else if(act==="drink"){
         c.thirst=cl(c.thirst+20,0,100);
         addLog(`💧 ${c.name} 自己跑去喝水了，咕噜咕噜~`,c.name,"喝水",c);
-        showYardEffect(c.id,"drink");
+        showYardEffect(c.id,"drink");showBasins("💧");
       }else if(act==="bath"){
         c.clean=cl(c.clean+25,0,100);c.happiness=cl(c.happiness+5,0,100);
         addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`,c.name,"洗澡",c);
