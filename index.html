@@ -388,10 +388,13 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .furniture{text-align:center;z-index:3;position:absolute;cursor:grab;touch-action:none;user-select:none;transform-origin:center bottom}
 .furniture.dragging{cursor:grabbing;z-index:10;opacity:.85}
 .furniture .fur-label{font-size:9px;color:#5a3e2b;font-weight:600;margin-top:2px}
-.fur-scale-btns{display:flex;gap:2px;justify-content:center;margin-top:1px}
+.fur-scale-btns{display:none;gap:2px;justify-content:center;margin-top:1px}
+.furniture.selected .fur-scale-btns{display:flex}
+.furniture.selected{outline:2px dashed rgba(255,107,157,.8);outline-offset:2px;border-radius:4px}
 .fur-scale-btns button{font-size:10px;line-height:1;width:14px;height:14px;border-radius:50%;border:1px solid #8B6914;background:#FFE4B5;cursor:pointer;padding:0;color:#5a3e2b;font-weight:700}
 .fur-scale-btns button:active{background:#FFD700}
-.room-rug{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:60%;height:30px;border-radius:50%/40%;z-index:1;opacity:.85;border:2px solid rgba(0,0,0,.15);box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.css-rug{width:140px;height:36px;border-radius:50%/40%;opacity:.9;border:2px solid rgba(0,0,0,.15);box-shadow:0 2px 4px rgba(0,0,0,.1)}
+#furRug{z-index:1}
 .room-furniture-row{position:absolute;inset:0;z-index:2;pointer-events:none}
 .room-furniture-row .furniture{pointer-events:auto}
 .room-edit-hint{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:8px;color:rgba(0,0,0,.3);z-index:1}
@@ -1799,17 +1802,13 @@ const ROOM_FUR_DEFAULTS={
   furLamp:{left:"70%",bottom:"22%",scale:1},
   furTub:{left:"82%",bottom:"14%",scale:1},
   furDoor:{left:"3%",bottom:"55%",scale:1},
-  furWindow:{left:"75%",bottom:"60%",scale:1}
+  furWindow:{left:"75%",bottom:"60%",scale:1},
+  furRug:{left:"20%",bottom:"3%",scale:1}
 };
-function roomRugHTML(id){
-  // 基于id生成稳定随机花色
+function rugStyleFor(id){
   let s=0;const sid=String(id);for(let i=0;i<sid.length;i++)s=(s*31+sid.charCodeAt(i))>>>0;
   const rnd=()=>{s=(s*1103515245+12345)>>>0;return(s>>>16)/65536};
-  const palettes=[
-    ["#ff6b9d","#ffd93d","#6bcf7f"],["#a78bfa","#fbbf24","#f87171"],
-    ["#60a5fa","#34d399","#fcd34d"],["#fb923c","#facc15","#a3e635"],
-    ["#ec4899","#8b5cf6","#06b6d4"],["#84cc16","#eab308","#f97316"]
-  ];
+  const palettes=[["#ff6b9d","#ffd93d","#6bcf7f"],["#a78bfa","#fbbf24","#f87171"],["#60a5fa","#34d399","#fcd34d"],["#fb923c","#facc15","#a3e635"],["#ec4899","#8b5cf6","#06b6d4"],["#84cc16","#eab308","#f97316"]];
   const p=palettes[Math.floor(rnd()*palettes.length)];
   const styles=[
     `background:repeating-linear-gradient(45deg,${p[0]} 0 12px,${p[1]} 12px 24px,${p[2]} 24px 36px)`,
@@ -1818,7 +1817,7 @@ function roomRugHTML(id){
     `background:repeating-linear-gradient(0deg,${p[0]} 0 6px,${p[1]} 6px 12px),repeating-linear-gradient(90deg,${p[2]}80 0 6px,transparent 6px 12px)`,
     `background:radial-gradient(ellipse at center,${p[0]} 0%,${p[1]} 50%,${p[2]} 100%)`
   ];
-  return`<div class="room-rug" style="${styles[Math.floor(rnd()*styles.length)]}"></div>`;
+  return styles[Math.floor(rnd()*styles.length)];
 }
 function applyFurTransform(el,sc,rot){el.style.transform="scale("+sc+") rotate("+rot+"deg)"}
 function adjustFurScale(fid,delta){
@@ -1881,6 +1880,7 @@ function roomFurniture(id,c,col){
     {id:"furLamp",html:`<div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div><div class="fur-label">照灯</div>`},
     {id:"furTub",html:`<div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div><div class="fur-label">浴盆</div>`},
     {id:"furDoor",html:`<div class="door-frame" style="width:32px;height:58px"><div class="door-panel"></div><div class="door-knob"></div></div><div class="fur-label">门</div>`},
+    {id:"furRug",html:`<div class="css-rug" style="${rugStyleFor(id)}"></div><div class="fur-label">地毯</div>`},
     {id:"furWindow",html:`<div class="win-frame" style="width:70px;height:55px"><div class="win-sky ${weather}"><div class="win-sun"></div><div class="win-cloud"></div>${winWeatherHTML()}</div><div class="win-cross-h"></div><div class="win-cross-v"></div><div class="win-curtain-l ${c.curtain?"open":""}" style="background:${col[0]}"></div><div class="win-curtain-r ${c.curtain?"open":""}" style="background:${col[0]}"></div></div><div class="fur-label">窗户</div>`}
   ];
   return pieces.map(p=>{
@@ -1910,7 +1910,12 @@ function initRoomDrag(){
       el.style.left=(nl/sr.width*100)+"%";el.style.bottom=(nb/sr.height*100)+"%";
     }
     function end(){
-      if(timer){clearTimeout(timer);timer=null}
+      if(timer){clearTimeout(timer);timer=null;
+        // 短按 = 选中切换
+        scene.querySelectorAll(".furniture.selected").forEach(f=>{if(f!==el)f.classList.remove("selected")});
+        el.classList.toggle("selected");
+        return;
+      }
       if(!dragging)return;dragging=false;el.classList.remove("dragging");
       const layout=getRoomLayout(roomId)||{};
       scene.querySelectorAll(".furniture").forEach(f=>{const old=layout[f.id]||ROOM_FUR_DEFAULTS[f.id]||{};layout[f.id]={left:f.style.left,bottom:f.style.bottom,scale:old.scale||1,rotate:old.rotate||0}});
@@ -1936,7 +1941,6 @@ function renderRoom(){
     <div class="room-header">🏠 ${c.gender==="male"?"♂":"♀"}${c.name}的房间</div>
     <div class="room-scene">
       <div class="room-ceiling-light ${c.light?"on":""}"><div class="cl-wire"></div><div class="cl-shade"><div class="cl-bulb"></div></div><div class="cl-glow"></div></div>
-      ${roomRugHTML(roomId)}
       <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" style="left:${cLeft}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
