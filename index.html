@@ -2012,7 +2012,7 @@ function renderRoom(){
   const bedLeftPct=parseFloat(bedPos.left)||0;
   const bedScale=bedPos.scale||ROOM_FUR_DEFAULTS.furBed.scale||1.5;
   const cLeft=c.sleeping?(bedLeftPct+26)+"%":"42%";
-  const cBottomStyle=c.sleeping?`;bottom:calc(${bedPos.bottom} + ${Math.round(30*bedScale)}px)`:"";
+  const cBottomStyle=c.sleeping?`;bottom:calc(${bedPos.bottom} + ${Math.round(55*bedScale)}px)`:"";
 
   const curtCls=c.curtain?"open":"";
   const curtCol=col[0];
