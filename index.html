@@ -400,11 +400,13 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-edit-hint{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:8px;color:rgba(0,0,0,.3);z-index:1}
 
 /* Bed */
-.css-bed{width:100px;height:52px;position:relative}
-.bed-frame{width:100px;height:34px;background:#8B6914;border-radius:6px;position:absolute;bottom:0;border:3px solid #6B4F10}
-.bed-mattress{width:88px;height:22px;background:#FFE4B5;border-radius:4px;position:absolute;bottom:6px;left:6px}
-.bed-pillow{width:26px;height:18px;background:#fff;border-radius:5px;position:absolute;bottom:10px;left:10px;border:2px solid #ddd}
-.bed-blanket{width:52px;height:18px;background:#FFB6C1;border-radius:0 0 4px 4px;position:absolute;bottom:6px;right:10px;opacity:.8}
+.css-bed{width:100px;height:60px;position:relative}
+.bed-frame{width:100px;height:34px;background:#8B6914;border-radius:6px;position:absolute;bottom:8px;border:3px solid #6B4F10}
+.bed-leg{position:absolute;bottom:0;width:8px;height:10px;background:#6B4F10;border-radius:0 0 3px 3px}
+.bed-leg.l{left:4px}.bed-leg.r{right:4px}
+.bed-mattress{width:88px;height:22px;background:#FFE4B5;border-radius:4px;position:absolute;bottom:14px;left:6px}
+.bed-pillow{width:26px;height:18px;background:#fff;border-radius:5px;position:absolute;bottom:18px;left:10px;border:2px solid #ddd}
+.bed-blanket{width:52px;height:18px;background:#FFB6C1;border-radius:0 0 4px 4px;position:absolute;bottom:14px;right:10px;opacity:.8}
 
 /* Food bowl */
 .css-bowl{width:66px;height:42px;position:relative}
@@ -1873,7 +1875,7 @@ function roomLayoutEmoji(id){
 function roomFurniture(id,c,col){
   const saved=getRoomLayout(id)||{};
   const pieces=[
-    {id:"furBed",html:`<div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div><div class="fur-label">小床</div>`},
+    {id:"furBed",html:`<div class="css-bed" id="cssBed"><div class="bed-leg l"></div><div class="bed-leg r"></div><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div><div class="fur-label">小床</div>`},
     {id:"furBowl",html:`<div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><div class="fur-label">饭盆</div>`},
     {id:"furWater",html:`<div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><div class="fur-label">水碗</div>`},
     {id:"furHeater",html:`<div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div><div class="fur-label">暖气</div>`},
