@@ -13,7 +13,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 /* ===== CHICKEN SPRITE ===== */
 .chick{display:inline-block;position:relative;width:50px;height:48px}
 .chick.big{transform:scale(1.7);transform-origin:bottom center;margin:28px 18px 8px}
-.chick.med{transform:scale(1.3);transform-origin:bottom center;margin:2px}
+.chick.med{transform:scale(0.9);transform-origin:bottom center;margin:2px}
 .chick-body{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:34px;height:28px;border-radius:50%;background:#FFD700;box-shadow:inset -2px -2px 5px rgba(0,0,0,.1),inset 2px 2px 5px rgba(255,255,255,.3)}
 .chick-head{position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:26px;border-radius:50%;background:#FFD700;box-shadow:inset -2px -2px 4px rgba(0,0,0,.08),inset 2px 2px 4px rgba(255,255,255,.3);z-index:2}
 .chick-hair{position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:3px solid transparent;border-right:3px solid transparent;border-bottom:7px solid #FFA500;z-index:3}
@@ -252,7 +252,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 @keyframes zzzF{0%,100%{opacity:.4;transform:translateY(0) scale(.8)}50%{opacity:1;transform:translateY(-6px) scale(1.1)}}
 @keyframes breathe{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
 @keyframes breatheBig{0%,100%{transform:scale(1.7) translateY(0)}50%{transform:scale(1.7) translateY(-2px)}}
-@keyframes breatheMed{0%,100%{transform:scale(1.3) translateY(0)}50%{transform:scale(1.3) translateY(-2px)}}
+@keyframes breatheMed{0%,100%{transform:scale(0.9) translateY(0)}50%{transform:scale(0.9) translateY(-2px)}}
 .chick{animation:breathe 2s ease-in-out infinite}
 .chick.big{animation:breatheBig 2s ease-in-out infinite!important}
 .chick.med{animation:breatheMed 2s ease-in-out infinite!important}
@@ -327,7 +327,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .coop-btn:hover{background:#fff}
 
 /* Yard ground */
-.yard-ground{position:relative;min-height:190px;background:linear-gradient(180deg,#6db35a 0%,#5a9a48 100%);padding:10px}
+.yard-ground{position:relative;min-height:240px;background:linear-gradient(180deg,#6db35a 0%,#5a9a48 100%);padding:10px}
 
 /* Grass tufts */
 .grass{position:absolute;pointer-events:none;z-index:0}
