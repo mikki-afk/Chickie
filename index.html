@@ -385,9 +385,12 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-scene{position:relative;min-height:200px;padding:10px 10px 0}
 
 /* CSS Furniture */
-.furniture{text-align:center;z-index:1;flex-shrink:0}
+.furniture{text-align:center;z-index:3;position:absolute;cursor:grab;touch-action:none;user-select:none}
+.furniture.dragging{cursor:grabbing;z-index:10;opacity:.8;transform:scale(1.05)}
 .furniture .fur-label{font-size:9px;color:#5a3e2b;font-weight:600;margin-top:2px}
-.room-furniture-row{display:flex;justify-content:space-between;align-items:flex-end;padding:0 4px;position:relative;z-index:1}
+.room-furniture-row{position:absolute;inset:0;z-index:2;pointer-events:none}
+.room-furniture-row .furniture{pointer-events:auto}
+.room-edit-hint{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);font-size:8px;color:rgba(0,0,0,.3);z-index:1}
 
 /* Bed */
 .css-bed{width:100px;height:52px;position:relative}
@@ -1784,26 +1787,61 @@ function exitRoom(){
   renderYard();
 }
 
+const ROOM_FUR_DEFAULTS={
+  furBed:{left:"1%",bottom:"18%"},
+  furBowl:{left:"24%",bottom:"16%"},
+  furWater:{left:"40%",bottom:"20%"},
+  furHeater:{left:"56%",bottom:"18%"},
+  furLamp:{left:"70%",bottom:"22%"},
+  furTub:{left:"80%",bottom:"14%"}
+};
+function getRoomLayout(id){try{const d=JSON.parse(localStorage.getItem("chickie_room_"+id));if(d)return d}catch(e){}return null}
+function saveRoomLayout(id,layout){localStorage.setItem("chickie_room_"+id,JSON.stringify(layout))}
 function roomFurniture(id,c,col){
-  // Seeded random per chicken so layout is consistent but unique
-  function srand(seed){let s=seed;return()=>{s=(s*16807+0)%2147483647;return(s-1)/2147483646}}
-  const rng=srand((id+1)*7919);
-  // Define furniture pieces
+  const saved=getRoomLayout(id)||{};
   const pieces=[
-    {id:"furBed",mb:4+Math.floor(rng()*4),html:`<div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div><div class="fur-label">小床</div>`},
-    {id:"furBowl",mb:Math.floor(rng()*3),html:`<div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><div class="fur-label">饭盆</div>`},
-    {id:"furWater",mb:Math.floor(rng()*3),html:`<div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><div class="fur-label">水碗</div>`},
-    {id:"furHeater",mb:2+Math.floor(rng()*3),html:`<div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div><div class="fur-label">暖气</div>`},
-    {id:"furLamp",mb:3+Math.floor(rng()*4),html:`<div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div><div class="fur-label">照灯</div>`},
-    {id:"furTub",mb:Math.floor(rng()*2),html:`<div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div><div class="fur-label">浴盆</div>`}
+    {id:"furBed",html:`<div class="css-bed" id="cssBed"><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div><div class="fur-label">小床</div>`},
+    {id:"furBowl",html:`<div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><div class="fur-label">饭盆</div>`},
+    {id:"furWater",html:`<div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><div class="fur-label">水碗</div>`},
+    {id:"furHeater",html:`<div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div><div class="fur-label">暖气</div>`},
+    {id:"furLamp",html:`<div class="css-lamp ${c.lamp>0?"lamp-on":""}"><div class="lamp-head"><div class="lamp-bulb"></div></div><div class="lamp-pole"></div><div class="lamp-base"></div><div class="lamp-cone"></div></div><div class="fur-label">照灯</div>`},
+    {id:"furTub",html:`<div class="css-tub"><div class="tub-body"></div><div class="tub-water"><div class="water-surface"></div></div><div class="tub-bubbles">°。°</div><div class="tub-feet-l"></div><div class="tub-feet-r"></div><div class="tub-splash" id="tubSplash">💦✨</div></div><div class="fur-label">浴盆</div>`}
   ];
-  // Shuffle middle items (keep bed always first or second, tub always last or second-to-last)
-  const bed=pieces[0],tub=pieces[5];
-  const mid=[pieces[1],pieces[2],pieces[3],pieces[4]];
-  for(let i=mid.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[mid[i],mid[j]]=[mid[j],mid[i]]}
-  // Bed always first so sleeping chicken aligns with it
-  const arr=[bed,...mid,tub];
-  return arr.map(p=>`<div class="furniture" id="${p.id}" style="margin-bottom:${p.mb}px">${p.html}</div>`).join("");
+  return pieces.map(p=>{
+    const pos=saved[p.id]||ROOM_FUR_DEFAULTS[p.id];
+    return`<div class="furniture" id="${p.id}" style="left:${pos.left};bottom:${pos.bottom}">${p.html}</div>`;
+  }).join("")+'<div class="room-edit-hint">长按家具可拖动摆放</div>';
+}
+function initRoomDrag(){
+  const scene=document.querySelector(".room-scene");if(!scene)return;
+  scene.querySelectorAll(".furniture").forEach(el=>{
+    let dragging=false,startX,startY,origL,origB,timer=null;
+    function start(e){
+      const t=e.touches?e.touches[0]:e;
+      startX=t.clientX;startY=t.clientY;
+      const r=el.getBoundingClientRect(),sr=scene.getBoundingClientRect();
+      origL=r.left-sr.left;origB=sr.bottom-r.bottom;
+      timer=setTimeout(()=>{dragging=true;el.classList.add("dragging")},250);
+    }
+    function move(e){
+      if(!dragging){if(timer){const t=e.touches?e.touches[0]:e;if(Math.abs(t.clientX-startX)>5||Math.abs(t.clientY-startY)>5){clearTimeout(timer);timer=null}}return}
+      e.preventDefault();
+      const t=e.touches?e.touches[0]:e,sr=scene.getBoundingClientRect();
+      const nl=Math.max(0,Math.min(origL+(t.clientX-startX),sr.width-el.offsetWidth));
+      const nb=Math.max(0,Math.min(origB-(t.clientY-startY),sr.height-el.offsetHeight-30));
+      el.style.left=(nl/sr.width*100)+"%";el.style.bottom=(nb/sr.height*100)+"%";
+    }
+    function end(){
+      if(timer){clearTimeout(timer);timer=null}
+      if(!dragging)return;dragging=false;el.classList.remove("dragging");
+      const layout=getRoomLayout(roomId)||{};
+      scene.querySelectorAll(".furniture").forEach(f=>{layout[f.id]={left:f.style.left,bottom:f.style.bottom}});
+      saveRoomLayout(roomId,layout);
+    }
+    el.addEventListener("mousedown",start);el.addEventListener("touchstart",start,{passive:true});
+    document.addEventListener("mousemove",move);document.addEventListener("touchmove",move,{passive:false});
+    document.addEventListener("mouseup",end);document.addEventListener("touchend",end);
+  });
 }
 function renderRoom(){
   const c=S.chickens[roomId];if(!c)return;
@@ -1811,7 +1849,8 @@ function renderRoom(){
   const sc=document.getElementById("roomScene");
   sc.style.background=`linear-gradient(180deg,${col[0]}25 60%,${col[0]}40 100%)`;
   sc.style.borderColor=col[1];
-  const cLeft=c.sleeping?"5%":(15+Math.floor(Math.random()*40))+"%";
+  const bedPos=(getRoomLayout(roomId)||{}).furBed||ROOM_FUR_DEFAULTS.furBed;
+  const cLeft=c.sleeping?bedPos.left:"42%";
 
   const curtCls=c.curtain?"open":"";
   const curtCol=col[0];
@@ -1873,6 +1912,7 @@ function renderRoom(){
     <div style="margin-top:4px;font-size:10px;color:#888">❤️喜欢:${ff}${fg} 💔讨厌:${hf}${hg}</div>
     <div style="margin-top:2px;font-size:10px;color:#888">💕好友:${bb.best>=0?S.chickens[bb.best].name+"("+bb.bestV+(()=>{const bl=BUDDY_LEVELS.slice().reverse().find(l=>bb.bestV>=l.threshold);return bl?" · "+bl.level:""})()+")"  :"无"} 😐疏远:${bb.worst>=0&&bb.worstV<bb.bestV?S.chickens[bb.worst].name+"("+bb.worstV+")":"无"}</div>`;
   renderRoomBtns();
+  initRoomDrag();
 }
 
 function renderRoomBtns(){
