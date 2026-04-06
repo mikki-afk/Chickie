@@ -458,7 +458,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-chicken-wrap{position:absolute;text-align:center;transition:left 1.5s ease-in-out,bottom .5s ease;z-index:5;bottom:15px}
 .room-chicken-wrap.on-bed{bottom:42px;z-index:6}
 .room-chicken-wrap.on-bed .chick{clip-path:inset(0 0 40% 0)}
-.room-chicken-wrap.on-bed::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:62px;height:24px;background:linear-gradient(180deg,#FFB6C1,#ff8fa3);border-radius:10px 10px 4px 4px;border:2px solid rgba(0,0,0,.12);box-shadow:inset 0 2px 0 rgba(255,255,255,.4);z-index:7}
+.room-chicken-wrap.on-bed::after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:62px;height:24px;background:var(--blanket,#FFB6C1);border-radius:10px 10px 4px 4px;border:2px solid rgba(0,0,0,.12);box-shadow:inset 0 2px 0 rgba(255,255,255,.4);z-index:7}
 .room-reaction{position:absolute;top:-28px;left:50%;transform:translateX(-50%);font-size:16px;opacity:0;pointer-events:none;white-space:nowrap}
 .room-reaction.show{opacity:1;animation:reactPop 2s ease forwards}
 @keyframes reactPop{0%{opacity:0;transform:translateX(-50%) scale(.5)}20%{opacity:1;transform:translateX(-50%) scale(1.1)}40%{transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}
@@ -1838,6 +1838,22 @@ const ROOM_FUR_DEFAULTS={
   furUmbrella:{left:"86%",bottom:"35%",scale:1},
   furCeilingLight:{left:"45%",bottom:"82%",scale:1}
 };
+function seededPick(id,salt,arr){
+  let s=salt|0;const sid=String(id);for(let i=0;i<sid.length;i++)s=(s*31+sid.charCodeAt(i))>>>0;
+  return arr[s%arr.length];
+}
+function snowBootColors(id){
+  const palettes=[["#e8f0ff","#b8d0ee","#6a8bb5"],["#ffffff","#dde8f5","#7a9cc6"],["#e0f7fa","#a8d8e0","#4a90a4"],["#f0e8ff","#c8b8e0","#7a5fa0"],["#e8ffe8","#b8e0b8","#5a8a5a"]];
+  return seededPick(id,7,palettes);
+}
+function rainBootColors(id){
+  const palettes=[["#ffd93d","#f4b400","#c08800"],["#ff6b6b","#e74c3c","#a0211a"],["#4dd0e1","#0097a7","#006064"],["#9c27b0","#6a1b9a","#3a0a5a"],["#66bb6a","#388e3c","#1b5e20"],["#ff9800","#e65100","#a03800"]];
+  return seededPick(id,11,palettes);
+}
+function blanketColor(id){
+  const cols=["#FFB6C1","#FFD580","#B0E0E6","#C8E6C9","#E1BEE7","#FFCCBC","#B3E5FC","#F8BBD0","#DCEDC8"];
+  return seededPick(id,17,cols);
+}
 function cabinetHTML(id){
   let s=0;const sid=String(id);for(let i=0;i<sid.length;i++)s=(s*31+sid.charCodeAt(i))>>>0;
   const rnd=()=>{s=(s*1103515245+12345)>>>0;return(s>>>16)/65536};
@@ -1925,7 +1941,7 @@ function roomLayoutEmoji(id){
 function roomFurniture(id,c,col){
   const saved=getRoomLayout(id)||{};
   const pieces=[
-    {id:"furBed",html:`<div class="css-bed" id="cssBed"><div class="bed-leg l"></div><div class="bed-leg r"></div><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${col[0]}"></div></div><div class="fur-label">小床</div>`},
+    {id:"furBed",html:`<div class="css-bed" id="cssBed"><div class="bed-leg l"></div><div class="bed-leg r"></div><div class="bed-frame"></div><div class="bed-mattress"></div><div class="bed-pillow"></div><div class="bed-blanket" style="background:${blanketColor(id)}"></div></div><div class="fur-label">小床</div>`},
     {id:"furBowl",html:`<div class="css-bowl" id="cssBowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><div class="fur-label">饭盆</div>`},
     {id:"furWater",html:`<div class="css-water" id="cssWater"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><div class="fur-label">水碗</div>`},
     {id:"furHeater",html:`<div class="css-heater ${c.heater>0?"heater-on":""}"><div class="heater-body"><div class="heater-lines"><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div><div class="heater-line"></div></div></div><div class="heater-feet"><div class="heater-foot"></div><div class="heater-foot"></div></div><div class="heater-wave">~~~</div></div><div class="fur-label">暖气</div>`},
@@ -1934,8 +1950,8 @@ function roomFurniture(id,c,col){
     {id:"furDoor",html:`<div class="door-frame" style="width:32px;height:58px"><div class="door-panel"></div><div class="door-knob"></div></div><div class="fur-label">门</div>`},
     {id:"furRug",html:`<div class="css-rug" style="${rugStyleFor(id)}"></div><div class="fur-label">地毯</div>`},
     {id:"furCabinet",html:cabinetHTML(id)},
-    {id:"furSnowBoots",html:`<div class="css-snowboots"><div class="snowboot"></div><div class="snowboot"></div></div><div class="fur-label">雪地靴</div>`},
-    {id:"furRainBoots",html:`<div class="css-rainboots"><div class="rainboot"></div><div class="rainboot"></div></div><div class="fur-label">雨鞋</div>`},
+    {id:"furSnowBoots",html:(()=>{const sb=snowBootColors(id);return`<div class="css-snowboots"><div class="snowboot" style="background:linear-gradient(180deg,${sb[0]},${sb[1]});border-color:${sb[2]}"></div><div class="snowboot" style="background:linear-gradient(180deg,${sb[0]},${sb[1]});border-color:${sb[2]}"></div></div><div class="fur-label">雪地靴</div>`})()},
+    {id:"furRainBoots",html:(()=>{const rb=rainBootColors(id);return`<div class="css-rainboots"><div class="rainboot" style="background:linear-gradient(180deg,${rb[0]},${rb[1]});border-color:${rb[2]}"></div><div class="rainboot" style="background:linear-gradient(180deg,${rb[0]},${rb[1]});border-color:${rb[2]}"></div></div><div class="fur-label">雨鞋</div>`})()},
     {id:"furUmbrella",html:`<div class="css-umbrella"><div class="um-stand"></div><div class="um-handle"></div><div class="um-canopy"></div><div class="um-tip"></div></div><div class="fur-label">伞架</div>`},
     {id:"furCeilingLight",html:`<div class="room-ceiling-light ${c.light?"on":""}" style="position:relative;top:auto;left:auto;transform:none"><div class="cl-wire"></div><div class="cl-shade"><div class="cl-bulb"></div></div><div class="cl-glow"></div></div><div class="fur-label">天花灯</div>`},
     {id:"furWindow",html:`<div class="win-frame" style="width:70px;height:55px"><div class="win-sky ${weather}"><div class="win-sun"></div><div class="win-cloud"></div>${winWeatherHTML()}</div><div class="win-cross-h"></div><div class="win-cross-v"></div><div class="win-curtain-l ${c.curtain?"open":""}" style="background:${col[0]}"></div><div class="win-curtain-r ${c.curtain?"open":""}" style="background:${col[0]}"></div></div><div class="fur-label">窗户</div>`}
@@ -1997,7 +2013,7 @@ function renderRoom(){
   sc.innerHTML=`
     <div class="room-header">🏠 ${c.gender==="male"?"♂":"♀"}${c.name}的房间</div>
     <div class="room-scene">
-      <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" style="left:${cLeft}">
+      <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" style="left:${cLeft};--blanket:${blanketColor(roomId)}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
