@@ -1959,7 +1959,7 @@ function initRoomDrag(){
       e.preventDefault();
       const t=e.touches?e.touches[0]:e,sr=scene.getBoundingClientRect();
       const nl=Math.max(0,Math.min(origL+(t.clientX-startX),sr.width-el.offsetWidth));
-      const nb=Math.max(0,Math.min(origB-(t.clientY-startY),sr.height-el.offsetHeight-30));
+      const nb=Math.max(0,Math.min(origB-(t.clientY-startY),sr.height-20));
       el.style.left=(nl/sr.width*100)+"%";el.style.bottom=(nb/sr.height*100)+"%";
     }
     function end(){
