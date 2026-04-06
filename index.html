@@ -351,9 +351,9 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .yard-actions{background:rgba(0,0,0,.15);padding:8px 10px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 
 /* Chicken popup menu */
-.chicken-menu{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#fff;border-radius:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);padding:5px;z-index:100;white-space:nowrap}
-.chicken-menu.show{display:flex;gap:3px}
-.chicken-menu button{padding:4px 8px;border:none;border-radius:6px;cursor:pointer;font-size:11px;font-weight:600;background:#f0f0f0}
+.chicken-menu{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#fff;border-radius:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);padding:6px;z-index:100;flex-wrap:wrap;justify-content:center;gap:3px;max-width:200px}
+.chicken-menu.show{display:flex}
+.chicken-menu button{padding:4px 7px;border:none;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;background:#f0f0f0}
 .chicken-menu button:hover{background:#ddd}
 
 /* ===== ROOM VIEW ===== */
@@ -882,7 +882,13 @@ h1{font-size:20px}
 </div>
 
 <div class="chicken-menu" id="chickenMenu" style="display:none">
-  <button onclick="menuRoom()">🚪 进房间</button>
+  <button onclick="menuFeed()">🌾 喂食</button>
+  <button onclick="menuDrink()">💧 喝水</button>
+  <button onclick="menuPet()">💕 互动</button>
+  <button onclick="menuPlay()">🎮 玩耍</button>
+  <button onclick="menuBath()">🛁 洗澡</button>
+  <button onclick="menuMed()">💊 喂药</button>
+  <button onclick="menuRoom()">🚪 房间</button>
   <button onclick="menuHome()">🏠 回去</button>
   <button id="menuNameBtn" onclick="menuName()" style="display:none;background:#fff0f5;color:#e84393">✏️ 取名</button>
 </div>
@@ -1560,6 +1566,69 @@ function hideMenu(){const m=document.getElementById("chickenMenu");m.classList.r
 function menuRoom(){if(menuTgt<0)return;const id=menuTgt;hideMenu();enterRoom(id)}
 function menuHome(){if(menuTgt<0)return;S.chickens[menuTgt].location="inside";hideMenu();save();renderYard()}
 function menuName(){if(menuTgt<0)return;const c=S.chickens[menuTgt];if(!c)return;const id=menuTgt;hideMenu();const p1=c.parents?S.chickens[c.parents[0]]:null,p2=c.parents?S.chickens[c.parents[1]]:null;showBabyNaming(id,p1?p1.name:"?",p2?p2.name:"?",c.gender)}
+function menuFeed(){
+  if(menuTgt<0)return;const id=menuTgt;const c=S.chickens[id];if(!c||S.food<=0)return;hideMenu();
+  openSel("选择食物给 "+c.name,FOODS.map(f=>({...f,type:"food"})),function(fid){
+    const food=FOODS.find(f=>f.id===fid)||FOODS[0];
+    let h=30,pA=0;
+    if(c.favoriteFood.includes(fid)){h=45;pA=10}else if(c.hatedFood.includes(fid)){h=15;pA=-10}
+    c.hunger=cl(c.hunger+h,0,100);c.happiness=cl(c.happiness+pA,0,100);
+    if(food.hp)c.health=cl(c.health+food.hp,0,100);
+    c.totalHunger+=Math.min(h,100);S.food--;S.totalInteractions++;
+    {const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}
+    updStages();save();
+    addLog(`🌾 你给${c.name}喂了${food.icon}${food.name}${food.hp?" (营养+"+food.hp+")":""}`,c.name,"吃饭",c);
+    renderYard();
+  });
+}
+function menuDrink(){
+  if(menuTgt<0)return;const id=menuTgt;const c=S.chickens[id];if(!c)return;hideMenu();
+  openSel("选择饮品给 "+c.name,DRINKS.map(d=>({id:d.id,icon:d.icon,name:d.name,type:"drink"})),function(did){
+    const dk=DRINKS.find(d=>d.id===did)||DRINKS[0];
+    c.thirst=cl(c.thirst+dk.thirst,0,100);if(dk.health)c.health=cl(c.health+dk.health,0,100);
+    c.happiness=cl(c.happiness+(dk.happiness||3),0,100);
+    S.totalInteractions++;{const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}
+    save();addLog(`${dk.icon} 你给${c.name}喝了${dk.name}`,c.name,"喝水",c);renderYard();
+  });
+}
+function menuPet(){
+  if(menuTgt<0)return;const id=menuTgt;const c=S.chickens[id];if(!c)return;hideMenu();
+  openSel("选择和 "+c.name+" 互动",PETS.map(p=>({...p,type:"pet"})),function(pid){
+    const pet=PETS.find(p=>p.id===pid);
+    c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);
+    S.totalInteractions++;{const ov=c.affManual;c.affManual+=3;checkAffMilestone(c.id,"manual",ov,c.affManual)}
+    save();addLog(`${pet.icon} 你对${c.name}${pet.name}了~ ${genPetReact(pid,c.name,c.sleeping)}`,c.name,"互动",c);renderYard();
+  });
+}
+function menuPlay(){
+  if(menuTgt<0)return;const id=menuTgt;const c=S.chickens[id];if(!c||c.sleeping)return;hideMenu();
+  openSel("选择游戏和 "+c.name+" 玩",GAMES.map(g=>({...g,type:"game"})),function(gid){
+    const game=GAMES.find(g=>g.id===gid);
+    let pA=20,hC=10;
+    if(c.favoriteGame===gid){pA=30;hC=5}else if(c.hatedGame===gid){pA=10;hC=15}
+    c.happiness=cl(c.happiness+pA,0,100);c.hunger=cl(c.hunger-hC,0,100);c.totalHappiness+=Math.min(pA,100);
+    S.totalInteractions++;{const ov=c.affManual;c.affManual+=2;checkAffMilestone(c.id,"manual",ov,c.affManual)}
+    updStages();save();addLog(`🎮 你带${c.name}玩了${game.icon}${game.name}`,c.name,"玩耍",c);renderYard();
+  });
+}
+function menuBath(){
+  if(menuTgt<0)return;const c=S.chickens[menuTgt];if(!c||c.sleeping)return;hideMenu();
+  c.clean=cl(c.clean+30,0,100);c.happiness=cl(c.happiness+5,0,100);
+  S.totalInteractions++;{const ov=c.affManual;c.affManual+=1;checkAffMilestone(c.id,"manual",ov,c.affManual)}
+  save();addLog(`🛁 你给${c.name}洗澡了`,c.name,"洗澡",c);renderYard();
+}
+function menuMed(){
+  if(menuTgt<0)return;const id=menuTgt;const c=S.chickens[id];if(!c)return;hideMenu();
+  openSel("选择药品给 "+c.name,MEDS.map(m=>({id:m.id,icon:m.icon,name:m.name+(c.sickness?" "+(m.cures.includes(c.sickness.id)||m.cures.includes("any")?"✅对症":""):""),type:"med"})),function(mid){
+    const med=MEDS.find(m=>m.id===mid);if(!med)return;
+    c.health=cl(c.health+med.health,0,100);c.fatigue=cl(c.fatigue-10,0,100);
+    let cured="";
+    if(c.sickness&&(med.cures.includes(c.sickness.id)||med.cures.includes("any"))){cured=c.sickness.name+"好了！✨";c.sickness=null}
+    else if(c.sickness){cured=c.sickness.name+"没好（药不对症）"}
+    S.totalInteractions++;{const ov=c.affManual;c.affManual+=1;checkAffMilestone(c.id,"manual",ov,c.affManual)}
+    save();addLog(`💊 你给${c.name}喂了${med.icon}${med.name}${cured?" | "+cured:""}`,c.name,"喂药",c);renderYard();
+  });
+}
 function callOut(id){const c=S.chickens[id];if(c.location!=="inside")return;const d=document.getElementById("door"+id);if(d)d.classList.add("open");setTimeout(()=>{c.location="outside";save();renderYard()},300)}
 
 // ===== ROOM =====
@@ -1702,11 +1771,11 @@ function getCD(cid,a){return Math.max(0,(cds[cid+"_"+a]||0)-Date.now())}
 function setCD(cid,a){cds[cid+"_"+a]=Date.now()+CD_MS[a]}
 
 // ===== SELECTION =====
-let selCb=null;
-function openSel(title,items,cb){
-  selCb=cb;
+let selCb=null;let selChickenId=-1;
+function openSel(title,items,cb,chickId){
+  selCb=cb;selChickenId=chickId!==undefined?chickId:(roomId>=0?roomId:menuTgt);
   document.getElementById("selTitle").textContent=title;
-  const c=roomId>=0?S.chickens[roomId]:null;
+  const c=selChickenId>=0?S.chickens[selChickenId]:null;
   document.getElementById("selGrid").innerHTML=items.map(item=>{
     let hint="";
     if(c){
