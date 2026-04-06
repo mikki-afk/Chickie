@@ -345,7 +345,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 /* Fruit trees */
 .fruit-tree{position:absolute;pointer-events:none;z-index:1}
 .fruit-trunk{width:12px;height:30px;background:linear-gradient(90deg,#6B4F10,#8B6914,#6B4F10);border-radius:2px;margin:0 auto}
-.fruit-canopy{width:44px;height:36px;background:radial-gradient(ellipse,#3a7a2f,#2d6a22);border-radius:50%;position:relative;margin-top:-18px;box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 2px 2px 4px rgba(100,200,50,.2);animation:treeSway 5s ease-in-out infinite}
+.fruit-canopy{width:44px;height:36px;background:radial-gradient(ellipse,#3a7a2f,#2d6a22);border-radius:50%;position:relative;margin-bottom:-10px;box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 2px 2px 4px rgba(100,200,50,.2);animation:treeSway 5s ease-in-out infinite}
 .fruit-canopy .tree-fruit{position:absolute;font-size:8px;animation:fruitBob 3s ease-in-out infinite}
 @keyframes fruitBob{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
 .fruit-drop{position:absolute;font-size:14px;z-index:10;animation:fruitFall 1s ease-in forwards;pointer-events:none}
@@ -690,7 +690,7 @@ h1{font-size:20px}
 /* Trees */
 .yard-tree{position:absolute;pointer-events:none;z-index:1}
 .tree-trunk{width:10px;height:28px;background:linear-gradient(90deg,#6B4F10,#8B6914,#6B4F10);border-radius:2px;margin:0 auto}
-.tree-canopy{width:40px;height:32px;background:radial-gradient(ellipse,#4a8c3f,#357a2a);border-radius:50%;position:relative;margin-top:-18px;box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 2px 2px 4px rgba(100,200,50,.2);animation:treeSway 4s ease-in-out infinite}
+.tree-canopy{width:40px;height:32px;background:radial-gradient(ellipse,#4a8c3f,#357a2a);border-radius:50%;position:relative;margin-bottom:-10px;box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 2px 2px 4px rgba(100,200,50,.2);animation:treeSway 4s ease-in-out infinite}
 .tree-canopy::before{content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:28px;height:22px;background:radial-gradient(ellipse,#55a040,#3d8a30);border-radius:50%}
 @keyframes treeSway{0%,100%{transform:rotate(0deg)}25%{transform:rotate(1.5deg)}75%{transform:rotate(-1.5deg)}}
 
@@ -795,11 +795,11 @@ h1{font-size:20px}
         </div>
         <div class="fence-rail"></div>
         <div class="fence-rail2"></div>
-        <div class="yard-tree" style="left:8%;top:8%"><div class="tree-trunk"></div><div class="tree-canopy"></div></div>
-        <div class="yard-tree" style="right:10%;top:5%"><div class="tree-trunk"></div><div class="tree-canopy"></div></div>
-        <div class="yard-tree" style="left:55%;top:2%"><div class="tree-trunk" style="height:22px"></div><div class="tree-canopy" style="width:34px;height:28px"></div></div>
-        <div class="fruit-tree" id="fruitTree1" style="left:25%;top:5%"><div class="fruit-trunk"></div><div class="fruit-canopy"><span class="tree-fruit" style="top:8px;left:5px">🍎</span><span class="tree-fruit" style="top:15px;right:6px">🍎</span><span class="tree-fruit" style="bottom:5px;left:18px">🍎</span></div></div>
-        <div class="fruit-tree" id="fruitTree2" style="right:25%;top:3%"><div class="fruit-trunk"></div><div class="fruit-canopy"><span class="tree-fruit" style="top:10px;left:8px">🍊</span><span class="tree-fruit" style="top:5px;right:8px">🍊</span><span class="tree-fruit" style="bottom:8px;left:20px">🍊</span></div></div>
+        <div class="yard-tree" style="left:8%;top:8%"><div class="tree-canopy"></div><div class="tree-trunk"></div></div>
+        <div class="yard-tree" style="right:10%;top:5%"><div class="tree-canopy"></div><div class="tree-trunk"></div></div>
+        <div class="yard-tree" style="left:55%;top:2%"><div class="tree-canopy" style="width:34px;height:28px"></div><div class="tree-trunk" style="height:22px"></div></div>
+        <div class="fruit-tree" id="fruitTree1" style="left:25%;top:5%"><div class="fruit-canopy"><span class="tree-fruit" style="top:8px;left:5px">🍎</span><span class="tree-fruit" style="top:15px;right:6px">🍎</span><span class="tree-fruit" style="bottom:5px;left:18px">🍎</span></div><div class="fruit-trunk"></div></div>
+        <div class="fruit-tree" id="fruitTree2" style="right:25%;top:3%"><div class="fruit-canopy"><span class="tree-fruit" style="top:10px;left:8px">🍊</span><span class="tree-fruit" style="top:5px;right:8px">🍊</span><span class="tree-fruit" style="bottom:8px;left:20px">🍊</span></div><div class="fruit-trunk"></div></div>
         <div class="yard-flower" style="left:20%;top:60%"><div class="flower-head" style="background:#ff6b8a"></div><div class="flower-stem"></div></div>
         <div class="yard-flower" style="left:35%;top:72%" ><div class="flower-head" style="background:#ffd93d"></div><div class="flower-stem"></div></div>
         <div class="yard-flower" style="left:70%;top:65%"><div class="flower-head" style="background:#a29bfe"></div><div class="flower-stem"></div></div>
