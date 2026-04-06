@@ -342,18 +342,39 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .yard-bar-fill{height:100%;border-radius:2px;transition:width .3s}
 .yard-bar-fill.h{background:#ff6b6b}.yard-bar-fill.p{background:#ffd93d}.yard-bar-fill.w{background:#74b9ff}
 
+/* Fruit trees */
+.fruit-tree{position:absolute;pointer-events:none;z-index:1}
+.fruit-trunk{width:12px;height:30px;background:linear-gradient(90deg,#6B4F10,#8B6914,#6B4F10);border-radius:2px;margin:0 auto}
+.fruit-canopy{width:44px;height:36px;background:radial-gradient(ellipse,#3a7a2f,#2d6a22);border-radius:50%;position:relative;margin-top:-18px;box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 2px 2px 4px rgba(100,200,50,.2);animation:treeSway 5s ease-in-out infinite}
+.fruit-canopy .tree-fruit{position:absolute;font-size:8px;animation:fruitBob 3s ease-in-out infinite}
+@keyframes fruitBob{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+.fruit-drop{position:absolute;font-size:14px;z-index:10;animation:fruitFall 1s ease-in forwards;pointer-events:none}
+@keyframes fruitFall{0%{transform:translateY(0) rotate(0deg);opacity:1}80%{opacity:1}100%{transform:translateY(120px) rotate(180deg);opacity:0}}
+.fruit-hit{position:absolute;font-size:10px;z-index:11;animation:fruitHitPop .8s ease-out forwards;pointer-events:none}
+@keyframes fruitHitPop{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-30px) scale(1.5);opacity:0}}
+
+/* Force bar */
+.force-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;display:flex;align-items:center;justify-content:center}
+.force-box{background:#fff;border-radius:16px;padding:16px 24px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.3);min-width:220px}
+.force-box h3{margin:0 0 8px;font-size:14px}
+.force-bar-track{width:100%;height:20px;background:#eee;border-radius:10px;overflow:hidden;position:relative;margin:8px 0}
+.force-bar-fill{height:100%;border-radius:10px;transition:width 50ms linear;background:linear-gradient(90deg,#4cd137,#ffc312,#ee5a24)}
+.force-bar-zone{position:absolute;top:0;bottom:0;border-left:2px dashed rgba(0,0,0,.3)}
+.force-label{font-size:11px;color:#666;margin-bottom:8px}
+.force-result{font-size:13px;font-weight:600;margin-top:6px;min-height:20px}
+
 /* Yard items */
-.yard-items{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:space-around;padding:0 15%;z-index:1;pointer-events:none}
-.yard-item{text-align:center;transform:scale(.7);transform-origin:bottom center}
+.yard-items{position:absolute;inset:0;z-index:1;pointer-events:none}
+.yard-item{position:absolute;text-align:center;transform:scale(.55);transform-origin:bottom center}
 .yard-item-label{font-size:8px;color:#fff;background:rgba(0,0,0,.2);border-radius:3px;padding:0 3px;margin-top:2px;display:block}
 
 /* Yard actions */
 .yard-actions{background:rgba(0,0,0,.15);padding:8px 10px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
 
 /* Chicken popup menu */
-.chicken-menu{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#fff;border-radius:10px;box-shadow:0 3px 12px rgba(0,0,0,.2);padding:6px;z-index:100;flex-wrap:wrap;justify-content:center;gap:3px;max-width:200px}
+.chicken-menu{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#fff;border-radius:18px;box-shadow:0 3px 12px rgba(0,0,0,.2);padding:5px 8px;z-index:100;flex-wrap:nowrap;justify-content:center;gap:4px;white-space:nowrap}
 .chicken-menu.show{display:flex}
-.chicken-menu button{padding:4px 7px;border:none;border-radius:6px;cursor:pointer;font-size:10px;font-weight:600;background:#f0f0f0}
+.chicken-menu button{padding:3px 6px;border:none;border-radius:12px;cursor:pointer;font-size:9px;font-weight:600;background:#f0f0f0;white-space:nowrap}
 .chicken-menu button:hover{background:#ddd}
 
 /* ===== ROOM VIEW ===== */
@@ -669,7 +690,7 @@ h1{font-size:20px}
 /* Trees */
 .yard-tree{position:absolute;pointer-events:none;z-index:1}
 .tree-trunk{width:10px;height:28px;background:linear-gradient(90deg,#6B4F10,#8B6914,#6B4F10);border-radius:2px;margin:0 auto}
-.tree-canopy{width:40px;height:32px;background:radial-gradient(ellipse,#4a8c3f,#357a2a);border-radius:50%;position:relative;top:-8px;box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 2px 2px 4px rgba(100,200,50,.2);animation:treeSway 4s ease-in-out infinite}
+.tree-canopy{width:40px;height:32px;background:radial-gradient(ellipse,#4a8c3f,#357a2a);border-radius:50%;position:relative;margin-top:-18px;box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 2px 2px 4px rgba(100,200,50,.2);animation:treeSway 4s ease-in-out infinite}
 .tree-canopy::before{content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:28px;height:22px;background:radial-gradient(ellipse,#55a040,#3d8a30);border-radius:50%}
 @keyframes treeSway{0%,100%{transform:rotate(0deg)}25%{transform:rotate(1.5deg)}75%{transform:rotate(-1.5deg)}}
 
@@ -774,9 +795,11 @@ h1{font-size:20px}
         </div>
         <div class="fence-rail"></div>
         <div class="fence-rail2"></div>
-        <div class="yard-tree" style="left:8%;top:8%"><div class="tree-canopy"></div><div class="tree-trunk"></div></div>
-        <div class="yard-tree" style="right:10%;top:5%"><div class="tree-canopy"></div><div class="tree-trunk"></div></div>
-        <div class="yard-tree" style="left:55%;top:2%"><div class="tree-canopy" style="width:34px;height:28px"></div><div class="tree-trunk" style="height:22px"></div></div>
+        <div class="yard-tree" style="left:8%;top:8%"><div class="tree-trunk"></div><div class="tree-canopy"></div></div>
+        <div class="yard-tree" style="right:10%;top:5%"><div class="tree-trunk"></div><div class="tree-canopy"></div></div>
+        <div class="yard-tree" style="left:55%;top:2%"><div class="tree-trunk" style="height:22px"></div><div class="tree-canopy" style="width:34px;height:28px"></div></div>
+        <div class="fruit-tree" id="fruitTree1" style="left:25%;top:5%"><div class="fruit-trunk"></div><div class="fruit-canopy"><span class="tree-fruit" style="top:8px;left:5px">🍎</span><span class="tree-fruit" style="top:15px;right:6px">🍎</span><span class="tree-fruit" style="bottom:5px;left:18px">🍎</span></div></div>
+        <div class="fruit-tree" id="fruitTree2" style="right:25%;top:3%"><div class="fruit-trunk"></div><div class="fruit-canopy"><span class="tree-fruit" style="top:10px;left:8px">🍊</span><span class="tree-fruit" style="top:5px;right:8px">🍊</span><span class="tree-fruit" style="bottom:8px;left:20px">🍊</span></div></div>
         <div class="yard-flower" style="left:20%;top:60%"><div class="flower-head" style="background:#ff6b8a"></div><div class="flower-stem"></div></div>
         <div class="yard-flower" style="left:35%;top:72%" ><div class="flower-head" style="background:#ffd93d"></div><div class="flower-stem"></div></div>
         <div class="yard-flower" style="left:70%;top:65%"><div class="flower-head" style="background:#a29bfe"></div><div class="flower-stem"></div></div>
@@ -791,15 +814,15 @@ h1{font-size:20px}
           <div class="puddle" style="left:75%;top:45%"></div>
         </div>
         <div class="yard-items">
-          <div class="yard-item"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
-          <div class="yard-item"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
-          <div class="yard-item"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
-          <div class="yard-item"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
-          <div class="yard-item"><div class="toy"><div class="toy-ball"></div></div><span class="yard-item-label">球</span></div>
-          <div class="yard-item"><div class="toy"><div class="toy-straw"></div></div><span class="yard-item-label">草窝</span></div>
-          <div class="yard-item"><div class="toy"><div class="toy-log"></div></div><span class="yard-item-label">木桩</span></div>
-          <div class="yard-item"><div class="toy"><div class="toy-stick"></div></div><span class="yard-item-label">树枝</span></div>
-          <div class="yard-item"><div class="toy"><div class="toy-duck"><div class="duck-body"></div><div class="duck-head"><div class="duck-eye"></div></div><div class="duck-beak"></div></div></div><span class="yard-item-label">小鸭</span></div>
+          <div class="yard-item" style="left:5%;top:60%"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
+          <div class="yard-item" style="left:82%;top:55%"><div class="css-bowl"><div class="bowl-body"></div><div class="bowl-inner"></div><div class="bowl-food"></div></div><span class="yard-item-label">饭碗</span></div>
+          <div class="yard-item" style="left:15%;top:75%"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
+          <div class="yard-item" style="left:70%;top:72%"><div class="css-water"><div class="water-body"></div><div class="water-inner"><div class="water-surface"></div></div></div><span class="yard-item-label">水盆</span></div>
+          <div class="yard-item" style="left:45%;top:80%"><div class="toy"><div class="toy-ball"></div></div><span class="yard-item-label">球</span></div>
+          <div class="yard-item" style="left:60%;top:45%"><div class="toy"><div class="toy-straw"></div></div><span class="yard-item-label">草窝</span></div>
+          <div class="yard-item" style="left:30%;top:50%"><div class="toy"><div class="toy-log"></div></div><span class="yard-item-label">木桩</span></div>
+          <div class="yard-item" style="left:88%;top:38%"><div class="toy"><div class="toy-stick"></div></div><span class="yard-item-label">树枝</span></div>
+          <div class="yard-item" style="left:50%;top:62%"><div class="toy"><div class="toy-duck"><div class="duck-body"></div><div class="duck-head"><div class="duck-eye"></div></div><div class="duck-beak"></div></div></div><span class="yard-item-label">小鸭</span></div>
         </div>
       </div>
       <!-- Yard action buttons -->
@@ -881,6 +904,19 @@ h1{font-size:20px}
   </div>
 </div>
 
+<div class="force-overlay" id="forceOverlay" style="display:none">
+  <div class="force-box">
+    <h3 id="forceTitle">互动力度</h3>
+    <div class="force-label">点击停止！太大力会吓到小鸡哦~</div>
+    <div class="force-bar-track" onclick="stopForceBar()">
+      <div class="force-bar-fill" id="forceFill" style="width:0%"></div>
+      <div class="force-bar-zone" style="left:70%;border-color:orange"></div>
+      <div class="force-bar-zone" style="left:90%;border-color:red"></div>
+    </div>
+    <div class="force-result" id="forceResult"></div>
+  </div>
+</div>
+
 <div class="chicken-menu" id="chickenMenu" style="display:none">
   <button onclick="menuFeed()">🌾 喂食</button>
   <button onclick="menuDrink()">💧 喝水</button>
@@ -951,6 +987,14 @@ const DRINKS=[
   {id:"tea",icon:"🍵",name:"花草茶",thirst:30,health:5,happiness:3},
   {id:"yogurt",icon:"🫗",name:"酸奶",thirst:25,health:5,happiness:5}
 ];
+// 果树季节掉落
+const TREE_FRUITS=[
+  {season:[3,4,5],fruits:[{icon:"🍎",name:"苹果",hp:5},{icon:"🍐",name:"梨",hp:4},{icon:"🍑",name:"桃子",hp:5}]},
+  {season:[6,7,8],fruits:[{icon:"🍊",name:"橘子",hp:4},{icon:"🍉",name:"西瓜",hp:3},{icon:"🥭",name:"芒果",hp:5},{icon:"🍒",name:"樱桃",hp:4}]},
+  {season:[9,10,11],fruits:[{icon:"🍇",name:"葡萄",hp:4},{icon:"🍎",name:"苹果",hp:5},{icon:"🥝",name:"猕猴桃",hp:5},{icon:"🌰",name:"栗子",hp:3}]},
+  {season:[12,1,2],fruits:[{icon:"🍊",name:"橘子",hp:4},{icon:"🥕",name:"萝卜",hp:6}]}
+];
+function getSeasonFruits(){const m=new Date().getMonth()+1;const s=TREE_FRUITS.find(t=>t.season.includes(m));return s?s.fruits:[{icon:"🍃",name:"树叶",hp:0}]}
 const CD_MS={feed:30000,play:30000,drink:30000,bath:60000,sleep:300000,pet:15000};
 const PETS=[
   {id:"pat",icon:"🤚",name:"摸摸头",expr:"love",anim:"anim-pat"},
@@ -1349,7 +1393,13 @@ function renderPoops(el){
 }
 
 // ===== YARD RENDER =====
-function renderYard(){renderCoops();renderYardChickens();renderStats();renderYardBtns()}
+function renderYard(){renderCoops();renderYardChickens();renderStats();renderYardBtns();updateFruitTrees()}
+function updateFruitTrees(){
+  const fruits=getSeasonFruits();const f1=fruits[0],f2=fruits[Math.min(1,fruits.length-1)];
+  const t1=document.getElementById("fruitTree1"),t2=document.getElementById("fruitTree2");
+  if(t1)t1.querySelectorAll(".tree-fruit").forEach(el=>el.textContent=f1.icon);
+  if(t2)t2.querySelectorAll(".tree-fruit").forEach(el=>el.textContent=f2.icon);
+}
 
 function renderCoops(){
   document.getElementById("coopsRow").innerHTML=S.chickens.map((c,i)=>{
@@ -1591,13 +1641,56 @@ function menuDrink(){
     save();addLog(`${dk.icon} 你给${c.name}喝了${dk.name}`,c.name,"喝水",c);renderYard();
   });
 }
+// ===== FORCE BAR =====
+let forceAnim=null,forceVal=0,forceDir=1,forceCb=null;
+function startForceBar(title,cb){
+  document.getElementById("forceOverlay").style.display="flex";
+  document.getElementById("forceTitle").textContent=title;
+  document.getElementById("forceResult").textContent="";
+  forceVal=0;forceDir=1;forceCb=cb;
+  const fill=document.getElementById("forceFill");
+  function tick(){forceVal+=forceDir*2;if(forceVal>=100){forceVal=100;forceDir=-1}if(forceVal<=0){forceVal=0;forceDir=1}fill.style.width=forceVal+"%";forceAnim=requestAnimationFrame(tick)}
+  forceAnim=requestAnimationFrame(tick);
+}
+function stopForceBar(){
+  if(!forceAnim)return;cancelAnimationFrame(forceAnim);forceAnim=null;
+  const res=document.getElementById("forceResult");
+  let level="gentle";
+  if(forceVal<35){level="gentle";res.textContent="🌸 轻柔~"}
+  else if(forceVal<70){level="normal";res.textContent="👍 刚刚好！"}
+  else if(forceVal<90){level="strong";res.textContent="💪 有点大力了！"}
+  else{level="extreme";res.textContent="💥 太用力了！！"}
+  setTimeout(()=>{document.getElementById("forceOverlay").style.display="none";if(forceCb)forceCb(forceVal,level)},800);
+}
 function menuPet(){
   if(menuTgt<0)return;const id=menuTgt;const c=S.chickens[id];if(!c)return;hideMenu();
   openSel("选择和 "+c.name+" 互动",PETS.map(p=>({...p,type:"pet"})),function(pid){
     const pet=PETS.find(p=>p.id===pid);
-    c.happiness=cl(c.happiness+12,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.min(12,100);
-    S.totalInteractions++;{const ov=c.affManual;c.affManual+=3;checkAffMilestone(c.id,"manual",ov,c.affManual)}
-    save();addLog(`${pet.icon} 你对${c.name}${pet.name}了~ ${genPetReact(pid,c.name,c.sleeping)}`,c.name,"互动",c);renderYard();
+    startForceBar(pet.icon+" "+pet.name+" - "+c.name,function(val,level){
+      let hapBonus=12,affBonus=3,extraMsg="";
+      if(level==="gentle"){hapBonus=8;affBonus=4;extraMsg=pick(["轻轻地~好温柔","小心翼翼的，好舒服","柔柔的，好享受"])}
+      else if(level==="normal"){hapBonus=15;affBonus=3;extraMsg=pick(["力度刚好！","舒服~","恰到好处"])}
+      else if(level==="strong"){
+        hapBonus=5;affBonus=1;extraMsg=pick(["有点疼！","太重了吧！","呜…轻点啦"]);
+        // 40% chance 炸毛
+        if(Math.random()<0.4){hapBonus=-5;extraMsg=pick(["炸毛了！！羽毛全竖起来了","生气地扑棱翅膀！","吓得跳起来了！","不高兴地瞪着你"]);showYardEffect(c.id,"scared")}
+        // Wake sleeping chicken
+        if(c.sleeping&&Math.random()<0.5){c.sleeping=false;extraMsg+=" 被吵醒了！😡";c.happiness=cl(c.happiness-10,0,100)}
+      }
+      else{// extreme
+        hapBonus=-10;affBonus=-2;
+        extraMsg=pick(["炸毛了！！！暴怒！","吓坏了！疯狂扑棱！","气到原地转圈！","受到惊吓缩成一团！"]);
+        showYardEffect(c.id,"scared");
+        // 20% chance to bite
+        if(Math.random()<0.2){extraMsg+=" 还咬了你一口！🦷"}
+        // Wake sleeping chicken 80%
+        if(c.sleeping&&Math.random()<0.8){c.sleeping=false;extraMsg+=" 直接被吵醒了！😡😡";c.happiness=cl(c.happiness-15,0,100)}
+      }
+      c.happiness=cl(c.happiness+hapBonus,0,100);c.fatigue=cl(c.fatigue-5,0,100);c.totalHappiness+=Math.max(0,hapBonus);
+      S.totalInteractions++;{const ov=c.affManual;c.affManual+=Math.max(0,affBonus);checkAffMilestone(c.id,"manual",ov,c.affManual)}
+      const forceTag=level==="gentle"?"轻柔":level==="normal"?"适中":level==="strong"?"大力":"暴力";
+      save();addLog(`${pet.icon} 你对${c.name}${pet.name}了(${forceTag})~ ${genPetReact(pid,c.name,c.sleeping)} | ${extraMsg}`,c.name,"互动",c);renderYard();
+    });
   });
 }
 function menuPlay(){
@@ -2774,15 +2867,70 @@ function renameBaby(babyId,newName){
   if(view==="yard")renderYard();
 }
 
+function triggerFruitDrop(){
+  const fruits=getSeasonFruits();
+  const f=pick(fruits);
+  const outdoor=S.chickens.filter(c=>c.location==="outside"&&!c.sleeping);
+  // Visual fruit fall animation
+  if(view==="yard"){
+    const yard=document.getElementById("yardGround");
+    if(yard){
+      const drop=document.createElement("div");
+      drop.className="fruit-drop";drop.textContent=f.icon;
+      drop.style.left=(15+Math.random()*70)+"%";drop.style.top="5%";
+      yard.appendChild(drop);setTimeout(()=>drop.remove(),1200);
+    }
+  }
+  // 30% chance to hit a chicken
+  if(outdoor.length>0&&Math.random()<0.3){
+    const c=pick(outdoor);
+    const hitReact=pick(["被砸了一下，吓了一跳！","被砸中了头，呆住了","被砸到了，叫了一声","被砸了，气鼓鼓地看着树","被砸中，一脸懵","被砸到了，揉了揉头"]);
+    c.happiness=cl(c.happiness-3,0,100);
+    c.health=cl(c.health-1,0,100);
+    addLog(`${f.icon}💥 树上掉下一个${f.name}砸到了${c.name}！${c.name}${hitReact}`,c.name,"状态",c);
+    if(view==="yard"){const el=document.getElementById("yc"+c.id);if(el){const h=document.createElement("div");h.className="fruit-hit";h.textContent="💫";el.appendChild(h);setTimeout(()=>h.remove(),1000)}}
+  }else{
+    // Fruit falls to ground, chickens can eat it
+    if(outdoor.length>0&&Math.random()<0.5){
+      const c=pick(outdoor);
+      c.hunger=cl(c.hunger+15,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);
+      addLog(`${f.icon} 树上掉了个${f.name}，${c.name}${pick(["捡起来吃了","开心地啄了几口","叼走了","美滋滋地吃掉了"])}~`,c.name,"吃饭",c);
+    }else{
+      S.food++;
+      addLog(`${f.icon} 果树上掉了个${f.name}，落在了地上`);
+    }
+  }
+  save();
+}
 function triggerBuddyEvent(){
   const outdoor=S.chickens.filter(c=>c.location==="outside"&&!c.sleeping);
   if(outdoor.length<2)return;
   const i1=Math.floor(Math.random()*outdoor.length);
   let i2=Math.floor(Math.random()*(outdoor.length-1));if(i2>=i1)i2++;
   const c1=outdoor[i1],c2=outdoor[i2];
-  addBuddyAff(c1.id,c2.id,1);
   const aff=getBuddyAff(c1.id,c2.id);
-  checkBuddyMilestone(c1.id,c2.id,aff);
+  // 15% chance of fight/argument (lower affinity = higher chance)
+  const fightChance=aff>30?0.05:aff>15?0.1:0.18;
+  if(Math.random()<fightChance){
+    const fightEvents=[
+      {lines:[`${c1.name}和${c2.name}为了一颗虫子吵起来了！`,`${pick(["两只互不相让","叽叽喳喳吵个不停","周围的鸡都在看热闹","吵了半天也没结果"])}`],emoji:"💢"},
+      {lines:[`${c1.name}不小心踩到了${c2.name}！`,`${c2.name}${pick(["气得追着"+c1.name+"跑","瞪了"+c1.name+"一眼","叫了一声表示不满","踢了"+c1.name+"一脚"])}`],emoji:"😤"},
+      {lines:[`${c1.name}啄了${c2.name}一下！`,`${c2.name}${pick(["啄了回去！","生气地扑棱翅膀","躲到一边不理"+c1.name,"委屈地叫了一声"])}`],emoji:"💥"},
+      {lines:[`${c1.name}抢了${c2.name}的位置！`,`${c2.name}${pick(["不服气地挤回来","气鼓鼓地走开了","推了"+c1.name+"一把","两只开始互推"])}`],emoji:"😡"},
+      {lines:[`${c1.name}嘲笑${c2.name}${pick(["跑得慢","唱歌难听","羽毛乱","胆子小"])}`,`${c2.name}${pick(["不服气地反驳","哼！转头不理","委屈巴巴的","暗暗发誓要证明自己"])}`],emoji:"😤"},
+      {lines:[`${c1.name}和${c2.name}打架了！`,`${pick(["两只扑棱着翅膀互啄","羽毛飞得到处都是","打着打着又和好了","其他鸡赶紧来劝架"])}`],emoji:"💥"}
+    ];
+    const evt=pick(fightEvents);
+    c1.happiness=cl(c1.happiness-5,0,100);c2.happiness=cl(c2.happiness-5,0,100);
+    addBuddyAff(c1.id,c2.id,-2);
+    addLog(`${evt.emoji} ${evt.lines[0]} ${evt.lines[1]}`,c1.name,"状态",c1);
+    showYardEffect(c1.id,"scared");showYardEffect(c2.id,"scared");
+    // Might wake nearby sleeping chickens
+    S.chickens.forEach(c=>{if(c.sleeping&&c.location==="outside"&&Math.random()<0.15){c.sleeping=false;c.happiness=cl(c.happiness-5,0,100);addLog(`😡 ${c.name}被吵架声吵醒了！`,c.name,"状态",c)}});
+    save();return;
+  }
+  addBuddyAff(c1.id,c2.id,1);
+  checkBuddyMilestone(c1.id,c2.id,getBuddyAff(c1.id,c2.id));
   checkRomance(c1.id,c2.id);
   // Generate dynamic chat
   const chat=genBuddyChat(c1.name,c2.name,aff);
@@ -2874,8 +3022,16 @@ function startAutoActivity(){
           addLog(`🧹 ${c.name} 把一坨粑粑踢走了，爱干净！`,c.name,"清粑粑",c);
           return;
         }
-        const idle=pick(["wander","chat","nap"]);
-        if(idle==="wander"){addLog(`👀 ${c.name} ${pick(["在院子里溜达~","到处走来走去找东西","绕着院子跑了一圈","好奇地东张西望","踢了一颗小石子玩"])}`,c.name,"闲逛",c);showYardEffect(c.id,"wander")}
+        const idle=pick(["wander","chat","nap","naughty"]);
+        if(idle==="naughty"){
+          const naughtyActs=[
+            `🦷 ${c.name}偷偷咬了你一口！${pick(["还装作什么都没发生","得意地跑走了","舔了舔嘴好像在说还不错","无辜地看着你"])}`,
+            `😈 ${c.name}${pick(["啄了你的鞋带","扯了你的裤脚","踩了你的脚一下","叼走了你的东西跑了","在你手上轻轻咬了一下"])}`,
+            `🐔 ${c.name}${pick(["调皮地拍了你一翅膀","突然跳到你头上","用爪子挠了你一下","对着你的手指猛啄"])}`
+          ];
+          addLog(pick(naughtyActs),c.name,"闲逛",c);showYardEffect(c.id,"wander");
+        }
+        else if(idle==="wander"){addLog(`👀 ${c.name} ${pick(["在院子里溜达~","到处走来走去找东西","绕着院子跑了一圈","好奇地东张西望","踢了一颗小石子玩"])}`,c.name,"闲逛",c);showYardEffect(c.id,"wander")}
         else if(idle==="chat"){addLog(`💬 ${c.name} ${pick(["叽叽喳喳地叫着","对着天空唱歌","自言自语嘟囔着什么","学其他鸡叫，怪怪的","哼着不知道哪里学来的小曲"])}`,c.name,"闲逛",c);showYardEffect(c.id,"chat")}
         else{addLog(`😴 ${c.name} ${pick(["打了个小盹儿","找了个舒服的地方趴下了","在阳光下眯了一会儿","靠着墙角睡着了","做了个美梦，嘴角上扬"])}`,c.name,"闲逛",c);showYardEffect(c.id,"nap")}
         return;
@@ -2910,6 +3066,8 @@ function startAutoActivity(){
         addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`,c.name,"洗澡",c);
       }
     });
+    // Fruit tree drop (15% chance per tick)
+    if(Math.random()<0.15)triggerFruitDrop();
     // Random buddy interaction (30% chance per tick)
     if(Math.random()<0.3)triggerBuddyEvent();
     tryBaby();
