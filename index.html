@@ -2011,7 +2011,7 @@ function renderRoom(){
   // 睡觉时居中放在床上方（床宽约25%，往右偏一点对准枕头）
   const bedLeftPct=parseFloat(bedPos.left)||0;
   const bedScale=bedPos.scale||ROOM_FUR_DEFAULTS.furBed.scale||1.5;
-  const cLeft=c.sleeping?(bedLeftPct+12)+"%":"42%";
+  const cLeft=c.sleeping?(bedLeftPct+18)+"%":"42%";
   const cBottomStyle=c.sleeping?`;bottom:calc(${bedPos.bottom} + ${Math.round(30*bedScale)}px)`:"";
 
   const curtCls=c.curtain?"open":"";
