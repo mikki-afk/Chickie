@@ -2503,9 +2503,7 @@ async function flushNotion(){
     if(item.stats.stage)props["色调"]={select:{name:toneMap[item.stats.stage]||"🎨 标准"}};
     // 睡眠状态
     if(item.stats.sleeping!==undefined)props["睡眠"]={checkbox:!!item.stats.sleeping};
-    // 生病状态
-    if(item.stats.sickness)props["疾病"]={select:{name:item.stats.sickness.icon+" "+item.stats.sickness.name}};
-    // 房间家具 emoji 布局
+// 房间家具 emoji 布局
     if(item.stats.id!==undefined&&item.stats.location==="inside"){
       const layout=roomLayoutEmoji(item.stats.id);
       if(layout){
