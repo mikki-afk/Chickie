@@ -2527,12 +2527,27 @@ function scheduleStateSync(){
 function chickExtraState(c){
   if(!c)return"";
   const lines=[];
-  // 穿搭
-  const outfitMap={rainy:"🧥 雨衣+👢雨靴+☂️伞",snowy:"🎩+🧣围巾+🧥外套+🥾雪地靴",sunny:"👒 草帽+🕶️墨镜",cloudy:"🧢 鸭舌帽"};
-  const outfit=c.location==="outside"?(outfitMap[weather]||"🐥 常服"):"🏠 居家";
+  // 长相详情
+  const d=CDEFS[c.id];
+  if(d){
+    const tailN={fluffy:"蓬松大尾巴",sleek:"流线型短尾",curly:"卷卷翘尾",spiky:"尖刺尾",round:"圆润圆尾"};
+    const stageDesc={baby:"🥚 刚破壳·毛茸茸·没长冠·嫩黄透粉",teen:"🌱 少年·小绒毛·小冠冒头·毛色鲜亮",mature:"🌿 青年·羽毛整齐·鸡冠明显·色彩浓郁",adult:"🐔 成年·羽翼丰满·红冠高耸·肌肉结实",elder:"👴 老年·羽毛褪色·冠子微垂·神态安详"};
+    lines.push(`长相: 体色${d.color[0]}↔${d.color[1]} · 绒毛${d.plumage} · 羽毛${d.feather} · 鸡冠${d.comb} · ${tailN[d.tailStyle]||d.tailStyle}`);
+    if(c.stage)lines.push("阶段: "+(stageDesc[c.stage]||c.stage));
+  }
+  const genderN=c.gender==="male"?"♂ 公鸡":"♀ 母鸡";
+  lines.push("性别: "+genderN);
+  // 穿搭 - 细节化
+  let outfit;
+  if(c.location!=="outside")outfit="🏠 居家不穿";
+  else if(weather==="rainy")outfit="🧢帽 + 🧥雨衣(防水橡胶) + 👢雨靴(橡胶防滑) + ☂️手撑一把伞";
+  else if(weather==="snowy")outfit="🎩冬帽 + 🧣羊毛围巾 + 🧥厚羽绒外套 + 🥾雪地靴(防滑加绒)";
+  else if(weather==="sunny")outfit="👒草帽 + 🕶️墨镜(防紫外线)";
+  else if(weather==="cloudy")outfit="🧢鸭舌帽(轻便出门)";
+  else outfit="🐥 常服";
   lines.push("穿搭: "+outfit);
   // 色调
-  const toneMap={baby:"🌼 嫩黄",teen:"✨ 明亮",mature:"🎨 标准",adult:"🔆 鲜艳",elder:"🍂 褪色"};
+  const toneMap={baby:"🌼 嫩黄透亮(亮度+15% 饱和-15%)",teen:"✨ 明亮活泼(亮度+5%)",mature:"🎨 标准色彩",adult:"🔆 浓郁鲜艳(饱和+10%)",elder:"🍂 褪色沧桑(饱和-45% 亮度-5%)"};
   if(c.stage)lines.push("色调: "+(toneMap[c.stage]||"🎨 标准"));
   // 睡眠
   if(c.sleeping)lines.push("💤 睡眠中");
