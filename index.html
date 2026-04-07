@@ -2881,11 +2881,16 @@ function execInstruction(cmd,pageId){
       if(ci>=0&&newName){renameBaby(ci,newName);matched=true}
     }
   }
-  // 查看状态：看看XX / XX状态 / XX怎么样
+  // 查看状态：看看XX / XX状态 / XX怎么样 / 状态报告 / 看看全部
   if(!matched){
-    m=cmd.match(/(?:看看|查看)(.+)/)||cmd.match(/(.+?)(?:状态|怎么样|咋样|如何)/);
-    if(m){
-      const who=m[1].trim();
+    let who=null;
+    if(cmd==="看看全部"||cmd==="全部状态"||cmd==="状态报告"||cmd==="看看大家"||cmd==="看看所有"||cmd==="查看全部"||cmd==="查看所有"||cmd==="大家状态"||cmd==="所有状态"||cmd==="报告状态"||cmd==="报告"||cmd==="看看"||cmd==="汇报"||cmd==="全家状态"){
+      who="全部";
+    }else{
+      m=cmd.match(/^(?:看看|查看|瞅瞅|瞧瞧)(.+)$/)||cmd.match(/^(.+?)(?:状态|怎么样|咋样|如何|的情况|近况)$/);
+      if(m)who=m[1].trim();
+    }
+    if(who){
       if(who==="全部"||who==="所有"||who==="大家"){
         // 每只鸡一份独立详细报告
         addLog(`📋 [状态报告 · 总览] 🌤️${weather} 🌾食物:${S.food} 💩:${S.poops.length} 共${S.chickens.length}家`,"全部","状态",null,true);
