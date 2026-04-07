@@ -1874,12 +1874,35 @@ function rainBootColors(id){
   return seededPick(id,11,palettes);
 }
 function outfitHTML(c){
+  if(c&&c.location==="inside")return indoorOutfitHTML(c);
   // 根据天气自动穿搭
   if(weather==="rainy")return`<span class="outfit hat">🧢</span><span class="outfit body">🧥</span><span class="outfit shoes">👢</span><span class="outfit hand">☂️</span>`;
   if(weather==="snowy")return`<span class="outfit hat">🎩</span><span class="outfit scarf">🧣</span><span class="outfit body">🧥</span><span class="outfit shoes">🥾</span>`;
   if(weather==="sunny")return`<span class="outfit hat">👒</span><span class="outfit hand">🕶️</span>`;
   if(weather==="cloudy")return`<span class="outfit hat">🧢</span>`;
   return"";
+}
+function indoorOutfitHTML(c){
+  if(c.sleeping)return"";// 睡觉盖被子
+  // 按 chickenId 稳定随机家居服配色 + 样式
+  let s=0;const sid=String(c.id);for(let i=0;i<sid.length;i++)s=(s*31+sid.charCodeAt(i))>>>0;
+  const rnd=()=>{s=(s*1103515245+12345)>>>0;return(s>>>16)/65536};
+  const warm=(c.heater||0)+(c.lamp||0);
+  // 套装池：[上衣emoji, 可选下装/配件]
+  let pool;
+  if(warm>=3)pool=[["👕"],["🎽"],["👚"]];// 太暖：背心/T
+  else if(warm>=1)pool=[["👕","🩳"],["👚","🩳"],["🎽","🩳"]];// 暖：家居短袖
+  else pool=[["🧥","🧦"],["👚","🧦"],["🧶","🧦"],["🥼","🧦"]];// 凉：加绒+袜
+  const set=pool[Math.floor(rnd()*pool.length)];
+  // 颜色池（粉嫩家居色）
+  const cols=["#FFB6C1","#FFD580","#B0E0E6","#C8E6C9","#E1BEE7","#FFCCBC","#B3E5FC","#F8BBD0","#DCEDC8","#FFE0B2"];
+  const tint=cols[Math.floor(rnd()*cols.length)];
+  let html=`<span class="outfit body" style="filter:drop-shadow(0 0 2px ${tint})">${set[0]}</span>`;
+  if(set[1])html+=`<span class="outfit shoes" style="filter:drop-shadow(0 0 2px ${tint})">${set[1]}</span>`;
+  // 配件（30% 概率）
+  const acc=["🎀","🧢","👑","🎩"];
+  if(rnd()<0.35)html+=`<span class="outfit hat">${acc[Math.floor(rnd()*acc.length)]}</span>`;
+  return html;
 }
 function blanketColor(id){
   const cols=["#FFB6C1","#FFD580","#B0E0E6","#C8E6C9","#E1BEE7","#FFCCBC","#B3E5FC","#F8BBD0","#DCEDC8"];
@@ -2059,7 +2082,7 @@ function renderRoom(){
     <div class="room-scene">
       <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" onclick="showMenu(event,${roomId})" style="left:${cLeft};--blanket:${blanketColor(roomId)}${cBottomStyle}">
         <div class="room-reaction" id="roomReact"></div>
-        ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
+        ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}${outfitHTML(c)}
       </div>
       <div class="room-warm ${c.heater>0||c.lamp>0?"active":""}" id="roomWarm"></div>
       <div class="room-dim" style="opacity:${!c.light&&!c.curtain?0.3:!c.light&&c.curtain?0.1:0}"></div>
