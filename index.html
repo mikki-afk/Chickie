@@ -1644,6 +1644,17 @@ function renderYardChickens(){
   });
   renderPoops(g);
   startWalk();
+  tailorGarments();
+}
+
+// 量身定做：用 JS 测量每只小鸡身体真实尺寸，写入 CSS 变量
+function tailorGarments(){
+  requestAnimationFrame(()=>{
+    document.querySelectorAll(".chick-body").forEach(b=>{
+      const w=b.offsetWidth,h=b.offsetHeight;
+      if(w&&h){b.style.setProperty("--bw",w+"px");b.style.setProperty("--bh",h+"px")}
+    });
+  });
 }
 
 function startWalk(){
@@ -2215,6 +2226,7 @@ function renderRoom(){
     <div style="margin-top:2px;font-size:10px;color:#888">💕好友:${bb.best>=0?S.chickens[bb.best].name+"("+bb.bestV+(()=>{const bl=BUDDY_LEVELS.slice().reverse().find(l=>bb.bestV>=l.threshold);return bl?" · "+bl.level:""})()+")"  :"无"} 😐疏远:${bb.worst>=0&&bb.worstV<bb.bestV?S.chickens[bb.worst].name+"("+bb.worstV+")":"无"}</div>`;
   renderRoomBtns();
   initRoomDrag();
+  tailorGarments();
   // 睡觉时自动贴到床的实际位置
   if(c.sleeping){
     requestAnimationFrame(()=>{
