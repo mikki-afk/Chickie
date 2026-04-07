@@ -2068,10 +2068,11 @@ function renderRoom(){
       const wrap=document.getElementById("roomChicken");
       if(!bed||!scn||!wrap)return;
       const br=bed.getBoundingClientRect(),sr=scn.getBoundingClientRect();
-      const cx=br.left+br.width/2-sr.left;
-      const cb=sr.bottom-br.top-br.height*0.35;// 床面稍偏上
-      wrap.style.left=(cx/sr.width*100)+"%";
-      wrap.style.bottom=cb+"px";
+      const cxPct=((br.left+br.width/2-sr.left)/sr.width*100);
+      const bedTopFromBottom=sr.bottom-br.top;// 床顶到场景底
+      wrap.style.left=cxPct+"%";
+      wrap.style.transform="translateX(-50%)";
+      wrap.style.bottom=(bedTopFromBottom-br.height*0.55)+"px";
     });
   }
 }
