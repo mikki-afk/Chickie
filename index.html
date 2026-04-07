@@ -392,13 +392,19 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .room-scene{position:relative;min-height:200px;padding:10px 10px 0}
 
 /* CSS Furniture */
-.furniture{text-align:center;z-index:3;position:absolute;cursor:grab;touch-action:none;user-select:none;transform-origin:center bottom}
+.furniture{text-align:center;z-index:3;position:absolute;cursor:default;touch-action:none;user-select:none;transform-origin:center bottom}
+.fur-edit-mode .furniture{cursor:grab}
+.fur-edit-mode .furniture:not(.selected){outline:1px dashed rgba(0,0,0,.2);outline-offset:2px;border-radius:4px}
+.btn-edit{background:linear-gradient(135deg,#a78bfa,#7c3aed)}
+.btn-edit.edit-on{background:linear-gradient(135deg,#10b981,#059669)}
 .furniture.dragging{cursor:grabbing;z-index:10;opacity:.85}
 .furniture .fur-label{font-size:9px;color:#5a3e2b;font-weight:600;margin-top:2px;display:none}
 .furniture.selected .fur-label{display:block}
 .fur-scale-btns{display:none;gap:2px;justify-content:center;margin-top:1px}
-.furniture.selected .fur-scale-btns{display:flex}
-.furniture.selected{outline:2px dashed rgba(255,107,157,.8);outline-offset:2px;border-radius:4px}
+.fur-edit-mode .furniture.selected .fur-scale-btns{display:flex}
+.fur-edit-mode .furniture.selected{outline:2px dashed rgba(255,107,157,.8);outline-offset:2px;border-radius:4px}
+.room-edit-hint{display:none}
+.fur-edit-mode .room-edit-hint{display:block}
 .fur-scale-btns button{font-size:10px;line-height:1;width:14px;height:14px;border-radius:50%;border:1px solid #8B6914;background:#FFE4B5;cursor:pointer;padding:0;color:#5a3e2b;font-weight:700}
 .fur-scale-btns button:active{background:#FFD700}
 .css-rug{width:140px;height:36px;border-radius:50%/40%;opacity:.9;border:2px solid rgba(0,0,0,.15);box-shadow:0 2px 4px rgba(0,0,0,.1)}
@@ -1905,6 +1911,13 @@ function rugStyleFor(id){
   ];
   return styles[Math.floor(rnd()*styles.length)];
 }
+function toggleFurEdit(){
+  S.furEditMode=!S.furEditMode;save();
+  const scn=document.querySelector(".room-scene");
+  if(scn)scn.classList.toggle("fur-edit-mode",S.furEditMode);
+  if(!S.furEditMode)document.querySelectorAll(".furniture.selected").forEach(f=>f.classList.remove("selected"));
+  renderRoomBtns();
+}
 function applyFurTransform(el,sc,rot){el.style.transform="scale("+sc+") rotate("+rot+"deg)"}
 function adjustFurScale(fid,delta){
   const layout=getRoomLayout(roomId)||{};
@@ -1983,9 +1996,11 @@ function roomFurniture(id,c,col){
 }
 function initRoomDrag(){
   const scene=document.querySelector(".room-scene");if(!scene)return;
+  scene.classList.toggle("fur-edit-mode",!!S.furEditMode);
   scene.querySelectorAll(".furniture").forEach(el=>{
     let dragging=false,startX,startY,origL,origB,timer=null;
     function start(e){
+      if(!S.furEditMode)return;
       const t=e.touches?e.touches[0]:e;
       startX=t.clientX;startY=t.clientY;
       const r=el.getBoundingClientRect(),sr=scene.getBoundingClientRect();
@@ -2112,6 +2127,7 @@ function renderRoomBtns(){
     h+=`<button class="action-btn btn-med" ${mcd>0?"disabled":""} onclick="doRoomMed()">💊 喂药${mcd>0?`<span class="cooldown-text">${Math.ceil(mcd/1000)}秒</span>`:""}</button>`;
   }
   h+=`<button class="action-btn btn-out" onclick="doRoomOut()">☀️ 叫出去</button>`;
+  h+=`<button class="action-btn btn-edit ${S.furEditMode?"edit-on":""}" onclick="toggleFurEdit()">${S.furEditMode?"✅ 完成摆放":"🛠️ 布置家具"}</button>`;
   h+=`<button class="action-btn btn-exit" onclick="exitRoom()">🚪 退出房间</button>`;
   document.getElementById("roomActions").innerHTML=h;
   document.getElementById("roomControls").innerHTML=`
