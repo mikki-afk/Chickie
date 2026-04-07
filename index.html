@@ -983,6 +983,7 @@ h1{font-size:20px}
       <button onclick="saveNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#4682B4;color:#fff;cursor:pointer;font-size:12px">保存</button>
       <button onclick="uploadStateToCloud()" style="padding:4px 12px;border:none;border-radius:6px;background:#48bb78;color:#fff;cursor:pointer;font-size:12px">☁️ 上传到云端</button>
       <button onclick="downloadStateFromCloud()" style="padding:4px 12px;border:none;border-radius:6px;background:#ed8936;color:#fff;cursor:pointer;font-size:12px">⬇️ 从云端拉取</button>
+      <button id="cloudSyncBtn" onclick="toggleCloudSync()" style="padding:4px 12px;border:none;border-radius:6px;background:#805ad5;color:#fff;cursor:pointer;font-size:12px">☁️ 自动同步: 关</button>
       <button onclick="clearNotion()" style="padding:4px 12px;border:none;border-radius:6px;background:#ddd;cursor:pointer;font-size:12px">清除</button>
     </div>
     <div id="notionStatus" style="text-align:center;margin-top:4px;font-size:11px;color:#888"></div>
@@ -2432,6 +2433,37 @@ let NOTION_TOKEN=localStorage.getItem("chickie_notion_token")||"";
 let NOTION_DB=localStorage.getItem("chickie_notion_db")||"";
 let NOTION_PROXY=localStorage.getItem("chickie_notion_proxy")||"https://orange-dawn-b0b2.chickie-proxy.workers.dev/";
 let notionQueue=[];let notionSending=false;
+async function autoSyncOnStart(){
+  if(localStorage.getItem("chickie_cloud_sync")!=="on")return;
+  if(!NOTION_PROXY)return;
+  try{
+    const r=await fetch(NOTION_PROXY+"state");
+    if(!r.ok)return;
+    const d=await r.json();
+    if(!d||!d.chickens)return;
+    // 云端有更新的 tick 就用云端
+    const cloudTick=d._lastTick||0,localTick=S._lastTick||0;
+    if(cloudTick>=localTick){
+      Object.assign(S,d);save();
+      console.log("☁️ 云端状态已自动同步 (cloud:",new Date(cloudTick).toLocaleString(),")");
+      if(view==="yard")renderYard();else if(view==="room")renderRoom();
+      renderStats();renderLog();
+    }
+  }catch(e){console.log("Auto sync error:",e)}
+}
+function toggleCloudSync(){
+  const on=localStorage.getItem("chickie_cloud_sync")==="on";
+  localStorage.setItem("chickie_cloud_sync",on?"off":"on");
+  const btn=document.getElementById("cloudSyncBtn");
+  if(btn)btn.textContent=on?"☁️ 自动同步: 关":"☁️ 自动同步: 开";
+  document.getElementById("notionStatus").textContent=on?"自动同步已关":"✅ 自动同步已开（启动拉取+每2分钟上传）";
+}
+// 每 2 分钟自动上传
+setInterval(()=>{
+  if(localStorage.getItem("chickie_cloud_sync")!=="on")return;
+  if(!NOTION_PROXY)return;
+  fetch(NOTION_PROXY+"state",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({...S,_lastTick:Date.now()})}).catch(()=>{});
+},120000);
 async function uploadStateToCloud(){
   const st=document.getElementById("notionStatus");st.textContent="☁️ 上传中…";
   try{
@@ -3647,6 +3679,8 @@ initWeather();
 startPoopTimer();
 startAutoActivity();
 startInstrPoll();
+autoSyncOnStart();
+if(localStorage.getItem("chickie_cloud_sync")==="on"){setTimeout(()=>{const b=document.getElementById("cloudSyncBtn");if(b)b.textContent="☁️ 自动同步: 开"},500)}
 renderYard();renderStats();renderLog();
 setInterval(decay,60000);
 setInterval(()=>{
