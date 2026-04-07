@@ -2050,7 +2050,7 @@ function renderRoom(){
   sc.innerHTML=`
     <div class="room-header">🏠 ${c.gender==="male"?"♂":"♀"}${c.name}的房间</div>
     <div class="room-scene">
-      <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" style="left:${cLeft};--blanket:${blanketColor(roomId)}${cBottomStyle}">
+      <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" onclick="showMenu(event,${roomId})" style="left:${cLeft};--blanket:${blanketColor(roomId)}${cBottomStyle}">
         <div class="room-reaction" id="roomReact"></div>
         ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
