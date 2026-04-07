@@ -113,7 +113,7 @@ function handleInstruction(cmd, S) {
   let log = null, matched = false;
 
   // status queries
-  const allAlias = ["看看全部","全部状态","状态报告","看看大家","看看所有","查看全部","查看所有","大家状态","所有状态","报告状态","报告","看看","汇报","全家状态"];
+  const allAlias = ["看看全部","全部状态","状态报告","看看大家","看看所有","查看全部","查看所有","大家状态","所有状态","报告状态","报告","看看","汇报","全家状态","大家怎么样","大家怎么样了","大家好吗","全部怎么样"];
   if (allAlias.includes(cmd)) return { matched: true, log: reportAll(S), type: "状态", chicken: "全部" };
   let m = cmd.match(/^(?:看看|查看|瞅瞅|瞧瞧)(.+)$/) || cmd.match(/^(.+?)(?:状态|怎么样|咋样|如何|的情况|近况)$/);
   if (m) { const i = find(m[1].trim()); if (i >= 0) return { matched: true, log: reportOne(S.chickens[i], S), type: "状态", chicken: S.chickens[i].name }; }
