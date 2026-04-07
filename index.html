@@ -2599,16 +2599,28 @@ function chickExtraState(c){
 async function syncStateToNotion(){
   if(!NOTION_TOKEN||!NOTION_DB)return;
   const stageE={baby:"🥚",teen:"🌱",mature:"🌿",adult:"🐔",elder:"👴"};
-  const blocks=S.chickens.map(c=>{
-    const head=`${c.gender==="male"?"♂":"♀"}${c.name} ${stageE[c.stage]||"🐥"}${stgN(c.stage)} ${c.location==="inside"?"🏠室内":"🌳院子"} ${getExpr(c)}`;
-    return head+"\n"+chickExtraState(c);
+  const sep="\n\n══════════════════\n\n";
+  const header=`🌤️ ${weather} 🌾食物:${S.food} 💩:${S.poops.length} ⏰${torontoISO().slice(11,16)}\n👨‍👩‍👧‍👦 共 ${S.chickens.length} 只小鸡 · 每家独立详报`;
+  // 每只鸡一个 rich_text 对象，绕过 2000 字符限制
+  const richText=[{text:{content:header+sep}}];
+  S.chickens.forEach((c,i)=>{
+    const head=`🏡 第${i+1}家 ─ ${c.gender==="male"?"♂":"♀"}${c.name}\n${stageE[c.stage]||"🐥"}${stgN(c.stage)} · ${c.location==="inside"?"🏠室内":"🌳院子"} · ${getExpr(c)}\n`;
+    const body=chickExtraState(c);
+    const tail=c.location==="inside"?"\n\n🗺️ 房间布局:\n"+roomLayoutEmoji(c.id):"";
+    let chunk=head+"\n"+body+tail;
+    if(i<S.chickens.length-1)chunk+=sep;
+    // 单个 text 对象上限 2000
+    while(chunk.length>1900){
+      richText.push({text:{content:chunk.slice(0,1900)}});
+      chunk=chunk.slice(1900);
+    }
+    richText.push({text:{content:chunk}});
   });
-  const stateStr=`🌤️ ${weather} 🌾食物:${S.food} 💩:${S.poops.length}\n\n`+blocks.join("\n\n");
   try{
     await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
       method:"PATCH",
       headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
-      body:JSON.stringify({properties:{"详情":{rich_text:[{text:{content:stateStr.slice(0,2000)}}]},"时间":{date:{start:torontoISO()}}}})
+      body:JSON.stringify({properties:{"详情":{rich_text:richText},"时间":{date:{start:torontoISO()}}}})
     });
   }catch(e){console.log("State sync error:",e)}
 }
@@ -2875,20 +2887,22 @@ function execInstruction(cmd,pageId){
     if(m){
       const who=m[1].trim();
       if(who==="全部"||who==="所有"||who==="大家"){
-        let report=[];
-        S.chickens.forEach(c=>{
-          const ex=getExpr(c);
-          const exE={sleep:"😴",injured:"🤕",fever:"🤒",sick:"🤧",happy:"😊",angry:"😡",hungry:"😣",content:"🙂"};
-          report.push(`${c.name}(${c.gender==="male"?"♂":"♀"}${c.stage}): 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)} ${c.sleeping?"💤睡觉中":c.location==="inside"?"🏠室内":"☀️室外"} 表情:${exE[ex]||"🐥"}${ex}`);
+        // 每只鸡一份独立详细报告
+        addLog(`📋 [状态报告 · 总览] 🌤️${weather} 🌾食物:${S.food} 💩:${S.poops.length} 共${S.chickens.length}家`,"全部","状态",null,true);
+        S.chickens.forEach((c,i)=>{
+          const head=`🏡 第${i+1}家 ─ ${c.gender==="male"?"♂":"♀"}${c.name} ${c.location==="inside"?"🏠室内":"🌳院子"}`;
+          let buddyInfo=[];S.chickens.forEach((c2,j)=>{if(j===i)return;const v=getBuddyAff(i,j);if(v>0)buddyInfo.push(`${c2.name}:${v}`)});
+          const extra=chickExtraState(c)+(buddyInfo.length?"\n好友: "+buddyInfo.join(" "):"")+`\n亲密(手动):${c.affManual} 亲密(指令):${c.affNotion}`;
+          addLog(`${head}\n${extra}`,c.name,"状态",c,true);
         });
-        addLog(`📋 [状态报告]\n${report.join("\n")}\n🌾食物:${S.food} 💩粑粑:${S.poops.length}`,"全部","状态",null,true);matched=true;
+        matched=true;
       }else{
         const ci=names.indexOf(who);
         if(ci>=0){
-          const c=S.chickens[ci];const ex=getExpr(c);
-          const bl=BUDDY_LEVELS.slice().reverse().find(l=>getBuddyAff(ci,0)>=l.threshold);
+          const c=S.chickens[ci];
           let buddyInfo=[];S.chickens.forEach((c2,j)=>{if(j===ci)return;const v=getBuddyAff(ci,j);if(v>0)buddyInfo.push(`${c2.name}:${v}`)});
-          addLog(`📋 [${c.name}状态] ${c.gender==="male"?"♂公鸡":"♀母鸡"} ${c.stage}\n饱食:${Math.round(c.hunger)} 快乐:${Math.round(c.happiness)} 水分:${Math.round(c.thirst)} 清洁:${Math.round(c.clean)} 健康:${Math.round(c.health)} 疲惫:${Math.round(c.fatigue)}\n${c.sleeping?"💤睡觉中":c.location==="inside"?"🏠室内":"☀️室外"} 暖气:${c.heater} 照灯:${c.lamp}\n表情:${ex} 亲密(手动):${c.affManual} 亲密(指令):${c.affNotion}\n好友:${buddyInfo.join(" ")||"暂无"}`,c.name,"状态",c,true);matched=true;
+          const extra=chickExtraState(c)+(buddyInfo.length?"\n好友: "+buddyInfo.join(" "):"")+`\n亲密(手动):${c.affManual} 亲密(指令):${c.affNotion}`;
+          addLog(`📋 [${c.name}的家 · 详细报告]\n${extra}`,c.name,"状态",c,true);matched=true;
         }
       }
     }
