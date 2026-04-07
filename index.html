@@ -351,11 +351,11 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 /* ===== CSS-绘制的小鸡服装 ===== */
 .chick-acc{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:3}
 /* 服装：自适应 chick-body 尺寸（百分比）。garment 是 chick-body 的子元素 */
-.chick-garment{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:125%;height:100%;pointer-events:none;z-index:3}
+.chick-garment{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:calc(var(--bw,34px) + 16px);height:calc(var(--bh,28px) + 2px);pointer-events:none;z-index:3}
 .chick-garment::before{content:"";position:absolute;top:-12%;left:50%;transform:translateX(-50%);width:30%;height:18%;background:var(--g2);border-radius:0 0 50% 50%;z-index:2}
 /* T 恤 - 短袖 */
 .garment-tshirt{background:var(--g1);border:2px solid var(--g2);border-radius:45% 45% 20% 20%}
-.garment-tshirt::after{content:"";position:absolute;top:8%;left:-12%;right:-12%;height:38%;background:var(--g1);border:2px solid var(--g2);border-radius:50%;z-index:1}
+.garment-tshirt::after{content:"";position:absolute;top:18%;left:-22%;right:-22%;height:42%;background:var(--g1);border:2px solid var(--g2);border-radius:50%;z-index:1}
 /* 背心 - 无袖 */
 .garment-vest{width:88%;background:var(--g1);border:2px solid var(--g2);border-radius:40% 40% 18% 18%}
 /* 连衣裙 - A 字下摆 */
