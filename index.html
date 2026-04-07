@@ -348,6 +348,60 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .outfit.body{top:22px;left:50%;transform:translateX(-50%);font-size:16px;opacity:.9}
 .outfit.shoes{bottom:-2px;left:50%;transform:translateX(-50%);font-size:12px}
 .outfit.hand{top:8px;right:-4px;font-size:13px}
+/* ===== CSS-绘制的小鸡服装 ===== */
+.chick-acc{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:3}
+.chick-garment{bottom:0}
+/* T 恤 */
+.garment-tshirt{width:32px;height:18px;background:var(--g1);border-radius:50% 50% 8px 8px / 70% 70% 10px 10px;border-top:2px solid var(--g2);box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)}
+.garment-tshirt::before,.garment-tshirt::after{content:"";position:absolute;top:1px;width:7px;height:6px;background:var(--g1);border-radius:50%}
+.garment-tshirt::before{left:-3px}.garment-tshirt::after{right:-3px}
+/* 背心 */
+.garment-vest{width:26px;height:14px;bottom:3px;background:var(--g1);border-radius:8px 8px 4px 4px;border:1.5px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(0,0,0,.1)}
+/* 连衣裙 */
+.garment-dress{width:38px;height:22px;background:var(--g1);border-radius:30% 30% 20% 20% / 50% 50% 30% 30%;border-top:2px solid var(--g2);box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
+.garment-dress::after{content:"";position:absolute;bottom:-2px;left:0;right:0;height:3px;background:var(--g2);border-radius:0 0 50% 50%}
+/* 卫衣 */
+.garment-sweater{width:34px;height:22px;background:var(--g1);border-radius:50% 50% 6px 6px / 60% 60% 6px 6px;border:1.5px solid var(--g2);box-shadow:inset 0 -3px 0 rgba(0,0,0,.1)}
+.garment-sweater::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:8px;height:6px;background:var(--g2);border-radius:0 0 6px 6px}
+/* 围裙 */
+.garment-apron{width:22px;height:18px;bottom:2px;background:var(--g1);border-radius:4px 4px 10px 10px;border:1.5px solid var(--g2)}
+.garment-apron::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:10px;height:3px;background:var(--g2);border-radius:2px}
+/* 雨衣（鲜亮+反光带） */
+.garment-raincoat{width:36px;height:24px;background:var(--g1);border-radius:50% 50% 8px 8px / 60% 60% 10px 10px;border:1.5px solid var(--g2);box-shadow:inset 0 -3px 0 rgba(255,255,255,.4),0 0 4px rgba(255,255,0,.3)}
+.garment-raincoat::before{content:"";position:absolute;top:8px;left:0;right:0;height:2px;background:rgba(255,255,255,.7)}
+.garment-raincoat::after{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:14px;height:8px;background:var(--g1);border-radius:50% 50% 0 0;border:1.5px solid var(--g2);border-bottom:none}
+/* 防风衣 */
+.garment-windbreaker{width:34px;height:22px;background:linear-gradient(180deg,var(--g1),var(--g2));border-radius:40% 40% 6px 6px / 50% 50% 6px 6px;border:1.5px solid var(--g2)}
+.garment-windbreaker::before{content:"";position:absolute;top:5px;left:50%;width:1px;height:14px;background:rgba(0,0,0,.3)}
+/* 羽绒服（蓬松横条） */
+.garment-puffer{width:38px;height:26px;background:var(--g1);border-radius:50% 50% 10px 10px / 60% 60% 12px 12px;border:2px solid var(--g2);box-shadow:inset 0 -4px 0 rgba(0,0,0,.1)}
+.garment-puffer::before{content:"";position:absolute;top:6px;left:0;right:0;height:2px;background:var(--g2);box-shadow:0 5px 0 var(--g2),0 10px 0 var(--g2)}
+.garment-puffer::after{content:"";position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:18px;height:10px;background:var(--g1);border-radius:50% 50% 0 0;border:2px solid var(--g2);border-bottom:none}
+
+/* ===== 帽子 ===== */
+.chick-hat{top:-4px;z-index:5}
+.hat-cap{width:22px;height:8px;background:var(--g1);border-radius:11px 11px 0 0;border:1px solid var(--g2)}
+.hat-cap::after{content:"";position:absolute;bottom:-2px;left:-5px;width:30px;height:3px;background:var(--g1);border-radius:2px;border:1px solid var(--g2);border-top:none}
+.hat-bow{width:14px;height:8px}
+.hat-bow::before,.hat-bow::after{content:"";position:absolute;top:0;width:7px;height:8px;background:var(--g1);border-radius:50%}
+.hat-bow::before{left:0}.hat-bow::after{right:0}
+.hat-bow{background:radial-gradient(circle,var(--g2) 2px,transparent 2px)}
+.hat-beret{width:22px;height:10px;background:var(--g1);border-radius:50%;border:1.5px solid var(--g2)}
+.hat-beret::after{content:"";position:absolute;top:0;right:-2px;width:4px;height:4px;background:var(--g2);border-radius:50%}
+.hat-bucket{width:26px;height:10px;background:var(--g1);border:1.5px solid var(--g2);border-radius:6px 6px 2px 2px}
+.hat-bucket::after{content:"";position:absolute;bottom:-3px;left:-4px;width:34px;height:4px;background:var(--g1);border:1.5px solid var(--g2);border-radius:50%}
+.hat-beanie{width:22px;height:11px;background:var(--g1);border-radius:11px 11px 2px 2px;border:1.5px solid var(--g2)}
+.hat-beanie::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:5px;height:5px;background:var(--g2);border-radius:50%}
+.hat-beanie::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--g2);border-radius:0 0 2px 2px}
+.hat-straw{width:28px;height:6px;background:var(--g1);border-radius:50%;border:1px solid var(--g2)}
+.hat-straw::before{content:"";position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:16px;height:8px;background:var(--g1);border-radius:50% 50% 0 0;border:1px solid var(--g2);border-bottom:none}
+
+/* ===== 鞋子 ===== */
+.chick-shoes{bottom:-4px;display:flex;gap:4px;z-index:4}
+.chick-shoes::before,.chick-shoes::after{content:"";display:block}
+.shoes-sock::before,.shoes-sock::after{width:6px;height:5px;background:var(--g1);border-radius:30% 30% 50% 50%;border:1px solid var(--g2)}
+.shoes-boot::before,.shoes-boot::after{width:7px;height:7px;background:var(--g1);border-radius:30% 30% 60% 60%;border:1px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(255,255,255,.3)}
+.shoes-snowboot::before,.shoes-snowboot::after{width:8px;height:8px;background:var(--g1);border-radius:30% 30% 60% 60%;border:1.5px solid var(--g2);box-shadow:inset 0 2px 0 rgba(255,255,255,.7)}
 /* 室内小鸡: 衣服贴合身体，按 chick 大小 */
 .room-chicken-wrap{width:90px;height:100px}
 .room-chicken-wrap .outfit{font-size:22px}
@@ -1189,7 +1243,39 @@ function chickHTML(id,expr,sz,ex){
     </div>
     <div class="chick-body"><div class="chick-wing L"></div><div class="chick-wing R"></div><div class="chick-tail"></div></div>
     <div class="chick-feet"><div class="chick-foot"></div><div class="chick-foot"></div></div>
+    ${garmentHTML(c)}
   </div>`;
+}
+// CSS-绘制的小鸡服装（按 chickenId 稳定随机 + 按场景）
+function garmentHTML(c){
+  if(!c||c.sleeping)return"";
+  let s=0;const sid=String(c.id);for(let i=0;i<sid.length;i++)s=(s*31+sid.charCodeAt(i))>>>0;
+  const rnd=()=>{s=(s*1103515245+12345)>>>0;return(s>>>16)/65536};
+  const palette=["#FF6B9D","#FFB347","#6BCF7F","#5DADE2","#AF7AC5","#F1948A","#85C1E9","#F8C471","#82E0AA","#F1948A","#FFD93D","#FF8FA3"];
+  const pick=()=>palette[Math.floor(rnd()*palette.length)];
+  const g1=pick(),g2=pick();
+  // 决定款式
+  let body="tshirt",hat="",shoes="";
+  if(c.location==="inside"){
+    const warm=(c.heater||0)+(c.lamp||0);
+    const indoorBody=warm>=3?["vest","tshirt"]:warm>=1?["tshirt","dress","sweater"]:["sweater","dress","apron"];
+    body=indoorBody[Math.floor(rnd()*indoorBody.length)];
+    if(rnd()<0.4)hat=["cap","bow","beret"][Math.floor(rnd()*3)];
+    if(warm===0)shoes="sock";
+  }else{
+    // 户外按天气
+    if(weather==="rainy"){body="raincoat";hat="bucket";shoes="boot"}
+    else if(weather==="snowy"){body="puffer";hat="beanie";shoes="snowboot"}
+    else if(weather==="sunny"){body=rnd()<0.5?"tshirt":"dress";hat="straw"}
+    else if(weather==="cloudy"){body=rnd()<0.5?"sweater":"windbreaker";hat="cap"}
+    else body="tshirt";
+  }
+  const style=`--g1:${g1};--g2:${g2}`;
+  let html="";
+  if(hat)html+=`<div class="chick-acc chick-hat hat-${hat}" style="${style}"></div>`;
+  html+=`<div class="chick-acc chick-garment garment-${body}" style="${style}"></div>`;
+  if(shoes)html+=`<div class="chick-acc chick-shoes shoes-${shoes}" style="${style}"></div>`;
+  return html;
 }
 
 // ===== EXPRESSIONS =====
@@ -1549,7 +1635,7 @@ function renderYardChickens(){
     div.className="yard-chicken";div.dataset.id=c.id;div.id="yc"+c.id;
     div.style.left=pos.left;div.style.top=pos.top;
     div.onclick=function(e){showMenu(e,c.id)};
-    div.innerHTML=`${chickHTML(c.id,expr,"med")}${outfitHTML(c)}
+    div.innerHTML=`${chickHTML(c.id,expr,"med")}
       <span class="yc-name">${c.gender==="male"?"♂":"♀"}${c.name}</span>
       <span class="yc-status">${st}</span>
       <div class="yard-bars">
@@ -2094,7 +2180,7 @@ function renderRoom(){
     <div class="room-scene">
       <div class="room-chicken-wrap ${c.sleeping?"on-bed":""}" id="roomChicken" onclick="showMenu(event,${roomId})" style="left:${cLeft};--blanket:${blanketColor(roomId)}${cBottomStyle}">
         <div class="room-reaction" id="roomReact"></div>
-        ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}${outfitHTML(c)}
+        ${chickHTML(roomId,expr,"big",c.sleeping?"anim-sleep":"")}
       </div>
       <div class="room-warm ${c.heater>0||c.lamp>0?"active":""}" id="roomWarm"></div>
       <div class="room-dim" style="opacity:${!c.light&&!c.curtain?0.3:!c.light&&c.curtain?0.1:0}"></div>
