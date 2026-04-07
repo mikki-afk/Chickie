@@ -2060,6 +2060,20 @@ function renderRoom(){
     <div style="margin-top:2px;font-size:10px;color:#888">💕好友:${bb.best>=0?S.chickens[bb.best].name+"("+bb.bestV+(()=>{const bl=BUDDY_LEVELS.slice().reverse().find(l=>bb.bestV>=l.threshold);return bl?" · "+bl.level:""})()+")"  :"无"} 😐疏远:${bb.worst>=0&&bb.worstV<bb.bestV?S.chickens[bb.worst].name+"("+bb.worstV+")":"无"}</div>`;
   renderRoomBtns();
   initRoomDrag();
+  // 睡觉时自动贴到床的实际位置
+  if(c.sleeping){
+    requestAnimationFrame(()=>{
+      const bed=document.getElementById("furBed");
+      const scn=document.querySelector(".room-scene");
+      const wrap=document.getElementById("roomChicken");
+      if(!bed||!scn||!wrap)return;
+      const br=bed.getBoundingClientRect(),sr=scn.getBoundingClientRect();
+      const cx=br.left+br.width/2-sr.left;
+      const cb=sr.bottom-br.top-br.height*0.35;// 床面稍偏上
+      wrap.style.left=(cx/sr.width*100)+"%";
+      wrap.style.bottom=cb+"px";
+    });
+  }
 }
 
 function renderRoomBtns(){
