@@ -2490,20 +2490,15 @@ async function flushNotion(){
         props["详情"]={rich_text:[{text:{content:detail+"\n好友: "+parts.join(" | ")}}]};
       }
     }
-    // 天气穿搭反馈
-    if(item.stats.location==="outside"){
-      const outfitMap={rainy:"🧥 雨衣雨靴打伞",snowy:"🧣 围巾雪地靴外套",sunny:"👒 草帽墨镜",cloudy:"🧢 鸭舌帽"};
-      const o=outfitMap[weather]||"🐥 常服";
-      props["穿搭"]={select:{name:o}};
-    }else{
-      props["穿搭"]={select:{name:"🏠 居家"}};
+    // 身心外观全部追加到详情
+    {
+      const extras=chickExtraState(item.stats);
+      if(extras){
+        const d=props["详情"].rich_text[0].text.content;
+        props["详情"]={rich_text:[{text:{content:d+"\n"+extras}}]};
+      }
     }
-    // 成长色调
-    const toneMap={baby:"🌼 嫩黄",teen:"✨ 明亮",mature:"🎨 标准",adult:"🔆 鲜艳",elder:"🍂 褪色"};
-    if(item.stats.stage)props["色调"]={select:{name:toneMap[item.stats.stage]||"🎨 标准"}};
-    // 睡眠状态
-    if(item.stats.sleeping!==undefined)props["睡眠"]={checkbox:!!item.stats.sleeping};
-// 房间家具 emoji 布局
+    // 房间家具 emoji 布局
     if(item.stats.id!==undefined&&item.stats.location==="inside"){
       const layout=roomLayoutEmoji(item.stats.id);
       if(layout){
@@ -2529,9 +2524,39 @@ function scheduleStateSync(){
   if(stateSyncTimer)clearTimeout(stateSyncTimer);
   stateSyncTimer=setTimeout(syncStateToNotion,5000);
 }
+function chickExtraState(c){
+  if(!c)return"";
+  const lines=[];
+  // 穿搭
+  const outfitMap={rainy:"🧥 雨衣+👢雨靴+☂️伞",snowy:"🎩+🧣围巾+🧥外套+🥾雪地靴",sunny:"👒 草帽+🕶️墨镜",cloudy:"🧢 鸭舌帽"};
+  const outfit=c.location==="outside"?(outfitMap[weather]||"🐥 常服"):"🏠 居家";
+  lines.push("穿搭: "+outfit);
+  // 色调
+  const toneMap={baby:"🌼 嫩黄",teen:"✨ 明亮",mature:"🎨 标准",adult:"🔆 鲜艳",elder:"🍂 褪色"};
+  if(c.stage)lines.push("色调: "+(toneMap[c.stage]||"🎨 标准"));
+  // 睡眠
+  if(c.sleeping)lines.push("💤 睡眠中");
+  // 环境
+  const env=[];
+  if(c.heater>0)env.push("🔥暖气"+c.heater);
+  if(c.lamp>0)env.push("💡照灯"+c.lamp);
+  if(c.light)env.push("💡灯开");
+  if(c.curtain)env.push("🪟窗帘开");
+  if(env.length)lines.push("环境: "+env.join(" "));
+  // 状态数值
+  lines.push(`❤️${Math.round(c.hunger)} 😊${Math.round(c.happiness)} 💧${Math.round(c.thirst)} 🛁${Math.round(c.clean)} 💚${Math.round(c.health)} 😴${Math.round(c.fatigue)}`);
+  // 生病
+  if(c.sickness)lines.push("病: "+c.sickness.icon+" "+c.sickness.name);
+  return lines.join("\n");
+}
 async function syncStateToNotion(){
   if(!NOTION_TOKEN||!NOTION_DB)return;
-  const stateStr=JSON.stringify({chickens:S.chickens.map(c=>({name:c.name,hunger:c.hunger,happiness:c.happiness,thirst:c.thirst,clean:c.clean,health:c.health,fatigue:c.fatigue,affManual:c.affManual,affNotion:c.affNotion,heater:c.heater,lamp:c.lamp,light:c.light,curtain:c.curtain,sleeping:c.sleeping,location:c.location,stage:c.stage,totalHunger:c.totalHunger,totalHappiness:c.totalHappiness,favoriteFood:c.favoriteFood,hatedFood:c.hatedFood,favoriteGame:c.favoriteGame,hatedGame:c.hatedGame,gender:c.gender,parents:c.parents})),food:S.food,poops:S.poops.length,buddyAff:S.buddyAff});
+  const stageE={baby:"🥚",teen:"🌱",mature:"🌿",adult:"🐔",elder:"👴"};
+  const blocks=S.chickens.map(c=>{
+    const head=`${c.gender==="male"?"♂":"♀"}${c.name} ${stageE[c.stage]||"🐥"}${stgN(c.stage)} ${c.location==="inside"?"🏠室内":"🌳院子"} ${getExpr(c)}`;
+    return head+"\n"+chickExtraState(c);
+  });
+  const stateStr=`🌤️ ${weather} 🌾食物:${S.food} 💩:${S.poops.length}\n\n`+blocks.join("\n\n");
   try{
     await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
       method:"PATCH",
