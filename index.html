@@ -67,7 +67,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 @keyframes angryShake{0%,100%{transform:translateX(-50%)}33%{transform:translateX(calc(-50% + 2px))}66%{transform:translateX(calc(-50% - 2px))}}
 @keyframes giggleShake{0%,100%{transform:translateX(-50%)}50%{transform:translateX(calc(-50% + 1px))}}
 @keyframes energeticBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
-@keyframes dizzy{0%{transform:translateX(-50%) rotate(0)}100%{transform:translateX(-50%) rotate(360deg)}}
+@keyframes dizzy{0%,100%{transform:translateX(-50%) rotate(-30deg)}25%{transform:translateX(-50%) rotate(120deg)}50%{transform:translateX(-50%) rotate(240deg)}75%{transform:translateX(-50%) rotate(60deg)}}
 @keyframes partyBounce{0%,100%{transform:translateX(-50%) translateY(0) rotate(0)}25%{transform:translateX(-50%) translateY(-4px) rotate(5deg)}75%{transform:translateX(-50%) translateY(-4px) rotate(-5deg)}}
 
 /* 😴 sleep */ .expr-sleep .chick-eye{height:2px;border-radius:2px;margin-top:2px;width:3px}.expr-sleep .chick-beak{width:5px;height:2px;border:none;background:#FF8C00;border-radius:1px;top:15px;margin-left:-2px}.expr-sleep .chick-blush{opacity:.3}.expr-sleep .chick-zzz{opacity:1;animation:zzzF 2s ease-in-out infinite}
@@ -352,7 +352,7 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .chick-acc{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:3}
 /* 服装：自适应 chick-body 尺寸（百分比）。garment 是 chick-body 的子元素 */
 .chick-garment{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:calc(var(--bw,34px) + 2px);height:calc(var(--bh,28px) + 2px);pointer-events:none;z-index:3}
-.chick-garment::before{content:"";position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:55%;height:32%;background:#fff8;border:2.5px solid var(--g2);border-top:none;border-radius:0 0 70% 70%;z-index:2;box-shadow:inset 0 -2px 0 var(--g2)}
+.chick-garment::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:38%;height:18%;background:var(--g2);border-radius:0 0 50% 50%;z-index:2}
 /* T 恤 - 短袖 */
 .garment-tshirt{background:var(--g1);border:2px solid var(--g2);border-radius:45% 45% 20% 20%}
 .garment-tshirt::after{content:none}
