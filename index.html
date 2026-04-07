@@ -1441,7 +1441,7 @@ function offlineActivities(rounds){
         addLog(`🛁 ${c.name} 你不在时自己洗了澡`,c.name,"洗澡",c);
       }
       // Auto poop
-      if(Math.random()<0.2)S.poops.push({x:5+Math.random()*85,y:10+Math.random()*70,id:Date.now()+Math.random()+r});
+      if(Math.random()<0.08)S.poops.push({x:5+Math.random()*85,y:10+Math.random()*70,id:Date.now()+Math.random()+r});
     });
   }
 }
@@ -1567,7 +1567,7 @@ function startPoopTimer(){
   if(poopTimer)clearInterval(poopTimer);
   poopTimer=setInterval(()=>{
     S.chickens.forEach(c=>{
-      if(c.location==="outside"&&!c.sleeping&&Math.random()<0.3){
+      if(c.location==="outside"&&!c.sleeping&&Math.random()<0.12){
         S.poops.push({x:5+Math.random()*85,y:10+Math.random()*70,id:Date.now()+Math.random()});
       }
     });
