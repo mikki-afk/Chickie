@@ -1,0 +1,11 @@
+name = "chickie-proxy"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Cron: 每分钟轮询 Notion 指令
+[triggers]
+crons = ["* * * * *"]
+
+# Secrets（不要写在这里）—— 用命令设置：
+#   wrangler secret put NOTION_TOKEN
+#   wrangler secret put NOTION_DB
