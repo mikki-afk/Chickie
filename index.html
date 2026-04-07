@@ -2148,6 +2148,25 @@ function renderRoom(){
       wrap.style.bottom=(bedTopFromBottom-br.height*0.72)+"px";
     });
   }
+  // 自动把衣服 emoji 贴到 chick 实际身体位置
+  if(!c.sleeping){
+    requestAnimationFrame(()=>{
+      const wrap=document.getElementById("roomChicken");if(!wrap)return;
+      const chick=wrap.querySelector(".chick");if(!chick)return;
+      const wr=wrap.getBoundingClientRect(),cr=chick.getBoundingClientRect();
+      const cxPx=cr.left+cr.width/2-wr.left;
+      const cyTop=cr.top-wr.top;
+      const ch=cr.height,cw=cr.width;
+      wrap.querySelectorAll(".outfit").forEach(o=>{
+        o.style.left=cxPx+"px";o.style.transform="translateX(-50%)";
+        if(o.classList.contains("hat"))     {o.style.top=(cyTop-2)+"px";o.style.fontSize=Math.round(cw*0.55)+"px"}
+        else if(o.classList.contains("scarf")){o.style.top=(cyTop+ch*0.38)+"px";o.style.fontSize=Math.round(cw*0.5)+"px"}
+        else if(o.classList.contains("body")) {o.style.top=(cyTop+ch*0.5)+"px";o.style.fontSize=Math.round(cw*0.7)+"px"}
+        else if(o.classList.contains("shoes")){o.style.top=(cyTop+ch*0.92)+"px";o.style.fontSize=Math.round(cw*0.5)+"px"}
+        else if(o.classList.contains("hand")) {o.style.top=(cyTop+ch*0.55)+"px";o.style.left=(cxPx+cw*0.4)+"px";o.style.transform="none";o.style.fontSize=Math.round(cw*0.5)+"px"}
+      });
+    });
+  }
 }
 
 function renderRoomBtns(){
