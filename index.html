@@ -2484,6 +2484,23 @@ async function flushNotion(){
         props["详情"]={rich_text:[{text:{content:detail+"\n好友: "+parts.join(" | ")}}]};
       }
     }
+    // 天气穿搭反馈
+    if(item.stats.location==="outside"){
+      const outfitMap={rainy:"🧢+🧥+👢+☂️（雨衣雨靴打伞）",snowy:"🎩+🧣+🧥+🥾（戴围巾穿雪地靴）",sunny:"👒+🕶️（草帽墨镜）",cloudy:"🧢（鸭舌帽）"};
+      const o=outfitMap[weather];
+      if(o){
+        const d=props["详情"].rich_text[0].text.content;
+        props["详情"]={rich_text:[{text:{content:d+"\n穿搭: "+o}}]};
+      }
+    }
+    // 房间家具 emoji 布局
+    if(item.stats.id!==undefined&&item.stats.location==="inside"){
+      const layout=roomLayoutEmoji(item.stats.id);
+      if(layout){
+        const d=props["详情"].rich_text[0].text.content;
+        props["详情"]={rich_text:[{text:{content:d+"\n\n房间布局:\n"+layout}}]};
+      }
+    }
   }
   try{
     const r=await fetch(NOTION_PROXY+"v1/pages",{
