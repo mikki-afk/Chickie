@@ -2599,30 +2599,41 @@ function chickExtraState(c){
 async function syncStateToNotion(){
   if(!NOTION_TOKEN||!NOTION_DB)return;
   const stageE={baby:"🥚",teen:"🌱",mature:"🌿",adult:"🐔",elder:"👴"};
-  const sep="\n\n══════════════════\n\n";
-  const header=`🌤️ ${weather} 🌾食物:${S.food} 💩:${S.poops.length} ⏰${torontoISO().slice(11,16)}\n👨‍👩‍👧‍👦 共 ${S.chickens.length} 只小鸡 · 每家独立详报`;
-  // 每只鸡一个 rich_text 对象，绕过 2000 字符限制
-  const richText=[{text:{content:header+sep}}];
-  S.chickens.forEach((c,i)=>{
-    const head=`🏡 第${i+1}家 ─ ${c.gender==="male"?"♂":"♀"}${c.name}\n${stageE[c.stage]||"🐥"}${stgN(c.stage)} · ${c.location==="inside"?"🏠室内":"🌳院子"} · ${getExpr(c)}\n`;
+  const pageMap=JSON.parse(localStorage.getItem("chickie_state_pages")||"{}");
+  const hdrBase={"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"};
+  // 每只鸡单独一条 database entry 作为"状态快照"
+  for(const c of S.chickens){
+    const head=`🏡 ${c.gender==="male"?"♂":"♀"}${c.name}的家 ${stageE[c.stage]||"🐥"}${stgN(c.stage)} ${c.location==="inside"?"🏠室内":"🌳院子"} ${getExpr(c)}`;
     const body=chickExtraState(c);
-    const tail=c.location==="inside"?"\n\n🗺️ 房间布局:\n"+roomLayoutEmoji(c.id):"";
-    let chunk=head+"\n"+body+tail;
-    if(i<S.chickens.length-1)chunk+=sep;
-    // 单个 text 对象上限 2000
-    while(chunk.length>1900){
-      richText.push({text:{content:chunk.slice(0,1900)}});
-      chunk=chunk.slice(1900);
-    }
-    richText.push({text:{content:chunk}});
-  });
-  try{
-    await fetch(NOTION_PROXY+"v1/pages/"+STATE_PAGE,{
-      method:"PATCH",
-      headers:{"Authorization":"Bearer "+NOTION_TOKEN,"Notion-Version":"2022-06-28","Content-Type":"application/json"},
-      body:JSON.stringify({properties:{"详情":{rich_text:richText},"时间":{date:{start:torontoISO()}}}})
-    });
-  }catch(e){console.log("State sync error:",e)}
+    const layout=c.location==="inside"?"\n\n🗺️ 房间布局:\n"+roomLayoutEmoji(c.id):"";
+    let content=head+"\n\n"+body+layout+`\n\n🌤️${weather} 🌾食物:${S.food} 💩:${S.poops.length}`;
+    const rich=[];
+    while(content.length>1900){rich.push({text:{content:content.slice(0,1900)}});content=content.slice(1900)}
+    rich.push({text:{content}});
+    const props={
+      "Name":{title:[{text:{content:"📊 状态 · "+c.name}}]},
+      "小鸡":{select:{name:c.name}},
+      "类型":{select:{name:"状态快照"}},
+      "时间":{date:{start:torontoISO()}},
+      "详情":{rich_text:rich},
+      "饱食":{number:Math.round(c.hunger)},
+      "快乐":{number:Math.round(c.happiness)},
+      "水分":{number:Math.round(c.thirst)},
+      "清洁":{number:Math.round(c.clean)},
+      "健康":{number:Math.round(c.health)},
+      "疲惫":{number:Math.round(c.fatigue)}
+    };
+    if(c.stage)props["阶段"]={select:{name:(stageE[c.stage]||"🥚")+" "+stgN(c.stage)}};
+    try{
+      const existing=pageMap[c.id];
+      if(existing){
+        await fetch(NOTION_PROXY+"v1/pages/"+existing,{method:"PATCH",headers:hdrBase,body:JSON.stringify({properties:props})});
+      }else{
+        const r=await fetch(NOTION_PROXY+"v1/pages",{method:"POST",headers:hdrBase,body:JSON.stringify({parent:{database_id:NOTION_DB},properties:props})});
+        if(r.ok){const d=await r.json();if(d.id){pageMap[c.id]=d.id;localStorage.setItem("chickie_state_pages",JSON.stringify(pageMap))}}
+      }
+    }catch(e){console.log("State sync error:",e)}
+  }
 }
 
 // ===== NOTION INSTRUCTION POLLING =====
