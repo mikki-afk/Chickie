@@ -348,32 +348,34 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .outfit.body{top:22px;left:50%;transform:translateX(-50%);font-size:16px;opacity:.9}
 .outfit.shoes{bottom:-2px;left:50%;transform:translateX(-50%);font-size:12px}
 .outfit.hand{top:8px;right:-4px;font-size:13px}
-/* ===== CSS-绘制的小鸡服装（迷你贴身款） ===== */
+/* ===== CSS-绘制的小鸡服装 ===== */
 .chick-acc{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:3}
-.chick-garment{bottom:1px;width:22px;height:9px;opacity:.92}
-/* T 恤 - 短上衣盖肚子 */
-.garment-tshirt{background:var(--g1);border-radius:6px 6px 3px 3px;border-top:1px solid var(--g2)}
-.garment-tshirt::before,.garment-tshirt::after{content:"";position:absolute;top:-1px;width:4px;height:4px;background:var(--g1);border-radius:50%}
-.garment-tshirt::before{left:-2px}.garment-tshirt::after{right:-2px}
-/* 背心 */
-.garment-vest{width:18px;height:8px;background:var(--g1);border-radius:4px 4px 2px 2px;border:1px solid var(--g2)}
-/* 连衣裙 - 下摆外扩 */
-.garment-dress{width:24px;height:11px;background:var(--g1);border-radius:6px 6px 50% 50% / 6px 6px 30% 30%;border-top:1px solid var(--g2)}
-/* 卫衣 */
-.garment-sweater{width:23px;height:10px;background:var(--g1);border-radius:8px 8px 3px 3px;border:1px solid var(--g2)}
-.garment-sweater::before{content:"";position:absolute;top:1px;left:50%;transform:translateX(-50%);width:6px;height:3px;background:var(--g2);border-radius:0 0 3px 3px}
-/* 围裙 */
-.garment-apron{width:14px;height:10px;background:var(--g1);border-radius:2px 2px 5px 5px;border:1px solid var(--g2)}
-.garment-apron::before{content:"";position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:7px;height:2px;background:var(--g2);border-radius:1px}
-/* 雨衣（亮黄+反光条） */
-.garment-raincoat{width:24px;height:12px;background:var(--g1);border-radius:8px 8px 3px 3px;border:1px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(255,255,255,.5)}
-.garment-raincoat::before{content:"";position:absolute;top:5px;left:1px;right:1px;height:1px;background:rgba(255,255,255,.85)}
-/* 防风衣 - 渐变拉链 */
-.garment-windbreaker{width:22px;height:11px;background:linear-gradient(180deg,var(--g1),var(--g2));border-radius:6px 6px 3px 3px;border:1px solid var(--g2)}
-.garment-windbreaker::before{content:"";position:absolute;top:2px;left:50%;width:1px;height:7px;background:rgba(0,0,0,.4)}
-/* 羽绒服 - 蓬松横条 */
-.garment-puffer{width:24px;height:13px;background:var(--g1);border-radius:8px 8px 4px 4px;border:1.5px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(0,0,0,.1)}
-.garment-puffer::before{content:"";position:absolute;top:3px;left:1px;right:1px;height:1px;background:var(--g2);box-shadow:0 3px 0 var(--g2),0 6px 0 var(--g2)}
+/* 服装：自适应 chick-body 尺寸（百分比）。garment 是 chick-body 的子元素 */
+.chick-garment{position:absolute;left:50%;bottom:-20%;transform:translateX(-50%);width:200%;height:150%;pointer-events:none;z-index:3}
+.chick-garment::before{content:"";position:absolute;top:-12%;left:50%;transform:translateX(-50%);width:30%;height:18%;background:var(--g2);border-radius:0 0 50% 50%;z-index:2}
+/* T 恤 - 短袖 */
+.garment-tshirt{background:var(--g1);border:2px solid var(--g2);border-radius:45% 45% 20% 20%}
+.garment-tshirt::after{content:"";position:absolute;top:8%;left:-12%;right:-12%;height:38%;background:var(--g1);border:2px solid var(--g2);border-radius:50%;z-index:1}
+/* 背心 - 无袖 */
+.garment-vest{width:88%;background:var(--g1);border:2px solid var(--g2);border-radius:40% 40% 18% 18%}
+/* 连衣裙 - A 字下摆 */
+.garment-dress{width:122%;height:92%;background:var(--g1);border:2px solid var(--g2);border-radius:40% 40% 55% 55% / 35% 35% 35% 35%}
+.garment-dress::after{content:"";position:absolute;top:6%;left:-10%;right:-10%;height:32%;background:var(--g1);border:2px solid var(--g2);border-radius:50%;z-index:1}
+/* 卫衣 - 长袖 */
+.garment-sweater{height:86%;background:var(--g1);border:2px solid var(--g2);border-radius:48% 48% 22% 22%}
+.garment-sweater::after{content:"";position:absolute;top:0;left:-16%;right:-16%;height:52%;background:var(--g1);border:2px solid var(--g2);border-radius:48%;z-index:1}
+/* 围裙 - 带肩带 */
+.garment-apron{width:72%;height:82%;background:var(--g1);border:2px solid var(--g2);border-radius:18% 18% 35% 35%}
+.garment-apron::after{content:"";position:absolute;top:-18%;left:8%;right:8%;height:18%;border-top:2px solid var(--g2);border-radius:50% 50% 0 0;background:transparent}
+/* 雨衣 - 亮黄反光带 */
+.garment-raincoat{height:96%;background:var(--g1);border:2px solid var(--g2);border-radius:48% 48% 22% 22%;box-shadow:inset 0 -18% 0 rgba(255,255,255,.35),0 0 5px rgba(255,200,0,.5)}
+.garment-raincoat::after{content:"";position:absolute;top:42%;left:6%;right:6%;height:8%;background:rgba(255,255,255,.9)}
+/* 防风衣 - 渐变 + 拉链 */
+.garment-windbreaker{height:90%;background:linear-gradient(180deg,var(--g1),var(--g2));border:2px solid var(--g2);border-radius:42% 42% 22% 22%}
+.garment-windbreaker::after{content:"";position:absolute;top:10%;left:50%;width:2px;height:70%;background:rgba(0,0,0,.5)}
+/* 羽绒服 - 蓬松横条 + 大领 */
+.garment-puffer{width:118%;height:100%;background:var(--g1);border:2.5px solid var(--g2);border-radius:55% 55% 28% 28%;box-shadow:inset 0 -18% 0 rgba(0,0,0,.12)}
+.garment-puffer::after{content:"";position:absolute;top:22%;left:6%;right:6%;height:6%;background:var(--g2);box-shadow:0 6px 0 var(--g2),0 12px 0 var(--g2)}
 
 /* ===== 帽子（迷你贴头） ===== */
 .chick-hat{top:-2px;z-index:5}
@@ -1236,9 +1238,8 @@ function chickHTML(id,expr,sz,ex){
       <div class="chick-hearts">💕</div>
       <div class="chick-zzz">Zzz</div>
     </div>
-    <div class="chick-body"><div class="chick-wing L"></div><div class="chick-wing R"></div><div class="chick-tail"></div></div>
+    <div class="chick-body"><div class="chick-wing L"></div><div class="chick-wing R"></div><div class="chick-tail"></div>${garmentHTML(c)}</div>
     <div class="chick-feet"><div class="chick-foot"></div><div class="chick-foot"></div></div>
-    ${garmentHTML(c)}
   </div>`;
 }
 // CSS-绘制的小鸡服装（按 chickenId 稳定随机 + 按场景）
