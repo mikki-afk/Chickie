@@ -348,60 +348,55 @@ h1{text-align:center;font-size:26px;padding:14px 0 8px;color:#5a3e2b;text-shadow
 .outfit.body{top:22px;left:50%;transform:translateX(-50%);font-size:16px;opacity:.9}
 .outfit.shoes{bottom:-2px;left:50%;transform:translateX(-50%);font-size:12px}
 .outfit.hand{top:8px;right:-4px;font-size:13px}
-/* ===== CSS-绘制的小鸡服装 ===== */
+/* ===== CSS-绘制的小鸡服装（迷你贴身款） ===== */
 .chick-acc{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;z-index:3}
-.chick-garment{bottom:0}
-/* T 恤 */
-.garment-tshirt{width:32px;height:18px;background:var(--g1);border-radius:50% 50% 8px 8px / 70% 70% 10px 10px;border-top:2px solid var(--g2);box-shadow:inset 0 -3px 0 rgba(0,0,0,.08)}
-.garment-tshirt::before,.garment-tshirt::after{content:"";position:absolute;top:1px;width:7px;height:6px;background:var(--g1);border-radius:50%}
-.garment-tshirt::before{left:-3px}.garment-tshirt::after{right:-3px}
+.chick-garment{bottom:1px;width:22px;height:9px;opacity:.92}
+/* T 恤 - 短上衣盖肚子 */
+.garment-tshirt{background:var(--g1);border-radius:6px 6px 3px 3px;border-top:1px solid var(--g2)}
+.garment-tshirt::before,.garment-tshirt::after{content:"";position:absolute;top:-1px;width:4px;height:4px;background:var(--g1);border-radius:50%}
+.garment-tshirt::before{left:-2px}.garment-tshirt::after{right:-2px}
 /* 背心 */
-.garment-vest{width:26px;height:14px;bottom:3px;background:var(--g1);border-radius:8px 8px 4px 4px;border:1.5px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(0,0,0,.1)}
-/* 连衣裙 */
-.garment-dress{width:38px;height:22px;background:var(--g1);border-radius:30% 30% 20% 20% / 50% 50% 30% 30%;border-top:2px solid var(--g2);box-shadow:inset 0 -4px 0 rgba(0,0,0,.08)}
-.garment-dress::after{content:"";position:absolute;bottom:-2px;left:0;right:0;height:3px;background:var(--g2);border-radius:0 0 50% 50%}
+.garment-vest{width:18px;height:8px;background:var(--g1);border-radius:4px 4px 2px 2px;border:1px solid var(--g2)}
+/* 连衣裙 - 下摆外扩 */
+.garment-dress{width:24px;height:11px;background:var(--g1);border-radius:6px 6px 50% 50% / 6px 6px 30% 30%;border-top:1px solid var(--g2)}
 /* 卫衣 */
-.garment-sweater{width:34px;height:22px;background:var(--g1);border-radius:50% 50% 6px 6px / 60% 60% 6px 6px;border:1.5px solid var(--g2);box-shadow:inset 0 -3px 0 rgba(0,0,0,.1)}
-.garment-sweater::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:8px;height:6px;background:var(--g2);border-radius:0 0 6px 6px}
+.garment-sweater{width:23px;height:10px;background:var(--g1);border-radius:8px 8px 3px 3px;border:1px solid var(--g2)}
+.garment-sweater::before{content:"";position:absolute;top:1px;left:50%;transform:translateX(-50%);width:6px;height:3px;background:var(--g2);border-radius:0 0 3px 3px}
 /* 围裙 */
-.garment-apron{width:22px;height:18px;bottom:2px;background:var(--g1);border-radius:4px 4px 10px 10px;border:1.5px solid var(--g2)}
-.garment-apron::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:10px;height:3px;background:var(--g2);border-radius:2px}
-/* 雨衣（鲜亮+反光带） */
-.garment-raincoat{width:36px;height:24px;background:var(--g1);border-radius:50% 50% 8px 8px / 60% 60% 10px 10px;border:1.5px solid var(--g2);box-shadow:inset 0 -3px 0 rgba(255,255,255,.4),0 0 4px rgba(255,255,0,.3)}
-.garment-raincoat::before{content:"";position:absolute;top:8px;left:0;right:0;height:2px;background:rgba(255,255,255,.7)}
-.garment-raincoat::after{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:14px;height:8px;background:var(--g1);border-radius:50% 50% 0 0;border:1.5px solid var(--g2);border-bottom:none}
-/* 防风衣 */
-.garment-windbreaker{width:34px;height:22px;background:linear-gradient(180deg,var(--g1),var(--g2));border-radius:40% 40% 6px 6px / 50% 50% 6px 6px;border:1.5px solid var(--g2)}
-.garment-windbreaker::before{content:"";position:absolute;top:5px;left:50%;width:1px;height:14px;background:rgba(0,0,0,.3)}
-/* 羽绒服（蓬松横条） */
-.garment-puffer{width:38px;height:26px;background:var(--g1);border-radius:50% 50% 10px 10px / 60% 60% 12px 12px;border:2px solid var(--g2);box-shadow:inset 0 -4px 0 rgba(0,0,0,.1)}
-.garment-puffer::before{content:"";position:absolute;top:6px;left:0;right:0;height:2px;background:var(--g2);box-shadow:0 5px 0 var(--g2),0 10px 0 var(--g2)}
-.garment-puffer::after{content:"";position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:18px;height:10px;background:var(--g1);border-radius:50% 50% 0 0;border:2px solid var(--g2);border-bottom:none}
+.garment-apron{width:14px;height:10px;background:var(--g1);border-radius:2px 2px 5px 5px;border:1px solid var(--g2)}
+.garment-apron::before{content:"";position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:7px;height:2px;background:var(--g2);border-radius:1px}
+/* 雨衣（亮黄+反光条） */
+.garment-raincoat{width:24px;height:12px;background:var(--g1);border-radius:8px 8px 3px 3px;border:1px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(255,255,255,.5)}
+.garment-raincoat::before{content:"";position:absolute;top:5px;left:1px;right:1px;height:1px;background:rgba(255,255,255,.85)}
+/* 防风衣 - 渐变拉链 */
+.garment-windbreaker{width:22px;height:11px;background:linear-gradient(180deg,var(--g1),var(--g2));border-radius:6px 6px 3px 3px;border:1px solid var(--g2)}
+.garment-windbreaker::before{content:"";position:absolute;top:2px;left:50%;width:1px;height:7px;background:rgba(0,0,0,.4)}
+/* 羽绒服 - 蓬松横条 */
+.garment-puffer{width:24px;height:13px;background:var(--g1);border-radius:8px 8px 4px 4px;border:1.5px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(0,0,0,.1)}
+.garment-puffer::before{content:"";position:absolute;top:3px;left:1px;right:1px;height:1px;background:var(--g2);box-shadow:0 3px 0 var(--g2),0 6px 0 var(--g2)}
 
-/* ===== 帽子 ===== */
-.chick-hat{top:-4px;z-index:5}
-.hat-cap{width:22px;height:8px;background:var(--g1);border-radius:11px 11px 0 0;border:1px solid var(--g2)}
-.hat-cap::after{content:"";position:absolute;bottom:-2px;left:-5px;width:30px;height:3px;background:var(--g1);border-radius:2px;border:1px solid var(--g2);border-top:none}
-.hat-bow{width:14px;height:8px}
-.hat-bow::before,.hat-bow::after{content:"";position:absolute;top:0;width:7px;height:8px;background:var(--g1);border-radius:50%}
+/* ===== 帽子（迷你贴头） ===== */
+.chick-hat{top:-2px;z-index:5}
+.hat-cap{width:14px;height:5px;background:var(--g1);border-radius:7px 7px 0 0;border:.5px solid var(--g2)}
+.hat-cap::after{content:"";position:absolute;bottom:-1px;left:-3px;width:20px;height:2px;background:var(--g1);border-radius:1px}
+.hat-bow{width:10px;height:5px;background:radial-gradient(circle,var(--g2) 1.5px,transparent 1.5px)}
+.hat-bow::before,.hat-bow::after{content:"";position:absolute;top:0;width:5px;height:5px;background:var(--g1);border-radius:50%}
 .hat-bow::before{left:0}.hat-bow::after{right:0}
-.hat-bow{background:radial-gradient(circle,var(--g2) 2px,transparent 2px)}
-.hat-beret{width:22px;height:10px;background:var(--g1);border-radius:50%;border:1.5px solid var(--g2)}
-.hat-beret::after{content:"";position:absolute;top:0;right:-2px;width:4px;height:4px;background:var(--g2);border-radius:50%}
-.hat-bucket{width:26px;height:10px;background:var(--g1);border:1.5px solid var(--g2);border-radius:6px 6px 2px 2px}
-.hat-bucket::after{content:"";position:absolute;bottom:-3px;left:-4px;width:34px;height:4px;background:var(--g1);border:1.5px solid var(--g2);border-radius:50%}
-.hat-beanie{width:22px;height:11px;background:var(--g1);border-radius:11px 11px 2px 2px;border:1.5px solid var(--g2)}
-.hat-beanie::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:5px;height:5px;background:var(--g2);border-radius:50%}
-.hat-beanie::after{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--g2);border-radius:0 0 2px 2px}
-.hat-straw{width:28px;height:6px;background:var(--g1);border-radius:50%;border:1px solid var(--g2)}
-.hat-straw::before{content:"";position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:16px;height:8px;background:var(--g1);border-radius:50% 50% 0 0;border:1px solid var(--g2);border-bottom:none}
+.hat-beret{width:14px;height:6px;background:var(--g1);border-radius:50%;border:.5px solid var(--g2)}
+.hat-beret::after{content:"";position:absolute;top:0;right:-1px;width:3px;height:3px;background:var(--g2);border-radius:50%}
+.hat-bucket{width:16px;height:6px;background:var(--g1);border:.5px solid var(--g2);border-radius:3px 3px 1px 1px}
+.hat-bucket::after{content:"";position:absolute;bottom:-2px;left:-2px;width:20px;height:2px;background:var(--g1);border:.5px solid var(--g2);border-radius:50%}
+.hat-beanie{width:14px;height:7px;background:var(--g1);border-radius:7px 7px 1px 1px;border:.5px solid var(--g2)}
+.hat-beanie::before{content:"";position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:3px;height:3px;background:var(--g2);border-radius:50%}
+.hat-straw{width:18px;height:3px;background:var(--g1);border-radius:50%;border:.5px solid var(--g2)}
+.hat-straw::before{content:"";position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:10px;height:5px;background:var(--g1);border-radius:50% 50% 0 0;border:.5px solid var(--g2);border-bottom:none}
 
 /* ===== 鞋子 ===== */
-.chick-shoes{bottom:-4px;display:flex;gap:4px;z-index:4}
+.chick-shoes{bottom:-3px;display:flex;gap:3px;z-index:4}
 .chick-shoes::before,.chick-shoes::after{content:"";display:block}
-.shoes-sock::before,.shoes-sock::after{width:6px;height:5px;background:var(--g1);border-radius:30% 30% 50% 50%;border:1px solid var(--g2)}
-.shoes-boot::before,.shoes-boot::after{width:7px;height:7px;background:var(--g1);border-radius:30% 30% 60% 60%;border:1px solid var(--g2);box-shadow:inset 0 -2px 0 rgba(255,255,255,.3)}
-.shoes-snowboot::before,.shoes-snowboot::after{width:8px;height:8px;background:var(--g1);border-radius:30% 30% 60% 60%;border:1.5px solid var(--g2);box-shadow:inset 0 2px 0 rgba(255,255,255,.7)}
+.shoes-sock::before,.shoes-sock::after{width:5px;height:3px;background:var(--g1);border-radius:30% 30% 50% 50%;border:.5px solid var(--g2)}
+.shoes-boot::before,.shoes-boot::after{width:5px;height:5px;background:var(--g1);border-radius:30% 30% 60% 60%;border:.5px solid var(--g2);box-shadow:inset 0 -1px 0 rgba(255,255,255,.4)}
+.shoes-snowboot::before,.shoes-snowboot::after{width:6px;height:5px;background:var(--g1);border-radius:30% 30% 60% 60%;border:1px solid var(--g2);box-shadow:inset 0 1px 0 rgba(255,255,255,.7)}
 /* 室内小鸡: 衣服贴合身体，按 chick 大小 */
 .room-chicken-wrap{width:90px;height:100px}
 .room-chicken-wrap .outfit{font-size:22px}
