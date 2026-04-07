@@ -1530,7 +1530,7 @@ function renderYardChickens(){
     div.className="yard-chicken";div.dataset.id=c.id;div.id="yc"+c.id;
     div.style.left=pos.left;div.style.top=pos.top;
     div.onclick=function(e){showMenu(e,c.id)};
-    div.innerHTML=`<div class="chick-outfit-wrap">${chickHTML(c.id,expr,"med")}${outfitHTML(c)}</div>
+    div.innerHTML=`${chickHTML(c.id,expr,"med")}${outfitHTML(c)}
       <span class="yc-name">${c.gender==="male"?"♂":"♀"}${c.name}</span>
       <span class="yc-status">${st}</span>
       <div class="yard-bars">
