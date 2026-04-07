@@ -2492,13 +2492,19 @@ async function flushNotion(){
     }
     // 天气穿搭反馈
     if(item.stats.location==="outside"){
-      const outfitMap={rainy:"🧢+🧥+👢+☂️（雨衣雨靴打伞）",snowy:"🎩+🧣+🧥+🥾（戴围巾穿雪地靴）",sunny:"👒+🕶️（草帽墨镜）",cloudy:"🧢（鸭舌帽）"};
-      const o=outfitMap[weather];
-      if(o){
-        const d=props["详情"].rich_text[0].text.content;
-        props["详情"]={rich_text:[{text:{content:d+"\n穿搭: "+o}}]};
-      }
+      const outfitMap={rainy:"🧥 雨衣雨靴打伞",snowy:"🧣 围巾雪地靴外套",sunny:"👒 草帽墨镜",cloudy:"🧢 鸭舌帽"};
+      const o=outfitMap[weather]||"🐥 常服";
+      props["穿搭"]={select:{name:o}};
+    }else{
+      props["穿搭"]={select:{name:"🏠 居家"}};
     }
+    // 成长色调
+    const toneMap={baby:"🌼 嫩黄",teen:"✨ 明亮",mature:"🎨 标准",adult:"🔆 鲜艳",elder:"🍂 褪色"};
+    if(item.stats.stage)props["色调"]={select:{name:toneMap[item.stats.stage]||"🎨 标准"}};
+    // 睡眠状态
+    if(item.stats.sleeping!==undefined)props["睡眠"]={checkbox:!!item.stats.sleeping};
+    // 生病状态
+    if(item.stats.sickness)props["疾病"]={select:{name:item.stats.sickness.icon+" "+item.stats.sickness.name}};
     // 房间家具 emoji 布局
     if(item.stats.id!==undefined&&item.stats.location==="inside"){
       const layout=roomLayoutEmoji(item.stats.id);
