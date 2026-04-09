@@ -3674,6 +3674,40 @@ function startStopLightning(){
   scheduleLightning();
 }
 
+// 按小鸡当前状态智能挑食物：生病→软食；虚弱/低健康→高营养；其他→喜好优先，避开讨厌
+function pickFoodFor(c){
+  const soft=["congee","noodle","dumpling","bun","tofu","yogurt"];
+  if(c.sickness){
+    const softList=FOODS.filter(f=>soft.includes(f.id));
+    if(softList.length)return pick(softList);
+  }
+  if(c.health<50){
+    const highHp=FOODS.filter(f=>(f.hp||0)>=5&&!c.hatedFood.includes(f.id));
+    if(highHp.length)return pick(highHp);
+  }
+  const fav=FOODS.filter(f=>c.favoriteFood.includes(f.id));
+  if(fav.length&&Math.random()<0.6)return pick(fav);
+  const ok=FOODS.filter(f=>!c.hatedFood.includes(f.id));
+  return pick(ok.length?ok:FOODS);
+}
+// 按病症挑饮品：感冒/发烧→蜂蜜水，肚子疼→花草茶，虚弱→鸡汤/营养液，其他→70% 清水 + 30% 随机饮品
+function pickDrinkFor(c){
+  if(c.sickness){
+    const id=c.sickness.id;
+    if(id==="cold"||id==="fever"){const d=DRINKS.find(x=>x.id==="honey-water");if(d)return d}
+    if(id==="stomach"){const d=DRINKS.find(x=>x.id==="tea");if(d)return d}
+    if(id==="weak"){const d=DRINKS.find(x=>x.id==="soup")||DRINKS.find(x=>x.id==="coconut");if(d)return d}
+  }
+  if(c.health<40){const nutri=DRINKS.filter(d=>(d.health||0)>=8);if(nutri.length)return pick(nutri)}
+  if(Math.random()<0.3)return pick(DRINKS);
+  return DRINKS[0]; // water
+}
+function applyDrink(c,d){
+  c.thirst=cl(c.thirst+(d.thirst||30),0,100);
+  if(d.health)c.health=cl(c.health+d.health,0,100);
+  if(d.happiness)c.happiness=cl(c.happiness+d.happiness,0,100);
+}
+
 let autoTimer=null;
 function startAutoActivity(){
   if(autoTimer)clearInterval(autoTimer);
@@ -3683,18 +3717,26 @@ function startAutoActivity(){
       // Urgent needs always trigger (hunger/thirst < 40)
       const urgent=c.hunger<40||c.thirst<40;
       if(!urgent&&Math.random()>0.5)return; // 50% chance for non-urgent
-      // 饿了/渴了强制吃喝（不走随机 pick）
-      if(c.hunger<30&&S.food>0){
-        const f=pick(FOODS);let h=30;
-        if(c.favoriteFood.includes(f.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
-        else if(c.hatedFood.includes(f.id)){h=15}
-        c.hunger=cl(c.hunger+h,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;
-        addLog(`🌾 ${c.name} 饿了自己找了${f.icon}${f.name}吃`,c.name,"吃饭",c);showYardEffect(c.id,"eat");showBowls(f.icon);
+      // 饿了/渴了强制吃喝（智能挑选：生病→软食，低健康→高营养，否则喜好）
+      if(c.hunger<30){
+        if(S.food>0){
+          const f=pickFoodFor(c);let h=30;
+          if(c.favoriteFood.includes(f.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
+          else if(c.hatedFood.includes(f.id)){h=15}
+          c.hunger=cl(c.hunger+h,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;
+          const tag=c.sickness?"生病了，自己找了点好消化的":"饿了自己找了";
+          addLog(`🌾 ${c.name} ${tag}${f.icon}${f.name}吃`,c.name,"吃饭",c);showYardEffect(c.id,"eat");showBowls(f.icon);
+        }else{
+          // 仓库空了：去啄树叶/草，回一点饱食但掉健康
+          c.hunger=cl(c.hunger+8,0,100);c.health=cl(c.health-1,0,100);
+          addLog(`🥺 ${c.name} 饿得啄了两口草…仓库里没食物了！`,c.name,"吃饭",c);
+        }
         return;
       }
       if(c.thirst<30){
-        c.thirst=cl(c.thirst+35,0,100);
-        addLog(`💧 ${c.name} 渴了自己去喝水了，咕噜咕噜~`,c.name,"喝水",c);showYardEffect(c.id,"drink");showBasins("💧");
+        const d=pickDrinkFor(c);applyDrink(c,d);
+        const tag=c.sickness?`生病了自己去喝${d.name}`:`渴了自己去喝${d.name}，咕噜咕噜~`;
+        addLog(`${d.icon} ${c.name} ${tag}`,c.name,"喝水",c);showYardEffect(c.id,"drink");showBasins(d.icon);
         return;
       }
       // Pick action based on needs
@@ -3727,7 +3769,7 @@ function startAutoActivity(){
       }
       const act=pick(needs);
       if(act==="eat"&&S.food>0){
-        const f=pick(FOODS);
+        const f=pickFoodFor(c);
         let h=30;
         if(c.favoriteFood.includes(f.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
         else if(c.hatedFood.includes(f.id)){h=15;c.happiness=cl(c.happiness-5,0,100)}
@@ -3747,9 +3789,9 @@ function startAutoActivity(){
         else addLog(`🎮 ${c.name} 自己玩了${g.icon}${g.name} 😊`,c.name,"玩耍",c);
         showYardEffect(c.id,"play");
       }else if(act==="drink"){
-        c.thirst=cl(c.thirst+30,0,100);
-        addLog(`💧 ${c.name} 自己跑去喝水了，咕噜咕噜~`,c.name,"喝水",c);
-        showYardEffect(c.id,"drink");showBasins("💧");
+        const d=pickDrinkFor(c);applyDrink(c,d);
+        addLog(`${d.icon} ${c.name} 自己跑去喝${d.name}了，咕噜咕噜~`,c.name,"喝水",c);
+        showYardEffect(c.id,"drink");showBasins(d.icon);
       }else if(act==="bath"){
         c.clean=cl(c.clean+25,0,100);c.happiness=cl(c.happiness+5,0,100);
         addLog(`🛁 ${c.name} 自己去洗澡了，洗香香~ ✨`,c.name,"洗澡",c);
