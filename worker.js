@@ -139,9 +139,31 @@ function handleInstruction(cmd, S) {
   // 叫醒XX
   m = cmd.match(/^叫醒(.+)$/);
   if (m) { const i = find(m[1]); if (i >= 0) { const c = S.chickens[i]; c.sleeping = false; return { matched: true, log: `📋 [后台] 叫醒了${c.name}`, type: "睡觉", chicken: c.name, stats: c }; } }
+  // 全部吃<具体食物>
+  m = cmd.match(/^(?:全部|大家|一起|都)吃(.+)$/);
+  if (m && m[1] !== "饭") {
+    const q = m[1].trim();
+    S.chickens.forEach(c => { if (!c.sleeping) { c.hunger = cl(c.hunger + 30, 0, 100); S.food = Math.max(0, (S.food || 0) - 1); } });
+    return { matched: true, log: `📋 [后台] 全部小鸡都吃了${q}`, type: "吃饭", chicken: "全部" };
+  }
+  // 全部喝<具体饮品>
+  m = cmd.match(/^(?:全部|大家|一起|都)喝(.+)$/);
+  if (m && m[1] !== "水") {
+    const q = m[1].trim();
+    S.chickens.forEach(c => c.thirst = cl(c.thirst + 35, 0, 100));
+    return { matched: true, log: `📋 [后台] 全部小鸡都喝了${q}`, type: "喝水", chicken: "全部" };
+  }
+  // 全部喂<具体药>
+  m = cmd.match(/^(?:全部|大家|一起|都)(?:喂|吃)(.+?药|蜂蜜水|草药|营养液|创可贴)$/);
+  if (m) {
+    const q = m[1].trim();
+    S.chickens.forEach(c => { c.health = cl(c.health + 30, 0, 100); c.fatigue = cl(c.fatigue - 10, 0, 100); if (c.sickness) c.sickness = null; });
+    return { matched: true, log: `📋 [后台] 全部小鸡都吃了${q}`, type: "喂药", chicken: "全部" };
+  }
   // 全部吃饭/喝水/洗澡/玩/睡觉/叫醒
   if (/^(全部|都|一起)吃饭$/.test(cmd)) { S.chickens.forEach(c => { if (!c.sleeping) { c.hunger = cl(c.hunger + 30, 0, 100); S.food = Math.max(0, (S.food || 0) - 1); } }); return { matched: true, log: `📋 [后台] 全部小鸡都吃饭了`, type: "吃饭", chicken: "全部" }; }
   if (/^(全部|都|一起)喝水$/.test(cmd)) { S.chickens.forEach(c => c.thirst = cl(c.thirst + 30, 0, 100)); return { matched: true, log: `📋 [后台] 全部小鸡都喝水了`, type: "喝水", chicken: "全部" }; }
+  if (/^(全部|都|一起)喂药$/.test(cmd)) { S.chickens.forEach(c => { c.health = cl(c.health + 30, 0, 100); c.fatigue = cl(c.fatigue - 10, 0, 100); if (c.sickness) c.sickness = null; }); return { matched: true, log: `📋 [后台] 全部小鸡都喂药了`, type: "喂药", chicken: "全部" }; }
   if (/^(全部|都|一起)洗澡$/.test(cmd)) { S.chickens.forEach(c => { c.clean = cl(c.clean + 30, 0, 100); c.happiness = cl(c.happiness + 5, 0, 100); }); return { matched: true, log: `📋 [后台] 全部小鸡都洗澡了`, type: "洗澡", chicken: "全部" }; }
   if (/^(全部|都|一起)玩$/.test(cmd)) { S.chickens.forEach(c => { c.happiness = cl(c.happiness + 20, 0, 100); c.hunger = cl(c.hunger - 10, 0, 100); }); return { matched: true, log: `📋 [后台] 全部小鸡都玩了`, type: "玩耍", chicken: "全部" }; }
   if (/^(全部|都|一起)睡觉$/.test(cmd)) { S.chickens.forEach(c => c.sleeping = true); return { matched: true, log: `📋 [后台] 全部小鸡都睡了 💤`, type: "睡觉", chicken: "全部" }; }
