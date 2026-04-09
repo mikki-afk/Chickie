@@ -1111,7 +1111,10 @@ const FOODS=[
   {id:"carrot",icon:"🥕",name:"胡萝卜",hp:6},{id:"mushroom",icon:"🍄",name:"蘑菇",hp:4},
   {id:"egg",icon:"🥚",name:"鸡蛋（别问哪来的）",hp:8},{id:"cookie",icon:"🍪",name:"饼干",hp:1},
   {id:"cake",icon:"🍰",name:"蛋糕",hp:1},{id:"cheese",icon:"🧀",name:"芝士",hp:5},
-  {id:"peanut",icon:"🥜",name:"花生",hp:3},{id:"seed",icon:"🌻",name:"瓜子",hp:2}
+  {id:"peanut",icon:"🥜",name:"花生",hp:3},{id:"seed",icon:"🌻",name:"瓜子",hp:2},
+  {id:"congee",icon:"🥣",name:"稀粥",hp:6},{id:"noodle",icon:"🍜",name:"面条",hp:5},
+  {id:"dumpling",icon:"🥟",name:"饺子",hp:6},{id:"bun",icon:"🥟",name:"小笼包",hp:5},
+  {id:"tofu",icon:"🍢",name:"豆腐",hp:5},{id:"yogurt",icon:"🥛",name:"酸奶",hp:4}
 ];
 const GAMES=[
   {id:"chase",icon:"🏃",name:"追逐游戏",anim:"anim-chase"},
@@ -2948,11 +2951,27 @@ function execInstruction(cmd,pageId){
     const ci=names.indexOf(m[1]);
     if(ci>=0){const c=S.chickens[ci];if(c.location==="outside"){c.location="inside";addLog(`📋 [指令] 把${c.name}喊回去了 | 饱食${Math.round(c.hunger)} 快乐${Math.round(c.happiness)} 水分${Math.round(c.thirst)} 清洁${Math.round(c.clean)} 健康${Math.round(c.health)} 疲惫${Math.round(c.fatigue)}`,c.name,"位置",c,true)}else{addLog(`📋 [指令] ${c.name}已经在家里了哦~`,c.name,"位置",c,true)}matched=true}
   }}
-  // 全部吃饭
+  // 全部吃<具体食物>  例：全部吃稀粥 / 大家吃米饭 / 一起吃🌾
+  if(!matched){m=cmd.match(/^(?:全部|大家|一起|都)吃(.+)$/);if(m){
+    const q=m[1].trim();
+    const f=FOODS.find(x=>x.name===q||x.icon===q||q.includes(x.name)||q.includes(x.icon));
+    if(f&&q!=="饭"){
+      if(S.food>0){let cnt=0;let slp=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){let h=30;if(c.favoriteFood.includes(f.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}else if(c.hatedFood.includes(f.id)){h=15;c.happiness=cl(c.happiness-5,0,100)}c.hunger=cl(c.hunger+h,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;cnt++}else if(c.sleeping)slp++});addLog(`📋 [指令] ${cnt}只小鸡一起吃了${f.icon}${f.name}${slp>0?"（"+slp+"只在睡觉没吃到）":""}`,"全部","吃饭",null,true)}else{addLog(`📋 [指令] 没有食物了~`,"全部","吃饭",null,true)}matched=true;
+    }
+  }}
+  // 全部吃饭（随机）
   if(!matched&&(cmd.includes("全部吃饭")||cmd.includes("都吃饭")||cmd.includes("一起吃饭"))){
     if(S.food>0){const f=pick(FOODS);let cnt=0;let slp=0;S.chickens.forEach(c=>{if(!c.sleeping&&S.food>0){c.hunger=cl(c.hunger+30,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;cnt++}else if(c.sleeping)slp++});addLog(`📋 [指令] ${cnt}只小鸡一起吃了${f.icon}${f.name}${slp>0?"（"+slp+"只在睡觉没吃到）":""}`,"全部","吃饭",null,true)}else{addLog(`📋 [指令] 没有食物了，先加点食物吧~`,"全部","吃饭",null,true)}matched=true
   }
-  // 全部喝水
+  // 全部喝<具体饮品>  例：全部喝椰子水 / 大家喝果汁
+  if(!matched){m=cmd.match(/^(?:全部|大家|一起|都)喝(.+)$/);if(m){
+    const q=m[1].trim();
+    const dk=DRINKS.find(x=>x.name===q||x.icon===q||q.includes(x.name)||q.includes(x.icon));
+    if(dk&&q!=="水"){
+      let cnt=0;let slp=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+dk.thirst,0,100);if(dk.health)c.health=cl(c.health+dk.health,0,100);if(dk.happiness)c.happiness=cl(c.happiness+dk.happiness,0,100);cnt++}else slp++});addLog(`📋 [指令] ${cnt}只小鸡一起喝了${dk.icon}${dk.name}${slp>0?"（"+slp+"只在睡觉）":""}`,"全部","喝水",null,true);matched=true;
+    }
+  }}
+  // 全部喝水（清水）
   if(!matched&&(cmd.includes("全部喝水")||cmd.includes("都喝水")||cmd.includes("一起喝水"))){
     let cnt=0;let slp=0;S.chickens.forEach(c=>{if(!c.sleeping){c.thirst=cl(c.thirst+35,0,100);cnt++}else slp++});addLog(`📋 [指令] ${cnt}只小鸡一起喝水了${slp>0?"（"+slp+"只在睡觉）":""}`,"全部","喝水",null,true);matched=true;
   }
@@ -2976,7 +2995,15 @@ function execInstruction(cmd,pageId){
   if(!matched&&(cmd.includes("打扫房间")||cmd.includes("打扫卫生")||cmd.includes("大扫除")||cmd.includes("收拾房间")||cmd.includes("搞卫生"))){
     S.poops=[];S.chickens.forEach(c=>{c.clean=cl(c.clean+20,0,100);c.happiness=cl(c.happiness+5,0,100)});addLog(`📋 [指令] 大扫除！粑粑清了，小鸡们都干净了`,"全部","打扫",null,true);matched=true;
   }
-  // 全部喂药
+  // 全部喂<具体药>  例：全部喂感冒药
+  if(!matched){m=cmd.match(/^(?:全部|大家|一起|都)(?:喂|吃)(.+?药|蜂蜜水|草药|营养液|创可贴)$/);if(m){
+    const q=m[1].trim();
+    const med=MEDS.find(x=>x.name===q||x.icon===q||q.includes(x.name));
+    if(med){
+      let cured=[];S.chickens.forEach(c=>{c.health=cl(c.health+med.health,0,100);c.fatigue=cl(c.fatigue-10,0,100);if(c.sickness&&(med.cures.includes(c.sickness.id)||med.cures.includes("any"))){cured.push(c.name+"的"+c.sickness.name);c.sickness=null}});addLog(`📋 [指令] 所有小鸡都吃了${med.icon}${med.name}${cured.length?" | ✨"+cured.join("、")+"好了":""}`,"全部","喂药",null,true);matched=true;
+    }
+  }}
+  // 全部喂药（随机）
   if(!matched&&(cmd.includes("全部喂药")||cmd.includes("都喂药")||cmd.includes("一起吃药"))){
     const med=pick(MEDS);let cured=[];S.chickens.forEach(c=>{c.health=cl(c.health+med.health,0,100);c.fatigue=cl(c.fatigue-10,0,100);if(c.sickness&&(med.cures.includes(c.sickness.id)||med.cures.includes("any"))){cured.push(c.name+"的"+c.sickness.name);c.sickness=null}});addLog(`📋 [指令] 所有小鸡都吃了${med.icon}${med.name}${cured.length?" | ✨"+cured.join("、")+"好了":""}`,"全部","喂药",null,true);matched=true;
   }
@@ -3653,17 +3680,29 @@ function startAutoActivity(){
   autoTimer=setInterval(()=>{
     S.chickens.forEach(c=>{
       if(c.sleeping)return;
-      // Urgent needs always trigger (hunger/thirst < 30)
-      const urgent=c.hunger<30||c.thirst<30;
+      // Urgent needs always trigger (hunger/thirst < 40)
+      const urgent=c.hunger<40||c.thirst<40;
       if(!urgent&&Math.random()>0.5)return; // 50% chance for non-urgent
+      // 饿了/渴了强制吃喝（不走随机 pick）
+      if(c.hunger<30&&S.food>0){
+        const f=pick(FOODS);let h=30;
+        if(c.favoriteFood.includes(f.id)){h=45;c.happiness=cl(c.happiness+8,0,100)}
+        else if(c.hatedFood.includes(f.id)){h=15}
+        c.hunger=cl(c.hunger+h,0,100);if(f.hp)c.health=cl(c.health+f.hp,0,100);S.food--;
+        addLog(`🌾 ${c.name} 饿了自己找了${f.icon}${f.name}吃`,c.name,"吃饭",c);showYardEffect(c.id,"eat");showBowls(f.icon);
+        return;
+      }
+      if(c.thirst<30){
+        c.thirst=cl(c.thirst+35,0,100);
+        addLog(`💧 ${c.name} 渴了自己去喝水了，咕噜咕噜~`,c.name,"喝水",c);showYardEffect(c.id,"drink");showBasins("💧");
+        return;
+      }
       // Pick action based on needs
       const needs=[];
-      if(c.hunger<60)needs.push("eat");
+      if(c.hunger<70)needs.push("eat","eat");
+      if(c.thirst<70)needs.push("drink","drink");
       if(c.happiness<60)needs.push("play");
-      if(c.thirst<60)needs.push("drink");
       if(c.clean<50)needs.push("bath");
-      if(c.hunger<30)needs.push("eat","eat"); // triple weight if very hungry
-      if(c.thirst<30)needs.push("drink","drink");
       if(needs.length===0){
         if(c.location==="inside")return; // Indoor chickens rest quietly
         // Not needy - maybe clean poop or idle
@@ -3708,7 +3747,7 @@ function startAutoActivity(){
         else addLog(`🎮 ${c.name} 自己玩了${g.icon}${g.name} 😊`,c.name,"玩耍",c);
         showYardEffect(c.id,"play");
       }else if(act==="drink"){
-        c.thirst=cl(c.thirst+20,0,100);
+        c.thirst=cl(c.thirst+30,0,100);
         addLog(`💧 ${c.name} 自己跑去喝水了，咕噜咕噜~`,c.name,"喝水",c);
         showYardEffect(c.id,"drink");showBasins("💧");
       }else if(act==="bath"){
@@ -3736,7 +3775,7 @@ function renderStats(){
 // ===== AUTO DECAY =====
 function decay(){
   S.chickens.forEach(c=>{
-    if(!c.sleeping){c.hunger=cl(c.hunger-1,0,100);c.happiness=cl(c.happiness-0.5,0,100);c.thirst=cl(c.thirst-0.5,0,100);c.clean=cl(c.clean-0.5,0,100);c.fatigue=cl(c.fatigue+0.5,0,100);if(c.hunger<20||c.thirst<20||c.clean<20||c.fatigue>80)c.health=cl(c.health-1,0,100)}else{c.fatigue=cl(c.fatigue-3,0,100);c.health=cl(c.health+1,0,100)}
+    if(!c.sleeping){c.hunger=cl(c.hunger-0.8,0,100);c.happiness=cl(c.happiness-0.5,0,100);c.thirst=cl(c.thirst-0.5,0,100);c.clean=cl(c.clean-0.5,0,100);c.fatigue=cl(c.fatigue+0.5,0,100);if(c.hunger<20||c.thirst<20||c.clean<20||c.fatigue>80)c.health=cl(c.health-1,0,100);if(c.fatigue>=95&&Math.random()<0.5){c.sleeping=true;addLog(`💤 ${c.name}实在太累了自己去睡了`,c.name,"睡觉",c)}}else{c.fatigue=cl(c.fatigue-3,0,100);c.health=cl(c.health+1,0,100);if(c.fatigue<=5){c.sleeping=false;addLog(`☀️ ${c.name}睡饱了自己醒了~`,c.name,"睡觉",c)}}
     // Heater & lamp benefits (indoor only)
     if(c.location==="inside"&&c.heater>0){c.health=cl(c.health+c.heater*0.4,0,100);c.happiness=cl(c.happiness+c.heater*0.2,0,100)}
     if(c.location==="inside"&&c.lamp>0){c.health=cl(c.health+c.lamp*0.3,0,100);c.fatigue=cl(c.fatigue-c.lamp*0.3,0,100)}
