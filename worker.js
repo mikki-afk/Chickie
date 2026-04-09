@@ -83,15 +83,18 @@ function tickState(S) {
   for (const c of S.chickens) {
     if (!c.sleeping) {
       c.hunger = cl((c.hunger ?? 100) - 0.8 * mins, 0, 100);
-      c.thirst = cl((c.thirst ?? 100) - 1.0 * mins, 0, 100);
+      c.thirst = cl((c.thirst ?? 100) - 0.5 * mins, 0, 100);
       c.clean = cl((c.clean ?? 100) - 0.5 * mins, 0, 100);
-      c.happiness = cl((c.happiness ?? 100) - 0.4 * mins, 0, 100);
-      c.fatigue = cl((c.fatigue ?? 0) + 0.6 * mins, 0, 100);
+      c.happiness = cl((c.happiness ?? 100) - 0.5 * mins, 0, 100);
+      c.fatigue = cl((c.fatigue ?? 0) + 0.5 * mins, 0, 100);
+      // 太累自己去睡
+      if (c.fatigue >= 95 && Math.random() < 0.5) c.sleeping = true;
     } else {
-      c.fatigue = cl((c.fatigue ?? 0) - 1.5 * mins, 0, 100);
+      c.fatigue = cl((c.fatigue ?? 0) - 3 * mins, 0, 100);
       c.hunger = cl((c.hunger ?? 100) - 0.2 * mins, 0, 100);
       c.thirst = cl((c.thirst ?? 100) - 0.2 * mins, 0, 100);
-      if (c.fatigue <= 0) c.sleeping = false;
+      // 睡饱了自己醒
+      if (c.fatigue <= 5) c.sleeping = false;
     }
     // Health drift
     const low = (c.hunger < 20) + (c.thirst < 20) + (c.clean < 20);
